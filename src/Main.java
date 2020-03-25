@@ -137,19 +137,19 @@ public class Main extends Application {
 	        
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                simmulationPage();
+	                simmulationPage(primaryStage);
 	            }
 	        });
 	        
 	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                meals();
+	                meals(primaryStage);
 	            }
 	        });
 	        
 	        button3.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                probabilityPage();
+	                probabilityPage(primaryStage);
 	            }
 	        });
 	        
