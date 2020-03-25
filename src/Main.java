@@ -179,27 +179,27 @@ public class Main extends Application {
 		}
 	}
 	
-	public static void simmulationPage() {
+	public static void simmulationPage(Stage primaryStage) {
 		
 	}
 	
-	public static void probabilityPage() {
+	public static void probabilityPage(Stage primaryStage) {
 		
 	}
 	
-	public static void meals() {
+	public static void meals(Stage primaryStage) {
 		
 	}
 	
-	public static void addFoodPage() {
+	public static void addFoodPage(Stage primaryStage) {
 		
 	}
 	
-	public static void addMealPage() {
+	public static void addMealPage(Stage primaryStage) {
 		
 	}
 	
-	public static void uploadMapPage() {
+	public static void uploadMapPage(Stage primaryStage) {
 		
 	}
 }
