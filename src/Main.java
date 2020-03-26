@@ -10,12 +10,12 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -62,7 +62,8 @@ public class Main extends Application {
 	        
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                mainPage(primaryStage);
+
+	        		mainPage(primaryStage);
 	            }
 	        });
 	        
@@ -95,7 +96,9 @@ public class Main extends Application {
 	}
 	
 	public void mainPage(Stage primaryStage) {
+		
 		try {
+			
 			primaryStage.setTitle("Main Page");
 			
 			Label label = new Label("Dromedary Drones");
@@ -180,15 +183,15 @@ public class Main extends Application {
 	}
 	
 	public static void simmulationPage(Stage primaryStage) {
-		
+
 	}
 	
 	public static void probabilityPage(Stage primaryStage) {
-		
+
 	}
 	
 	public static void meals(Stage primaryStage) {
-		
+
 	}
 	
 	public static void addFoodPage(Stage primaryStage) {
@@ -200,6 +203,74 @@ public class Main extends Application {
 	}
 	
 	public static void uploadMapPage(Stage primaryStage) {
+		
+	}
+	
+	public static void saveInformation(Stage primaryStage) {
+		
+		try {
+			primaryStage.setTitle("Saving Screen");
+			
+			Label label = new Label("Dromedary Drones");
+			
+			label.setFont(new Font("Arial", 40));
+			label.setLayoutX(80);
+
+	        Button button1 = new Button("Save Information");
+	        Button button2 = new Button("Exit");
+	        
+	        button1.setPrefHeight(40);
+	        button1.setPrefWidth(140);
+	        button2.setPrefHeight(40);
+	        button2.setPrefWidth(140);
+	        
+	   
+	        
+	        Pane root = new Pane();
+	        button1.setLayoutX(180);
+	        button1.setLayoutY(200);
+	        button2.setLayoutX(180);
+	        button2.setLayoutY(250);
+
+	     
+	        root.getChildren().add(button1);
+	        root.getChildren().add(button2);
+	        root.getChildren().add(label);
+	        
+	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	        		FileChooser fileChooser = new FileChooser();
+	        		fileChooser.setTitle("Open Resource File");
+	        		fileChooser.showOpenDialog(primaryStage);
+	            }
+	        });
+	        
+	        
+	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                System.exit(1);
+	            }
+	        });
+			
+			Scene scene = new Scene(root,500,500);
+			
+			primaryStage.setScene(scene);
+			primaryStage.show();
+			
+		
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+					
+					
+				}
+			}.start();
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 }
