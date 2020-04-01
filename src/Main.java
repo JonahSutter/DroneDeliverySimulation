@@ -340,6 +340,11 @@ public class Main extends Application {
 		    errorLabel.setLayoutX(135);
 		    errorLabel.setLayoutY(420);
 
+		    Label errorLabel2 = new Label("");
+		    errorLabel2.setFont(new Font("Arial", 15));
+		    errorLabel2.setLayoutX(30);
+		    errorLabel2.setLayoutY(325);
+
 		    Label mealsPerShift = new Label("Meals per shift:");
 		    mealsPerShift.setFont(new Font("Arial",20));
 		    mealsPerShift.setLayoutX(30);
@@ -416,18 +421,16 @@ public class Main extends Application {
 		    shiftProbabilities.getItems().addListener(new ListChangeListener<Object>() {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
-		        	errorLabel.setText("");
+		        	errorLabel2.setText("");
 		            for (int i = 0; i < shiftProbabilities.getItems().size(); i++) {
 		            	try {
 		            		String entryValue = shiftProbabilities.getItems().get(i);
-		            		System.out.println(entryValue);
 		            		int val = Integer.parseInt(entryValue);
-		            		System.out.println(val);
 		            		if (val < 0) {
-		            			errorLabel.setText("Invalid Shift Entry: \t\nValue less than 0)");
+		            			errorLabel2.setText("Invalid Shift Entry: \t\nValue less than 0)");
 		            		}
 		            	} catch (Exception E) {
-	            			errorLabel.setText("Invalid Shift Entry: \n\tNot an integer value.");
+	            			errorLabel2.setText("Invalid Shift Entry: \n\tNot an integer value.");
 		            	}
 		            }
 		        }
@@ -460,13 +463,13 @@ public class Main extends Application {
 	        root.getChildren().add(label);
 	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
-	        root.getChildren().addAll(labeledShifts,shiftProbabilities);
+	        root.getChildren().addAll(labeledShifts,shiftProbabilities,errorLabel2);
 
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 
 	            @Override public void handle(ActionEvent e) {
-		            if (totalVal.getText() == "100") {
-		            	if (errorLabel.getText() == "") {
+		            if (errorLabel.getText() == "" && errorLabel2.getText() == "") {
+		            	if (totalVal.getText() == "100") {
 			            	/*
 			    		    for (int i = 0; i < Orders.getMealList().size(); i++) {
 			    		    	String entryValue = listProbs.getItems().get(i);
@@ -475,9 +478,9 @@ public class Main extends Application {
 			    		    }
 			    		    */
 			                mainPage(primaryStage);
-		            	}
-		            } else{
-		            	errorLabel.setText("Invalid Summation: \n\tMeal percentages must total 100.");
+		            	} else {
+			            	errorLabel.setText("Invalid Summation: \n\tMeal percentages must total 100.");
+			            }
 		            }
 	            }
 	        });
