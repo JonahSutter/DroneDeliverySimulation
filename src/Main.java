@@ -31,8 +31,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 public class Main extends Application {
 
-	public static void main(String[] args) {		
-		launch(args); 
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 
@@ -213,44 +213,82 @@ public class Main extends Application {
 			mealProbLabel.setLayoutX(265);
 			mealProbLabel.setLayoutY(72);
 
-	        Button home = new Button("Home");
+			 Label totalLabel = new Label("Total:");
+		    totalLabel.setFont(new Font("Arial",15));
+		    totalLabel.setLayoutX(215);
+		    totalLabel.setLayoutY(390);
+
+		    Label totalVal = new Label("100.00%");
+		    totalVal.setFont(new Font("Arial",15));
+		    totalVal.setLayoutX(270);
+		    totalVal.setLayoutY(390);
+
+		    Label errorLabel = new Label("");
+		    errorLabel.setFont(new Font("Arial",15));
+		    errorLabel.setLayoutX(135);
+		    errorLabel.setLayoutY(420);
 
 	        ListView<String> listFood = new ListView<String>();
-	        ListView<Double> listProbs = new ListView<Double>();
+	        ListView<String> listProbs = new ListView<String>();
 
 	        ObservableList<String> foodItem =FXCollections.observableArrayList (
 		            "Cheeseburger", "Hamburger", "Fries", "Drink");
 		    /*
-	        for (int i = 0; i < mealsList.size(); i++) {
-		    	foodItem.add(mealsList.get(i).getName());
+	        for (int i = 0; i < Orders.getMealList().size(); i++) {
+		    	foodItem.add(Orders.getMealList().get(i).getName());
 		    }
 		    */
 	        listFood.setItems(foodItem);
 
-	        double fake = 25.2;
-	        double fake1 = 13.2;
-	        double fake2 = 25.7;
-	        double fake3 = 07.8;
-	        double fake4 = 9.5;
-
-		    ObservableList<Double> foodProbs =FXCollections.observableArrayList (
-		    		fake, fake1, fake2, fake3, fake4);
+		    ObservableList<String> foodProbs =FXCollections.observableArrayList (
+		    		"10", "22.5", "30.4", "25.4", "11.7");
 		    /*
-		    for (int i = 0; i < mealsList.size(); i++) {
-		    	foodProbs.add(mealsList.get(i).getProbability());
+		    for (int i = 0; i < Orders.getMealList().size(); i++) {
+		    	foodItem.add(Orders.getMealList().get(i).getPercentage());
 		    }
 		    */
 		    listProbs.setItems(foodProbs);
 		    listProbs.setEditable(true);
-		    listProbs.setCellFactory(DoubleFieldListCell.forListView());
 		    listProbs.setCellFactory(TextFieldListCell.forListView());
+		    listProbs.getItems().addListener(new ListChangeListener<Object>() {
+		        @Override
+		        public void onChanged(ListChangeListener.Change change) {
+		        	double total = 0;
+		        	errorLabel.setText("");
+		            for (int i = 0; i < listProbs.getItems().size(); i++) {
+		            	try {
+		            		String entryValue = listProbs.getItems().get(i);
+		            		double val = Double.parseDouble(entryValue);
+		            		if (val < 0) {
+		            			errorLabel.setText("Error: Invalid Entry (Less than 0)");
+		            		}
+		            		total += val;
+		            	} catch (Exception E) {
+	            			errorLabel.setText("Error: Invalid Entry (Not a numeric value)");
+		            	}
+		            }
+		            total = (total * 1000)/1000;
+		            if (total == 100) {
+		                totalVal.setText("100");
+		            } else {
+		            	totalVal.setText(String.format("%3.2f",total));
+		            }
+		        }
+		    });
 
+
+	        Button home = new Button("Home");
 	        Pane root = new Pane();
 
+	        home.setLayoutX(130);
+	        home.setLayoutY(385);
+	        home.setPrefWidth(75);
+
+
 	        listFood.setPrefWidth(140);
-	        listFood.setPrefHeight(300);
+	        listFood.setPrefHeight(275);
 	        listProbs.setPrefWidth(70);
-	        listProbs.setPrefHeight(300);
+	        listProbs.setPrefHeight(275);
 
 	        listFood.setLayoutX(125);
 	        listFood.setLayoutY(100);
@@ -262,32 +300,17 @@ public class Main extends Application {
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
 	        root.getChildren().add(label);
+	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel);
 
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 
 	            @Override public void handle(ActionEvent e) {
-		            double total = 0;
-		            for (int i = 0; i < listProbs.getItems().size(); i++) {
-		            	try {
-		            		String entryValue = listProbs.getItems().get(i);
-		            		double val = Double.parseDouble(entryValue);
-		            		if (val < 0) {
-		            			System.out.println("Less than 0!");
-		            		}
-		            		total += val;
-		            	} catch (Exception E) {
-		            		System.out.println("Error parsing double!");
-		            	}
-		            }
-		            if (total == 100) {
+		            if (totalVal.getText() == "100") {
 		                mainPage(primaryStage);
-		            } else if (total > 100) {
-		            	System.out.println("Total greater than 100. You are over by: " + (total-100));
-		            } else {
-		            	System.out.println("Total less than 100. You are under by: " + (100-total));
+		            } else{
+		            	errorLabel.setText("Values must total to 100 before exiting.");
 		            }
-
 	            }
 	        });
 
@@ -311,11 +334,11 @@ public class Main extends Application {
 			Label foods = new Label("Foods");
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
-			
+
 			mealsLabel.setFont(new Font("Arial", 20));
 			mealsLabel.setLayoutX(370);
 			mealsLabel.setLayoutY(80);
-			
+
 			foods.setFont(new Font("Arial", 20));
 			foods.setLayoutX(70);
 			foods.setLayoutY(80);
@@ -343,7 +366,7 @@ public class Main extends Application {
 	        addMeal.setLayoutY(150);
 	        home.setLayoutX(180);
 	        home.setLayoutY(360);
-	        
+
 	        addFood.setPrefHeight(40);
 	        addFood.setPrefWidth(140);
 	        addMeal.setPrefHeight(40);
@@ -351,7 +374,7 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-	        
+
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
 	        listMeals.setPrefWidth(140);
@@ -372,7 +395,7 @@ public class Main extends Application {
 	        root.getChildren().add(home);
 	        root.getChildren().add(foods);
 	        root.getChildren().add(mealsLabel);
-	        
+
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addFoodPage(primaryStage);
@@ -390,7 +413,7 @@ public class Main extends Application {
 	            	//mainPage(primaryStage);
 	            }
 	        });
-	
+
 			Scene scene = new Scene(root,500,500);
 
 			primaryStage.setScene(scene);
@@ -493,33 +516,33 @@ public class Main extends Application {
 	public static void addMealPage(Stage primaryStage) {
 		try {
 			primaryStage.setTitle("Add Meal Page");
-			
+
 			Label label = new Label("Dromedary Drones");
 			Label mealNameHere = new Label("Meal Name");
-			
+
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
-			
+
 			mealNameHere.setFont(new Font("Arial", 12));
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
 
 	        Button saveMeal = new Button("Save Meal");
 	        Button cancel = new Button("Cancel");
-	        
+
 	        TextField mealName = new TextField();
 	        mealName.setPromptText("Enter meal name.");
-	        
+
 	        TextField mealWeight1 = new TextField();
 	        TextField mealWeight2 = new TextField();
 	        TextField mealWeight3 = new TextField();
 	        TextField mealWeight4 = new TextField();
-	        
+
 	        mealWeight1.setPromptText("0.0");
 	        mealWeight2.setPromptText("0.0");
 	        mealWeight3.setPromptText("0.0");
 	        mealWeight4.setPromptText("0.0");
-	        
+
 	        ObservableList<String> mealOptions = FXCollections.observableArrayList(
 	        		"Cheeseburger",
 	        		"Habmurger",
@@ -527,48 +550,48 @@ public class Main extends Application {
 	        		"Drink",
 	        		"None"
 	        		);
-	        
+
 	        final ComboBox option1 = new ComboBox(mealOptions);
 	        final ComboBox option2 = new ComboBox(mealOptions);
 	        final ComboBox option3 = new ComboBox(mealOptions);
 	        final ComboBox option4 = new ComboBox(mealOptions);
-	        
+
 	        option1.setValue("Cheeseburger");
 	        option2.setValue("Hamburgerr");
 	        option3.setValue("Fries");
 	        option4.setValue("Drink");
-	        
+
 	        Pane root = new Pane();
-	        
+
 	        saveMeal.setLayoutX(180);
 	        saveMeal.setLayoutY(400);
 	        cancel.setLayoutX(180);
 	        cancel.setLayoutY(450);
-	        
+
 	        saveMeal.setPrefHeight(40);
 	        saveMeal.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);   
-	        
+	        cancel.setPrefWidth(140);
+
 	        mealName.setLayoutX(180);
 	        mealName.setLayoutY(100);
-	        
+
 	        option1.setLayoutX(180);
 	        option1.setLayoutY(150);
 
 	        option2.setLayoutX(180);
 	        option2.setLayoutY(200);
-	        
+
 	        option3.setLayoutX(180);
 	        option3.setLayoutY(250);
-	        
+
 	        option4.setLayoutX(180);
 	        option4.setLayoutY(300);
-	        
+
 	        mealWeight1.setLayoutX(310);
 	        mealWeight1.setLayoutY(150);
 	        mealWeight1.setPrefWidth(40);
-	        
+
 	        mealWeight2.setLayoutX(310);
 	        mealWeight2.setLayoutY(200);
 	        mealWeight2.setPrefWidth(40);
@@ -576,11 +599,11 @@ public class Main extends Application {
 	        mealWeight3.setLayoutX(310);
 	        mealWeight3.setLayoutY(250);
 	        mealWeight3.setPrefWidth(40);
-	        
+
 	        mealWeight4.setLayoutX(310);
 	        mealWeight4.setLayoutY(300);
 	        mealWeight4.setPrefWidth(40);
-	        
+
 	        root.getChildren().add(saveMeal);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(mealName);
@@ -594,30 +617,30 @@ public class Main extends Application {
 	        root.getChildren().add(mealWeight2);
 	        root.getChildren().add(mealWeight3);
 	        root.getChildren().add(mealWeight4);
-	        
+
 	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
-	        
+
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
-	        
+
 			Scene scene = new Scene(root,500,500);
-			
+
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			
-		
+
+
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
-					
-					
+
+
 				}
 			}.start();
 		} catch(Exception e) {
