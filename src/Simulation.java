@@ -2,6 +2,8 @@
 public class Simulation {
 	
 	private void knapSack() {
+		//Pretend orderList is the list of orders
+		int time = 0;
 		
 	}
 	

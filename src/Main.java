@@ -205,12 +205,12 @@ public class Main extends Application {
 
 			Label mealLabel = new Label("Meals:");
 			mealLabel.setFont(new Font("Arial",20));
-			mealLabel.setLayoutX(125);
+			mealLabel.setLayoutX(250);
 			mealLabel.setLayoutY(72);
 
 			Label mealProbLabel = new Label("(%):");
 			mealProbLabel.setFont(new Font("Arial",20));
-			mealProbLabel.setLayoutX(265);
+			mealProbLabel.setLayoutX(390);
 			mealProbLabel.setLayoutY(72);
 
 			 Label totalLabel = new Label("Total:");
@@ -227,6 +227,11 @@ public class Main extends Application {
 		    errorLabel.setFont(new Font("Arial",15));
 		    errorLabel.setLayoutX(135);
 		    errorLabel.setLayoutY(420);
+
+		    Label mealsPerShift = new Label("Meals per shift:");
+		    mealsPerShift.setFont(new Font("Arial",20));
+		    mealsPerShift.setLayoutX(30);
+		    mealsPerShift.setLayoutY(72);
 
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listProbs = new ListView<String>();
@@ -260,11 +265,11 @@ public class Main extends Application {
 		            		String entryValue = listProbs.getItems().get(i);
 		            		double val = Double.parseDouble(entryValue);
 		            		if (val < 0) {
-		            			errorLabel.setText("Error: Invalid Entry (Less than 0)");
+		            			errorLabel.setText("Invalid Meal Percentage: \n\t A value less than 0 was entered.");
 		            		}
 		            		total += val;
 		            	} catch (Exception E) {
-	            			errorLabel.setText("Error: Invalid Entry (Not a numeric value)");
+	            			errorLabel.setText("Invalid Meal Percentage: \n\t A non-numer value was entered.");
 		            	}
 		            }
 		            total = (total * 1000)/1000;
@@ -276,6 +281,47 @@ public class Main extends Application {
 		        }
 		    });
 
+	        ListView<String> labeledShifts = new ListView<String>();
+	        ListView<String> shiftProbabilities = new ListView<String>();
+
+		    ObservableList<String> shiftLabels =FXCollections.observableArrayList (
+		            "First Shift: ", "Second Shift: ", "Third Shift: ", "Fourth Shift: ");
+		    ObservableList<String> shiftProbs =FXCollections.observableArrayList (
+		            "10", "15", "18", "17");
+		    shiftProbabilities.setItems(shiftProbs);
+		    labeledShifts.setItems(shiftLabels);
+
+		    labeledShifts.setLayoutX(25);
+		    labeledShifts.setPrefHeight(100);
+		    labeledShifts.setPrefWidth(125);
+		    labeledShifts.setLayoutY(200);
+
+		    shiftProbabilities.setLayoutX(150);
+		    shiftProbabilities.setPrefHeight(100);
+		    shiftProbabilities.setPrefWidth(60);
+		    shiftProbabilities.setLayoutY(200);
+
+		    shiftProbabilities.getItems().addListener(new ListChangeListener<Object>() {
+		        @Override
+		        public void onChanged(ListChangeListener.Change change) {
+		        	errorLabel.setText("");
+		            for (int i = 0; i < shiftProbabilities.getItems().size(); i++) {
+		            	try {
+		            		String entryValue = shiftProbabilities.getItems().get(i);
+		            		System.out.println(entryValue);
+		            		int val = Integer.parseInt(entryValue);
+		            		System.out.println(val);
+		            		if (val < 0) {
+		            			errorLabel.setText("Invalid Shift Entry: \t\nValue less than 0)");
+		            		}
+		            	} catch (Exception E) {
+	            			errorLabel.setText("Invalid Shift Entry: \n\tNot an integer value.");
+		            	}
+		            }
+		        }
+		    });
+		    shiftProbabilities.setEditable(true);
+		    shiftProbabilities.setCellFactory(TextFieldListCell.forListView());
 
 	        Button home = new Button("Home");
 	        Pane root = new Pane();
@@ -290,9 +336,9 @@ public class Main extends Application {
 	        listProbs.setPrefWidth(70);
 	        listProbs.setPrefHeight(275);
 
-	        listFood.setLayoutX(125);
+	        listFood.setLayoutX(250);
 	        listFood.setLayoutY(100);
-	        listProbs.setLayoutX(265);
+	        listProbs.setLayoutX(390);
 	        listProbs.setLayoutY(100);
 
 
@@ -301,15 +347,25 @@ public class Main extends Application {
 	        root.getChildren().add(home);
 	        root.getChildren().add(label);
 	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
-	        root.getChildren().addAll(mealLabel,mealProbLabel);
+	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
+	        root.getChildren().addAll(labeledShifts,shiftProbabilities);
 
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 
 	            @Override public void handle(ActionEvent e) {
 		            if (totalVal.getText() == "100") {
-		                mainPage(primaryStage);
+		            	if (errorLabel.getText() == "") {
+			            	/*
+			    		    for (int i = 0; i < Orders.getMealList().size(); i++) {
+			    		    	String entryValue = listProbs.getItems().get(i);
+			            		double val = Double.parseDouble(entryValue);
+			    		    	Orders.getMealList().get(i).setPercentage(val);
+			    		    }
+			    		    */
+			                mainPage(primaryStage);
+		            	}
 		            } else{
-		            	errorLabel.setText("Values must total to 100 before exiting.");
+		            	errorLabel.setText("Invalid Summation: \n\tMeal percentages must total 100.");
 		            }
 	            }
 	        });
