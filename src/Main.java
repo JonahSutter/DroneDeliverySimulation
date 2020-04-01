@@ -191,7 +191,119 @@ public class Main extends Application {
 	}
 
 	public static void simmulationPage(Stage primaryStage) {
+		try {
 
+			primaryStage.setTitle("Simulation Results");
+
+			Label label = new Label("Dromedary Drones");
+			Label label2 = new Label("Simulation Complete!");
+			Label label3 = new Label("First in First Out");
+			Label label4 = new Label("Knapsack Packing");
+			//FIFO labels
+			Label fifo1 = new Label("Average Delivery Time:");
+			Label fifo2 = new Label("Worst Delivery Time:");
+			//Knapsack Labels
+			Label knap1 = new Label("Average Delivery Time:");
+			Label knap2 = new Label("Worst Delivery Time:");
+
+			//Label Settings
+			label.setFont(new Font("Arial", 40));
+			label.setLayoutX(280);
+			label2.setFont(new Font("Arial", 36));
+			label2.setLayoutX(278);
+			label2.setLayoutY(65);
+			label3.setFont(new Font("Arial", 30));
+			label3.setLayoutX(93);
+			label3.setLayoutY(125);
+			label4.setFont(new Font("Arial", 30));
+			label4.setLayoutX(593);
+			label4.setLayoutY(125);
+			//FIFO labels
+			fifo1.setFont(new Font("Arial", 18));
+			fifo1.setLayoutX(45);
+			fifo1.setLayoutY(177);
+			fifo2.setFont(new Font("Arial", 18));
+			fifo2.setLayoutX(45);
+			fifo2.setLayoutY(213);
+			//Knapsack labels
+			knap1.setFont(new Font("Arial", 18));
+			knap1.setLayoutX(530);
+			knap1.setLayoutY(177);
+			knap2.setFont(new Font("Arial", 18));
+			knap2.setLayoutX(530);
+			knap2.setLayoutY(213);
+
+			Button button1 = new Button("Save Data");
+			Button button2 = new Button("Home");
+			Button button3 = new Button("Exit");
+
+
+
+			Pane root = new Pane();
+			button1.setLayoutX(370);
+			button1.setLayoutY(364);
+			button2.setLayoutX(370);
+			button2.setLayoutY(319);
+			button3.setLayoutX(383);
+			button3.setLayoutY(409);
+
+			button1.setPrefHeight(32);
+			button1.setPrefWidth(161);
+			button2.setPrefHeight(32);
+			button2.setPrefWidth(161);
+			button3.setPrefHeight(32);
+			button3.setPrefWidth(135);
+
+			root.getChildren().add(button1);
+			root.getChildren().add(button2);
+			root.getChildren().add(button3);
+			root.getChildren().add(label);
+			root.getChildren().add(label2);
+			root.getChildren().add(label3);
+			root.getChildren().add(label4);
+			root.getChildren().add(fifo1);
+			root.getChildren().add(fifo2);
+			root.getChildren().add(knap1);
+			root.getChildren().add(knap2);
+
+
+			button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					//TODO: go to the save screen
+				}
+			});
+
+			button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					mainPage(primaryStage);
+				}
+			});
+
+
+			button3.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					System.exit(1);
+				}
+			});
+
+			Scene scene = new Scene(root,900,500);
+
+			primaryStage.setScene(scene);
+			primaryStage.show();
+
+
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+
+
+				}
+			}.start();
+
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void probabilityPage(Stage primaryStage) {
