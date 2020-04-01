@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -30,9 +31,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 public class Main extends Application {
 
-
-	public static void main(String[] args) {
-		launch(args);
+	public static void main(String[] args) {		
+		launch(args); 
 	}
 
 
@@ -307,12 +307,23 @@ public class Main extends Application {
 
 			Label label = new Label("Dromedary Drones");
 
+			Label mealsLabel = new Label("Meals");
+			Label foods = new Label("Foods");
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
+			
+			mealsLabel.setFont(new Font("Arial", 20));
+			mealsLabel.setLayoutX(370);
+			mealsLabel.setLayoutY(80);
+			
+			foods.setFont(new Font("Arial", 20));
+			foods.setLayoutX(70);
+			foods.setLayoutY(80);
 
 	        Button addFood = new Button("Add Food");
 	        Button addMeal = new Button("Add Meal");
 
+	        Button home = new Button("Home");
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listMeals = new ListView<String>();
 
@@ -327,15 +338,20 @@ public class Main extends Application {
 	        Pane root = new Pane();
 
 	        addFood.setLayoutX(180);
-	        addFood.setLayoutY(200);
+	        addFood.setLayoutY(100);
 	        addMeal.setLayoutX(180);
-	        addMeal.setLayoutY(250);
-
+	        addMeal.setLayoutY(150);
+	        home.setLayoutX(180);
+	        home.setLayoutY(360);
+	        
 	        addFood.setPrefHeight(40);
 	        addFood.setPrefWidth(140);
 	        addMeal.setPrefHeight(40);
 	        addMeal.setPrefWidth(140);
 
+	        home.setPrefHeight(40);
+	        home.setPrefWidth(140);
+	        
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
 	        listMeals.setPrefWidth(140);
@@ -353,6 +369,10 @@ public class Main extends Application {
 	        root.getChildren().add(listMeals);
 	        root.getChildren().add(label);
 
+	        root.getChildren().add(home);
+	        root.getChildren().add(foods);
+	        root.getChildren().add(mealsLabel);
+	        
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addFoodPage(primaryStage);
@@ -365,6 +385,12 @@ public class Main extends Application {
 	            }
 	        });
 
+	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	//mainPage(primaryStage);
+	            }
+	        });
+	
 			Scene scene = new Scene(root,500,500);
 
 			primaryStage.setScene(scene);
@@ -465,7 +491,138 @@ public class Main extends Application {
 	}
 
 	public static void addMealPage(Stage primaryStage) {
+		try {
+			primaryStage.setTitle("Add Meal Page");
+			
+			Label label = new Label("Dromedary Drones");
+			Label mealNameHere = new Label("Meal Name");
+			
+			label.setFont(new Font("Arial", 40));
+			label.setLayoutX(80);
+			
+			mealNameHere.setFont(new Font("Arial", 12));
+			mealNameHere.setLayoutX(220);
+			mealNameHere.setLayoutY(80);
 
+	        Button saveMeal = new Button("Save Meal");
+	        Button cancel = new Button("Cancel");
+	        
+	        TextField mealName = new TextField();
+	        mealName.setPromptText("Enter meal name.");
+	        
+	        TextField mealWeight1 = new TextField();
+	        TextField mealWeight2 = new TextField();
+	        TextField mealWeight3 = new TextField();
+	        TextField mealWeight4 = new TextField();
+	        
+	        mealWeight1.setPromptText("0.0");
+	        mealWeight2.setPromptText("0.0");
+	        mealWeight3.setPromptText("0.0");
+	        mealWeight4.setPromptText("0.0");
+	        
+	        ObservableList<String> mealOptions = FXCollections.observableArrayList(
+	        		"Cheeseburger",
+	        		"Habmurger",
+	        		"Fries",
+	        		"Drink",
+	        		"None"
+	        		);
+	        
+	        final ComboBox option1 = new ComboBox(mealOptions);
+	        final ComboBox option2 = new ComboBox(mealOptions);
+	        final ComboBox option3 = new ComboBox(mealOptions);
+	        final ComboBox option4 = new ComboBox(mealOptions);
+	        
+	        option1.setValue("Cheeseburger");
+	        option2.setValue("Hamburgerr");
+	        option3.setValue("Fries");
+	        option4.setValue("Drink");
+	        
+	        Pane root = new Pane();
+	        
+	        saveMeal.setLayoutX(180);
+	        saveMeal.setLayoutY(400);
+	        cancel.setLayoutX(180);
+	        cancel.setLayoutY(450);
+	        
+	        saveMeal.setPrefHeight(40);
+	        saveMeal.setPrefWidth(140);
+	        cancel.setPrefHeight(40);
+	        cancel.setPrefWidth(140);   
+	        
+	        mealName.setLayoutX(180);
+	        mealName.setLayoutY(100);
+	        
+	        option1.setLayoutX(180);
+	        option1.setLayoutY(150);
+
+	        option2.setLayoutX(180);
+	        option2.setLayoutY(200);
+	        
+	        option3.setLayoutX(180);
+	        option3.setLayoutY(250);
+	        
+	        option4.setLayoutX(180);
+	        option4.setLayoutY(300);
+	        
+	        mealWeight1.setLayoutX(310);
+	        mealWeight1.setLayoutY(150);
+	        mealWeight1.setPrefWidth(40);
+	        
+	        mealWeight2.setLayoutX(310);
+	        mealWeight2.setLayoutY(200);
+	        mealWeight2.setPrefWidth(40);
+
+	        mealWeight3.setLayoutX(310);
+	        mealWeight3.setLayoutY(250);
+	        mealWeight3.setPrefWidth(40);
+	        
+	        mealWeight4.setLayoutX(310);
+	        mealWeight4.setLayoutY(300);
+	        mealWeight4.setPrefWidth(40);
+	        
+	        root.getChildren().add(saveMeal);
+	        root.getChildren().add(cancel);
+	        root.getChildren().add(mealName);
+	        root.getChildren().add(label);
+	        root.getChildren().add(mealNameHere);
+	        root.getChildren().add(option1);
+	        root.getChildren().add(option2);
+	        root.getChildren().add(option3);
+	        root.getChildren().add(option4);
+	        root.getChildren().add(mealWeight1);
+	        root.getChildren().add(mealWeight2);
+	        root.getChildren().add(mealWeight3);
+	        root.getChildren().add(mealWeight4);
+	        
+	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                meals(primaryStage);
+	            }
+	        });
+	        
+	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                meals(primaryStage);
+	            }
+	        });
+	        
+			Scene scene = new Scene(root,500,500);
+			
+			primaryStage.setScene(scene);
+			primaryStage.show();
+			
+		
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+					
+					
+				}
+			}.start();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void uploadMapPage(Stage primaryStage) {
