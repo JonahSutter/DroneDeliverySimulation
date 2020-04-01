@@ -325,15 +325,15 @@ public class Main extends Application {
 			mealProbLabel.setLayoutX(390);
 			mealProbLabel.setLayoutY(72);
 
-			 Label totalLabel = new Label("Total:");
+			 Label totalLabel = new Label("Percentages Total To:");
 		    totalLabel.setFont(new Font("Arial",15));
-		    totalLabel.setLayoutX(215);
-		    totalLabel.setLayoutY(390);
+		    totalLabel.setLayoutX(245);
+		    totalLabel.setLayoutY(385);
 
-		    Label totalVal = new Label("100.00%");
+		    Label totalVal = new Label("100");
 		    totalVal.setFont(new Font("Arial",15));
-		    totalVal.setLayoutX(270);
-		    totalVal.setLayoutY(390);
+		    totalVal.setLayoutX(395);
+		    totalVal.setLayoutY(385);
 
 		    Label errorLabel = new Label("");
 		    errorLabel.setFont(new Font("Arial",15));
