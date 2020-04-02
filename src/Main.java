@@ -609,6 +609,18 @@ public class Main extends Application {
 	            }
 	        });
 
+			removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					removeFoodPage(primaryStage);
+				}
+			});
+
+			editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					editFoodPage(primaryStage);
+				}
+			});
+
 			Scene scene = new Scene(root,500,500);
 
 			primaryStage.setScene(scene);
@@ -857,10 +869,17 @@ public class Main extends Application {
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
+			
+	        Button home = new Button("Home");
+
+	        home.setLayoutX(180);
+	        home.setLayoutY(250);
+	        home.setPrefHeight(40);
+	        home.setPrefWidth(140);
 	        Button button1 = new Button("Save Information");
 	        Button button2 = new Button("Exit");
 
-	        button1.setPrefHeight(40);
+	        button1.setLayoutX(130);
 	        button1.setPrefWidth(140);
 	        button2.setPrefHeight(40);
 	        button2.setPrefWidth(140);
@@ -871,12 +890,13 @@ public class Main extends Application {
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
-	        button2.setLayoutY(250);
+	        button2.setLayoutY(300);
 
 
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
 	        root.getChildren().add(label);
+	        root.getChildren().add(home);
 
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -885,6 +905,15 @@ public class Main extends Application {
 	        		fileChooser.showOpenDialog(primaryStage);
 	            }
 	        });
+	        
+
+	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	        		mainPage(primaryStage);
+	            }
+	        });
+
+
 
 
 	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
