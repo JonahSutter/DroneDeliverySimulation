@@ -270,6 +270,7 @@ public class Main extends Application {
 			button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 				@Override public void handle(ActionEvent e) {
 					//TODO: go to the save screen
+					saveInformation(primaryStage);
 				}
 			});
 

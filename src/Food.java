@@ -15,4 +15,9 @@ public class Food {
 		}
 		return false;
 	}
+    
+    public double getWeight() {
+    	return this.weight;
+    }
+
 }
