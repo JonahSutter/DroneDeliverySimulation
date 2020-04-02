@@ -604,7 +604,7 @@ public class Main extends Application {
 
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	//mainPage(primaryStage);
+	            	mainPage(primaryStage);
 	            }
 	        });
 
