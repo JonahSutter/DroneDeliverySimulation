@@ -595,6 +595,21 @@ public class Main extends Application {
 	                addFoodPage(primaryStage);
 	            }
 	        });
+	        
+	      //adding removing food button 
+	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                removeFoodPage(primaryStage);
+	            }
+	        });
+	        
+	      //adding removing food button 
+	        editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                editFoodPage(primaryStage);
+	            }
+	        });
+
 
 	        addMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -817,7 +832,8 @@ public class Main extends Application {
 	                meals(primaryStage);
 	            }
 	        });
-
+	        
+	        
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
