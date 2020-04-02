@@ -609,6 +609,18 @@ public class Main extends Application {
 	            }
 	        });
 
+			removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					removeFoodPage(primaryStage);
+				}
+			});
+
+			editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+				@Override public void handle(ActionEvent e) {
+					editFoodPage(primaryStage);
+				}
+			});
+
 			Scene scene = new Scene(root,500,500);
 
 			primaryStage.setScene(scene);
