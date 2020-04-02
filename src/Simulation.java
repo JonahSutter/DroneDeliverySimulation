@@ -7,7 +7,6 @@ public class Simulation {
 		/*
 		int time = 0; 		//Every increment of time = 1 second
 		int pointer = 0; 	//Used to go through the generated orders list
-		double currWeight = 0; //The current weight loaded on the drone.
 
 		//List of current orders the Drone can see
 		ArrayList<Meal> currentOrders = new ArrayList<Meal>();
@@ -35,9 +34,12 @@ public class Simulation {
 			if (currentOrders.size() > 0 && time >= 300) {
 
 				//Pack the orders (Don't go overweight)
-				while (currentOrders.size() > 0 && currWeight < maxWeight) {
+
+				boolean overweight = false;
+				while (currentOrders.size() > 0 && !overweight) {
 					double maxWeight = 0;
 					int mealPos = 0;
+
 					for (int i = 0; i < currentOrders.size(); i++) {
 						double mealWeight = currentOrder.get(i).getWeight();
 						if (mealWeight > maxWeight) {
