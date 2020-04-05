@@ -30,8 +30,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 public class Main extends Application {
+	static Foods foodList = new Foods();
+	static Meals mealList = new Meals();
 
 	public static void main(String[] args) {
+		Food hamburger = new Food("Hamburger",6);
+		Food cheeseburger = new Food("Cheeseburger",7);
+		Food fries = new Food("Fries",3);
+		Food drink = new Food("Drink",9);
+		foodList.addFoodItem(hamburger);
+		foodList.addFoodItem(cheeseburger);
+		foodList.addFoodItem(fries);
+		foodList.addFoodItem(drink);
+		mealList.addMeal(new Meal("Basic",0.7,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
+		mealList.addMeal(new Meal("Drink Only",0.1,new ArrayList<Food>() {{add(drink);}}));
+		mealList.addMeal(new Meal("Cheesey",0.2,new ArrayList<Food>() {{add(cheeseburger);add(cheeseburger);add(cheeseburger);}}));
 		launch(args);
 	}
 
@@ -354,22 +367,16 @@ public class Main extends Application {
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listProbs = new ListView<String>();
 
-	        ObservableList<String> foodItem =FXCollections.observableArrayList (
-		            "Cheeseburger", "Hamburger", "Fries", "Drink");
-		    /*
-	        for (int i = 0; i < Orders.getMealList().size(); i++) {
-		    	foodItem.add(Orders.getMealList().get(i).getName());
-		    }
-		    */
-	        listFood.setItems(foodItem);
+	        ObservableList<String> foodItem =FXCollections.observableArrayList ();
+		    ObservableList<String> foodProbs =FXCollections.observableArrayList ();
 
-		    ObservableList<String> foodProbs =FXCollections.observableArrayList (
-		    		"10", "22.5", "30.4", "25.4", "11.7");
-		    /*
-		    for (int i = 0; i < Orders.getMealList().size(); i++) {
-		    	foodItem.add(Orders.getMealList().get(i).getPercentage());
+	        for (int i = 0; i < mealList.getMeals().size(); i++) {
+		    	foodItem.add(mealList.getMeals().get(i).getName());
+		    	foodProbs.add("" + mealList.getMeals().get(i).getPercentage()*100);
 		    }
-		    */
+
+
+		    listFood.setItems(foodItem);
 		    listProbs.setItems(foodProbs);
 		    listProbs.setEditable(true);
 		    listProbs.setCellFactory(TextFieldListCell.forListView());
@@ -384,6 +391,8 @@ public class Main extends Application {
 		            		double val = Double.parseDouble(entryValue);
 		            		if (val < 0) {
 		            			errorLabel.setText("Invalid Meal Percentage: \n\t A value less than 0 was entered.");
+		            		} else if (val > 100) {
+		            			errorLabel.setText("Invalid Meal Percentage: \n\t A value greater than 100 was entered.");
 		            		}
 		            		total += val;
 		            	} catch (Exception E) {
@@ -396,6 +405,10 @@ public class Main extends Application {
 		            } else {
 		            	totalVal.setText(String.format("%3.2f",total));
 		            }
+		            for (int i = 0; i < mealList.getMeals().size(); i++) {
+		            	double percent = Double.parseDouble(foodProbs.get(i))/100;
+		            	mealList.getMeals().get(i).setPercentage(percent);
+				    }
 		        }
 		    });
 
@@ -516,10 +529,10 @@ public class Main extends Application {
 			foods.setLayoutY(80);
 
 
-			  //adding remove food button 
-	        Button removeFood = new Button("Remove Food"); 
-	        //adding edit food button 
-	        Button editFood = new Button("Edit Food"); 
+			  //adding remove food button
+	        Button removeFood = new Button("Remove Food");
+	        //adding edit food button
+	        Button editFood = new Button("Edit Food");
 	        Button addFood = new Button("Add Food");
 	        Button addMeal = new Button("Add Meal");
 
@@ -543,21 +556,21 @@ public class Main extends Application {
 	        addMeal.setLayoutY(150);
 	        home.setLayoutX(180);
 	        home.setLayoutY(360);
-	        
-	        //adding remove food button 
+
+	        //adding remove food button
 	        removeFood.setLayoutX(180);
 	        removeFood.setLayoutY(200);
 	        //adding edit food button
 	        editFood.setLayoutX(180);
 	        editFood.setLayoutY(250);
-	        
-	        //adding remove food button 
+
+	        //adding remove food button
 	        removeFood.setPrefHeight(40);
-	        removeFood.setPrefWidth(140); 
-	        //adding edit food button 
+	        removeFood.setPrefWidth(140);
+	        //adding edit food button
 	        editFood.setPrefHeight(40);
 	        editFood.setPrefWidth(140);
-	        
+
 	        addFood.setPrefHeight(40);
 	        addFood.setPrefWidth(140);
 	        addMeal.setPrefHeight(40);
@@ -576,10 +589,10 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
-	      //adding remove food button 
-	        root.getChildren().add(removeFood); 
+	      //adding remove food button
+	        root.getChildren().add(removeFood);
 	        //adding edit food button
-	        root.getChildren().add(editFood); 
+	        root.getChildren().add(editFood);
 
 	        root.getChildren().add(addFood);
 	        root.getChildren().add(addMeal);
@@ -869,7 +882,7 @@ public class Main extends Application {
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
-			
+
 	        Button home = new Button("Home");
 
 	        home.setLayoutX(180);
@@ -905,7 +918,7 @@ public class Main extends Application {
 	        		fileChooser.showOpenDialog(primaryStage);
 	            }
 	        });
-	        
+
 
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -943,7 +956,7 @@ public class Main extends Application {
 
 
 	}
-	
+
 
 	public static void editFoodPage(Stage primaryStage) {
 		try {
@@ -951,184 +964,184 @@ public class Main extends Application {
 		Label label = new Label("Dromedary Drones");
 		Label name = new Label("Current Food Name");
 		Label newName = new Label("New Food Name");
-		Label newWeight = new Label("New Food Weight"); 
+		Label newWeight = new Label("New Food Weight");
 		Label weight = new Label("Current Food Weight");
-		
+
 		label.setFont(new Font("Arial", 40));
 		label.setLayoutX(80);
-		
+
 		name.setFont(new Font("Arial", 12));
 		name.setLayoutX(180);
 		name.setLayoutY(80);
-		
+
 		newName.setFont(new Font("Arial", 12));
 		newName.setLayoutX(180);
 		newName.setLayoutY(130);
-		
+
 		weight.setFont(new Font("Arial", 12));
 		weight.setLayoutX(180);
 		weight.setLayoutY(180);
-		
+
 		newWeight.setFont(new Font("Arial", 12));
 		newWeight.setLayoutX(180);
 		newWeight.setLayoutY(230);
 
         Button saveChanges = new Button("Save Changes");
         Button cancel = new Button("Cancel");
-        
+
         TextField foodName = new TextField();
         TextField foodWeight = new TextField();
         TextField newFoodName = new TextField();
-        TextField newFoodWeight = new TextField(); 
-        
-        
+        TextField newFoodWeight = new TextField();
+
+
         Pane root = new Pane();
-        
+
         saveChanges.setLayoutX(180);
         saveChanges.setLayoutY(300);
         cancel.setLayoutX(180);
         cancel.setLayoutY(350);
-        
+
         saveChanges.setPrefHeight(40);
         saveChanges.setPrefWidth(140);
         cancel.setPrefHeight(40);
-        cancel.setPrefWidth(140);   
-        
+        cancel.setPrefWidth(140);
+
         //food name text box is first
         foodName.setLayoutX(180);
         foodName.setLayoutY(100);
-        
+
         //food weight third
         foodWeight.setLayoutX(180);
         foodWeight.setLayoutY(200);
-        
+
         //new food name goes second
         newFoodName.setLayoutX(180);
         newFoodName.setLayoutY(150);
-        
+
         //last is new food weight
         newFoodWeight.setLayoutX(180);
         newFoodWeight.setLayoutY(250);
-        
+
         root.getChildren().add(saveChanges);
         root.getChildren().add(cancel);
         root.getChildren().add(foodName);
-        root.getChildren().add(newName); 
-        root.getChildren().add(newWeight); 
+        root.getChildren().add(newName);
+        root.getChildren().add(newWeight);
         root.getChildren().add(foodWeight);
-        root.getChildren().add(newFoodWeight); 
-        root.getChildren().add(newFoodName); 
+        root.getChildren().add(newFoodWeight);
+        root.getChildren().add(newFoodName);
         root.getChildren().add(label);
         root.getChildren().add(name);
         root.getChildren().add(weight);
-        
+
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 meals(primaryStage);
             }
         });
-        
+
         cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 meals(primaryStage);
             }
             });
         Scene scene = new Scene(root,500,500);
-		
+
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
-	
+
+
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				
-				
+
+
 			}
 		}.start();
 	} catch(Exception e) {
 		e.printStackTrace();
 	}
-        
+
 	}//ends edit food page
-	
+
 	public static void removeFoodPage(Stage primaryStage) {
 		try {
 			primaryStage.setTitle("Remove Food Page");
-			
+
 			Label label = new Label("Dromedary Drones");
 			Label name = new Label("Food Name");
-		
-			
+
+
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
-			
+
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
 			name.setLayoutY(180);
 
 	        Button remove = new Button("Remove");
 	        Button cancel = new Button("Cancel");
-	        
+
 	        TextField foodName = new TextField();
-	     
-	        
+
+
 	        Pane root = new Pane();
-	        
+
 	        remove.setLayoutX(180);
 	        remove.setLayoutY(300);
 	        cancel.setLayoutX(180);
 	        cancel.setLayoutY(350);
-	        
+
 	        remove.setPrefHeight(40);
 	        remove.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);   
-	        
+	        cancel.setPrefWidth(140);
+
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(200);
-	     
-	        
+
+
 	        root.getChildren().add(remove);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(foodName);
 
 	        root.getChildren().add(label);
 	        root.getChildren().add(name);
-	       
-	        
+
+
 	        remove.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
-	        
+
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
-	        
+
 			Scene scene = new Scene(root,500,500);
-			
+
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			
-		
+
+
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
-					
-					
+
+
 				}
 			}.start();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-        
+
 	}//ends remove food page
-	
-	
-	
-	
+
+
+
+
 }

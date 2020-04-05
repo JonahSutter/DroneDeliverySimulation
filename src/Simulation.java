@@ -9,17 +9,18 @@ public class Simulation {
 		int pointer = 0; 	//Used to go through the generated orders list
 
 		//List of current orders the Drone can see
-		ArrayList<Meal> currentOrders = new ArrayList<Meal>();
+		ArrayList<Order> currentOrders = new ArrayList<Order>();
 
 		//List of meals we skipped over when doing knapsack packing
-		ArrayList<Meal> skippedOrders = new ArrayList<Meal>();
+		ArrayList<Order> skippedOrders = new ArrayList<Order>();
 
 		double droneSpeed = 29.3333 	//Speed is in feet per second. (20mph)
 		double dropoffTime = 30  		//Time is in seconds (30 sec)
 		double maxWeight = 192 			//Weight in ounces (12 lbs)
 		double turnAround = 180 		//Time is in seconds (3 min)
-		boolean wasSent = false;		//Set to true if the drone has delivered
+		double returnTime = 0;			//Tells when the drone is due back
 
+		//Loop through all the orders generated from a 4-hour shift
 		while (pointer < orderList.size()) {
 
 			//Add the next order from the list once we pass the time marker
@@ -31,10 +32,9 @@ public class Simulation {
 
 			//The drone will only leave if there is a current order
 				//(Except for the first 5 minutes - special case)
-			if (currentOrders.size() > 0 && time >= 300) {
+			if (returnTime <= time && currentOrders.size() > 0 && time >= 300) {
 
 				//Pack the orders (Don't go overweight)
-
 				boolean overweight = false;
 				while (currentOrders.size() > 0 && !overweight) {
 					double maxWeight = 0;
@@ -49,19 +49,9 @@ public class Simulation {
 					}
 				}
 
-				//Calculate how long the drone will be gone
-				//   and increment the time by that value - 1
-				//   to "fast-forward" through the deliveries
-				wasSent = true;
-
-			}
-
-
-			//If the drone was sent we increment the time by turnAround - 1
-			//   to essentially "fast-forward" through the battery change.
-			if (wasSent) {
-				time += turnAround - 1;
-				wasSent = false;
+				//Calculate how long the drone will be gone and add on the
+				//		turn-around time (for putting in a new battery)
+				returnTime = timeDroneGone + time + turnAroud;
 			}
 
 			//Increment the time by one second
