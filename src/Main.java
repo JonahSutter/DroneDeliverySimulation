@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
+
+import javax.swing.event.ChangeListener;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -539,13 +543,18 @@ public class Main extends Application {
 	        Button home = new Button("Home");
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listMeals = new ListView<String>();
-
+	        
 	        ObservableList<String> food =FXCollections.observableArrayList (
-		            "Cheeseburger", "Hamburger", "Fries", "Drink");
-		        listFood.setItems(food);
-
-		    ObservableList<String> meals =FXCollections.observableArrayList (
-			        "Cheeseburger Combo", "Hamburger Combo", "Fries & Drink");
+			        "Cheeseburger", "Hamburger", "Fries", "Drink");
+			    listFood.setItems(food);
+			    
+			//Adds meals to the listView from the mealList, displaying their name    
+		    ObservableList<String> meals = FXCollections.observableArrayList();
+		    ArrayList<Meal> test = new ArrayList<Meal>();
+		    test = mealList.getMeals();
+		    for (int i = 0; i < test.size(); i++) {
+		    	meals.add((test.get(i).getName()));
+		    }
 			    listMeals.setItems(meals);
 
 	        Pane root = new Pane();
@@ -739,6 +748,7 @@ public class Main extends Application {
 
 			Label label = new Label("Dromedary Drones");
 			Label mealNameHere = new Label("Meal Name");
+			Label invalidName = new Label("Invalid Name");
 
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
@@ -746,6 +756,11 @@ public class Main extends Application {
 			mealNameHere.setFont(new Font("Arial", 12));
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
+			
+			invalidName.setFont(new Font("Arial", 12));
+			invalidName.setLayoutX(220);
+			invalidName.setLayoutY(80);
+			invalidName.setTextFill(Color.web("#cc0000"));
 
 	        Button saveMeal = new Button("Save Meal");
 	        Button cancel = new Button("Cancel");
@@ -838,9 +853,120 @@ public class Main extends Application {
 	        root.getChildren().add(mealWeight3);
 	        root.getChildren().add(mealWeight4);
 
+	        Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
+	        TextFormatter<String> formatter1 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
+	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
+	        });
+
+	        TextFormatter<String> formatter2 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
+	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
+	        });
+
+	        TextFormatter<String> formatter3 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
+	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
+	        });
+
+	        TextFormatter<String> formatter4 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
+	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
+	        });
+
+	        mealWeight1.setTextFormatter(formatter1);
+	        mealWeight2.setTextFormatter(formatter2);
+	        mealWeight3.setTextFormatter(formatter3);
+	        mealWeight4.setTextFormatter(formatter4);
+	        
+	        
 	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                meals(primaryStage);
+	            	
+	            	ArrayList<Food> newMeal = new ArrayList<Food>();	//list of foods to add to meal
+	            	String newMealName;
+	            	boolean hasValidFood = false;
+	            	boolean hasValidWeight = true;
+	            	
+	            	System.out.println(mealName.getText().toString());
+	            	
+	            	//If meal does not have a name, display invalidName, and only do it once
+	            	if (mealName.getText().equals("")) {
+	            		if (!root.getChildren().contains(invalidName)) {
+	            		System.out.println("Is null");
+	            		root.getChildren().add(invalidName);
+	            		root.getChildren().remove(mealNameHere);
+	            		}
+	            	}
+	            	
+	            	else if (!option1.getValue().toString().equals("None")
+	            			|| !option2.getValue().toString().equals("None")
+	            			|| !option3.getValue().toString().equals("None")
+	            			|| !option4.getValue().toString().equals("None")) {
+	            		hasValidFood = true;
+	            		
+	            		if (!option1.getValue().toString().equals("None")) {
+	            			if (mealWeight1.getText().toString().equals("")) {
+	            				//skip
+	            				System.out.println("Option 1 has no weight");
+	            				hasValidWeight = false;
+	            			}
+	            			else {
+	    		            	String food1Name = (String) option1.getValue();
+	    		            	double food1Weight = Double.parseDouble(mealWeight1.getText());
+	    		            	Food newFood = new Food(food1Name, food1Weight);
+	    		            	newMeal.add(newFood);
+	            			}
+	            		}
+	            		if (!option2.getValue().toString().equals("None")) {
+	            			if (mealWeight2.getText().toString().equals("")) {
+	            				//skip
+	            				System.out.println("Option 2 has no weight");
+	            				hasValidWeight = false;
+	            			}
+	            			else {
+	    		            	String food2Name = (String) option2.getValue();
+	    		            	double food2Weight = Double.parseDouble(mealWeight2.getText());
+	    		            	Food newFood = new Food(food2Name, food2Weight);
+	    		            	newMeal.add(newFood);
+	            			}
+	            		}
+            			if (!option3.getValue().toString().equals("None")) {
+	            			if (mealWeight3.getText().toString().equals("")) {
+	            				//skip
+	            				System.out.println("Option 3 has no weight");
+	            				hasValidWeight = false;
+	            			}
+	            			else {
+	    		            	String food3Name = (String) option3.getValue();
+	    		            	double food3Weight = Double.parseDouble(mealWeight3.getText());
+	    		            	Food newFood = new Food(food3Name, food3Weight);
+	    		            	newMeal.add(newFood);
+	            			}
+            			}
+            			if (!option4.getValue().toString().equals("None")) {
+	            			if (mealWeight4.getText().toString().equals("")) {
+	            				//skip
+	            				System.out.println("Option 4 has no weight");
+	            				hasValidWeight = false;
+	            			}
+	            			else {
+	    		            	String food4Name = (String) option4.getValue();
+	    		            	double food4Weight = Double.parseDouble(mealWeight4.getText());
+	    		            	Food newFood = new Food(food4Name, food4Weight);
+	    		            	newMeal.add(newFood);
+	            			}
+            			}
+            			if (hasValidFood && hasValidWeight) {
+            				System.out.println("Everything good");
+    		            	newMealName = mealName.getText().toString();
+    		            	Meal testMeal = new Meal(newMealName, 0, newMeal);
+    		            	mealList.addMeal(testMeal);
+    		                meals(primaryStage);
+            			}
+	            	}
+	            	
+	            	else {
+	            		System.out.println("All are set to none");
+	            	}
+	            	
+	            	System.out.println(option1.getValue().toString());
 	            }
 	        });
 
