@@ -333,7 +333,7 @@ public class Main extends Application {
 			label.setLayoutX(80);
 
 
-			Label mealLabel = new Label("Meals:");
+			Label mealLabel = new Label("Meal Name:");
 			mealLabel.setFont(new Font("Arial",20));
 			mealLabel.setLayoutX(250);
 			mealLabel.setLayoutY(72);
