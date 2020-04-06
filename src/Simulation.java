@@ -39,6 +39,7 @@ public class Simulation {
 					double tempMaxWeight = 0;
 					int mealPos = 0;
 
+					//TODO: Finish knapsack
 					for (int i = 0; i < currentOrders.size(); i++) {
 						double mealWeight = currentOrders.get(i).getMeal().getWeight();
 						if (mealWeight > maxWeight) {
@@ -102,7 +103,6 @@ public class Simulation {
 			//Increment the time by one second
 			time++;
 		}
-
 	}
 
 	private void FIFO() {
