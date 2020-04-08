@@ -1,7 +1,7 @@
 
 public class Order {
 	private int timeStamp;
-	private double[] location;
+	private double[] location = new double[2];
 	private Meal meal;
 
 	public Order(int timeStamp, double[] location, Meal meal) {
