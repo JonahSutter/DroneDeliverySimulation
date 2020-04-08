@@ -6,12 +6,19 @@ public class Simulation {
 	private void knapSack() {
 		int time = 0; 		//Every increment of time = 1 second
 		int pointer = 0; 	//Used to go through the generated orders list
+		int lastUsed = 0; 	//Used to parse through what orders have been delivered
 
 		//List of current orders the Drone can see
 		ArrayList<Order> currentOrders = new ArrayList<Order>();
 
 		//List of meals we skipped over when doing knapsack packing
 		ArrayList<Order> skippedOrders = new ArrayList<Order>();
+
+		//List of Orders the Drone is going to deliver this run
+		ArrayList<Order> ordersToDeliver = new ArrayList<Order>();
+
+		//List of each delivery time
+		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
 
 		double droneSpeed = 29.3333; 	//Speed is in feet per second. (20mph)
 		double dropOffTime = 30; 		//Time is in seconds (30 sec)
@@ -35,16 +42,32 @@ public class Simulation {
 
 				//Pack the orders (Don't go overweight)
 				boolean overweight = false;
+				double currWeight = 0;
 				while (currentOrders.size() > 0 && !overweight) {
 					double tempMaxWeight = 0;
 					int mealPos = 0;
 
+					if (skippedOrders.size() > 0 && !overweight) {
+						for (int i = 0; i < skippedOrders.size(); i++) {
+							double mealWeight = skippedOrders.get(0).getMeal().getWeight();
+							if (currWeight + mealWeight <= maxWeight) {
+								currWeight += mealWeight;
+								ordersToDeliver.add((skippedOrders.get(0)));
+								currentOrders.remove(0);
+							} else {
+								overweight = true;
+							}
+						}
+					}
+
 					//TODO: Finish knapsack
-					for (int i = 0; i < currentOrders.size(); i++) {
-						double mealWeight = currentOrders.get(i).getMeal().getWeight();
-						if (mealWeight > maxWeight) {
-							mealPos = i;
-							maxWeight = mealWeight;
+					if (!overweight) {
+						for (int i = 0; i < currentOrders.size(); i++) {
+							double mealWeight = currentOrders.get(i).getMeal().getWeight();
+							if (mealWeight > maxWeight) {
+								mealPos = i;
+								maxWeight = mealWeight;
+							}
 						}
 					}
 				}
@@ -90,9 +113,11 @@ public class Simulation {
 					double[] newPoint = currentOrders.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 						timeDroneGone += dropOffTime;
+						timeToDelivery.add(dropOffTime);
 					} else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
 						timeDroneGone += distance/droneSpeed + dropOffTime;
+						timeToDelivery.add(distance/droneSpeed + dropOffTime);
 					}
 					prevPoint = newPoint;
 				}
@@ -105,8 +130,111 @@ public class Simulation {
 		}
 	}
 
-	private void FIFO() {
+	private ArrayList<Double> FIFO() {
+		int time = 0; 		//Every increment of time = 1 second
+		int pointer = 0; 	//Used to go through the generated orders list
 
+		//List of current orders the Drone can see
+		ArrayList<Order> currentOrders = new ArrayList<Order>();
+
+		//List of meals we skipped over when doing knapsack packing
+		ArrayList<Order> ordersToDeliver;
+
+		//List of each delivery time
+		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
+
+		double droneSpeed = 29.3333; 	//Speed is in feet per second. (20mph)
+		double dropOffTime = 30; 		//Time is in seconds (30 sec)
+		double maxWeight = 192; 		//Weight in ounces (12 lbs)
+		double turnAround = 180;		//Time is in seconds (3 min)
+		double returnTime = 0;			//Tells when the drone is due back
+
+		//Loop through all the orders generated from a 4-hour shift
+		while (pointer < orderList.size()) {
+			//Reset the ordersToDeliver array
+			ordersToDeliver = new ArrayList<Order>();
+
+			//Add the next order from the list once we pass the time marker
+			if (orderList.get(pointer).getTime() <= time) {
+				currentOrders.add(orderList.get(pointer));
+				pointer++;
+			}
+
+
+			//The drone will only leave if there is an order to deliver and it is "home"
+				//(Except for the first 5 minutes - special case)
+			if (returnTime <= time && currentOrders.size() > 0 && time >= 300) {
+
+				//Pack the orders using FIFO
+				boolean overweight = false;
+				double currWeight = 0;
+				while (currentOrders.size() > 0 && !overweight) {
+					double mealWeight = currentOrders.get(0).getMeal().getWeight();
+					if (currWeight + mealWeight <= maxWeight) {
+						currWeight += mealWeight;
+						ordersToDeliver.add((currentOrders.get(0)));
+						currentOrders.remove(0);
+					} else {
+						overweight = true;
+					}
+				}
+
+				double[] prevPoint = new double[] {0,0};
+				//Greedy Traveling Salesman (Done by re-organizing the list of ordersToDeliver)
+				for (int i = 0; i < ordersToDeliver.size(); i++) {
+					double[] comparisonPoint = ordersToDeliver.get(i).getLocation();
+					double minDist;
+					int pos = i;
+					if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
+						minDist = 0;
+					} else {
+						minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
+						for (int j = i; j < ordersToDeliver.size(); j++) {
+							double distance;
+							double[] newPoint = ordersToDeliver.get(j).getLocation();
+							if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
+								distance = 0;
+							} else {
+								distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
+							}
+
+							if (j == 0 || distance < minDist) {
+								pos = j;
+								minDist = distance;
+							}
+							prevPoint = newPoint;
+						}
+						if (pos != i) {
+							Order temp = ordersToDeliver.get(i);
+							ordersToDeliver.set(i, ordersToDeliver.get(pos));
+							ordersToDeliver.set(pos, temp);
+						}
+					}
+				}
+
+				//Calculate how long the drone will be gone and add on the
+				//		turn-around time (for putting in a new battery)
+				prevPoint = new double[] {0,0};
+				double timeDroneGone = 0;
+				for (int i = 0; i < ordersToDeliver.size(); i++) {
+					double[] newPoint = ordersToDeliver.get(i).getLocation();
+					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
+						timeDroneGone += dropOffTime;
+						timeToDelivery.add(dropOffTime);
+					} else {
+						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
+						timeDroneGone += distance/droneSpeed + dropOffTime;
+						timeToDelivery.add(distance/droneSpeed + dropOffTime);
+					}
+					prevPoint = newPoint;
+				}
+				returnTime = timeDroneGone + time + turnAround;
+			}
+
+			//Increment the time by one second
+			time++;
+		}
+		return timeToDelivery;
 	}
 
 	public void runSimulation() {
