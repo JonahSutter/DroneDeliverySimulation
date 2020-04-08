@@ -72,42 +72,12 @@ public class Simulation {
 					}
 				}
 
-				double[] prevPoint = new double[] {0,0};
-				//Greedy Traveling Salesman (Done by re-organizing the list of current Orders)
-				for (int i = 0; i < currentOrders.size(); i++) {
-					double[] comparisonPoint = currentOrders.get(i).getLocation();
-					double minDist;
-					int pos = i;
-					if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
-						minDist = 0;
-					} else {
-						minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
-						for (int j = i; j < currentOrders.size(); j++) {
-							double distance;
-							double[] newPoint = currentOrders.get(j).getLocation();
-							if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
-								distance = 0;
-							} else {
-								distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
-							}
-
-							if (j == 0 || distance < minDist) {
-								pos = j;
-								minDist = distance;
-							}
-							prevPoint = newPoint;
-						}
-						if (pos != i) {
-							Order temp = currentOrders.get(i);
-							currentOrders.set(i, currentOrders.get(pos));
-							currentOrders.set(pos, temp);
-						}
-					}
-				}
+				//Do Traveling salesman
+				organizeRoute(currentOrders);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
-				prevPoint = new double[] {0,0};
+				double[] prevPoint = new double[] {0,0};
 				double timeDroneGone = 0;
 				for (int i = 0; i < currentOrders.size(); i++) {
 					double[] newPoint = currentOrders.get(i).getLocation();
@@ -179,42 +149,12 @@ public class Simulation {
 					}
 				}
 
-				double[] prevPoint = new double[] {0,0};
-				//Greedy Traveling Salesman (Done by re-organizing the list of ordersToDeliver)
-				for (int i = 0; i < ordersToDeliver.size(); i++) {
-					double[] comparisonPoint = ordersToDeliver.get(i).getLocation();
-					double minDist;
-					int pos = i;
-					if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
-						minDist = 0;
-					} else {
-						minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
-						for (int j = i; j < ordersToDeliver.size(); j++) {
-							double distance;
-							double[] newPoint = ordersToDeliver.get(j).getLocation();
-							if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
-								distance = 0;
-							} else {
-								distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
-							}
-
-							if (j == 0 || distance < minDist) {
-								pos = j;
-								minDist = distance;
-							}
-							prevPoint = newPoint;
-						}
-						if (pos != i) {
-							Order temp = ordersToDeliver.get(i);
-							ordersToDeliver.set(i, ordersToDeliver.get(pos));
-							ordersToDeliver.set(pos, temp);
-						}
-					}
-				}
+				//Do Traveling salesman
+				organizeRoute(currentOrders);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
-				prevPoint = new double[] {0,0};
+				double[] prevPoint = new double[] {0,0};
 				double timeDroneGone = 0;
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
 					double[] newPoint = ordersToDeliver.get(i).getLocation();
@@ -235,6 +175,41 @@ public class Simulation {
 			time++;
 		}
 		return timeToDelivery;
+	}
+
+	private void organizeRoute(ArrayList<Order> currentOrders) {
+		double[] prevPoint = new double[] {0,0};
+		//Greedy Traveling Salesman (Done by re-organizing the list of current Orders)
+		for (int i = 0; i < currentOrders.size(); i++) {
+			double[] comparisonPoint = currentOrders.get(i).getLocation();
+			double minDist;
+			int pos = i;
+			if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
+				minDist = 0;
+			} else {
+				minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
+				for (int j = i; j < currentOrders.size(); j++) {
+					double distance;
+					double[] newPoint = currentOrders.get(j).getLocation();
+					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
+						distance = 0;
+					} else {
+						distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
+					}
+
+					if (j == 0 || distance < minDist) {
+						pos = j;
+						minDist = distance;
+					}
+					prevPoint = newPoint;
+				}
+				if (pos != i) {
+					Order temp = currentOrders.get(i);
+					currentOrders.set(i, currentOrders.get(pos));
+					currentOrders.set(pos, temp);
+				}
+			}
+		}
 	}
 
 	public void runSimulation() {
