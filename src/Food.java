@@ -19,5 +19,16 @@ public class Food {
     public double getWeight() {
     	return this.weight;
     }
+    
+    public String getName() {
+    	return this.name; 
+    }
 
+    public void changeWeight(double w) {
+    	weight = w; 
+    }
+    
+    public void changeName(String n) {
+    	this.name = n; 
+    }
 }
