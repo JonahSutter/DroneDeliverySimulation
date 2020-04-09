@@ -5,6 +5,7 @@ public class Simulation {
 	private static ArrayList<Double> knapSack(ArrayList<Order> orderList) {
 		int time = 0; 		//Every increment of time = 1 second
 		int pointer = 0; 	//Used to go through the generated orders list
+		int numDelivered = 0;
 
 		//List of current orders the Drone can see
 		ArrayList<Order> currentOrders = new ArrayList<Order>();
@@ -25,10 +26,10 @@ public class Simulation {
 		double returnTime = 0;			//Tells when the drone is due back
 
 		//Loop through all the orders generated from a 4-hour shift
-		while (pointer < orderList.size()) {
+		while (numDelivered < orderList.size()) {
 
 			//Add the next order from the list once we pass the time marker
-			if (orderList.get(pointer).getTime()*60 <= time) {
+			if (pointer < orderList.size() && orderList.get(pointer).getTime()*60 <= time) {
 				currentOrders.add(orderList.get(pointer));
 				pointer++;
 			}
@@ -79,26 +80,29 @@ public class Simulation {
 				}
 
 				//Do Traveling salesman
-				organizeRoute(currentOrders);
+				organizeRoute(ordersToDeliver);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
 				double[] prevPoint = new double[] {0,0};
 				double timeDroneGone = 0;
-				for (int i = 0; i < currentOrders.size(); i++) {
-					double[] newPoint = currentOrders.get(i).getLocation();
+				for (int i = 0; i < ordersToDeliver.size(); i++) {
+					double[] newPoint = ordersToDeliver.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 						timeDroneGone += dropOffTime;
-						timeToDelivery.add((time + dropOffTime) - currentOrders.get(i).getTime()*60);
+						timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					} else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
 						timeDroneGone += distance/droneSpeed + dropOffTime;
-						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - currentOrders.get(i).getTime()*60);
+						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					}
 					prevPoint = newPoint;
 				}
 
 				returnTime = timeDroneGone + time + turnAround;
+
+				numDelivered += ordersToDeliver.size();
+				ordersToDeliver = new ArrayList<Order>();
 			}
 
 			//Increment the time by one second
@@ -284,7 +288,7 @@ public class Simulation {
 		Orders orderInfo = new Orders(20,20,20,25,mealList.getMeals(),locationList);
 
 		ArrayList<Double> testResults = new ArrayList<Double>();
-		testResults = FIFO(orderInfo.getOrders());
+		testResults = knapSack(orderInfo.getOrders());
 
 		for (int i = 0; i < testResults.size(); i++) {
 			System.out.println("Position " + i + " = " + testResults.get(i));
