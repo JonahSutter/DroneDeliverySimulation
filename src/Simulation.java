@@ -1,4 +1,10 @@
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.FileWriter;
 
 public class Simulation {
 
@@ -231,7 +237,71 @@ public class Simulation {
 
 	}
 
-	public void displayMethod() {
+	//Used to get the data from simulation to the GUI
+	public static void displayMethod(ArrayList<Double> FIFO, ArrayList<Double> Knapsack) {
+		//FIFO data
+		double FIFOAvg = 0;
+		double FIFOWorst = 0;
+
+		for(double time : FIFO){//go through all the times for FIFO
+			FIFOAvg += time;
+
+			if(time > FIFOWorst){
+				FIFOWorst = time;
+			}
+		}
+		FIFOAvg = FIFOAvg/FIFO.size();
+
+		//Knapsack Data
+		double KnapsackAvg = 0;
+		double KnapsackWorst = 0;
+
+		for(double time: Knapsack){
+			KnapsackAvg += time;
+
+			if(time > KnapsackWorst){
+				KnapsackWorst = time;
+			}
+		}
+		KnapsackAvg = KnapsackAvg / Knapsack.size();
+
+		//Save to JSON doc
+		JSONObject data = new JSONObject();
+		JSONObject FIFOObj = new JSONObject();
+		JSONObject KnapObj = new JSONObject();
+		JSONArray FIFOData = new JSONArray();
+		JSONArray KnapData = new JSONArray();
+
+		try {
+			FIFOObj.put("avgTime",FIFOAvg);
+			FIFOObj.put("worstTime", FIFOWorst);
+			for(double time : FIFO){
+				FIFOData.put(time);
+			}
+			FIFOObj.put("data", FIFOData);
+
+			KnapObj.put("avgTime", KnapsackAvg);
+			KnapObj.put("worstTime", KnapsackWorst);
+			for(double time: Knapsack){
+				KnapData.put(time);
+			}
+			KnapObj.put("data", KnapData);
+
+			data.put("FIFO", FIFOObj);
+			data.put("Knapsack", KnapObj);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		//System.out.println(data.toString());
+		try {
+			FileWriter file = new FileWriter("temp.json");
+			file.write(data.toString());
+			file.flush();
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -289,6 +359,11 @@ public class Simulation {
 
 		ArrayList<Double> testResults = new ArrayList<Double>();
 		testResults = knapSack(orderInfo.getOrders());
+		//Added code for testing displayMethod()
+		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
+		FIFOtestResults = knapSack(orderInfo.getOrders());
+		displayMethod(FIFOtestResults, testResults);
+		//end changes
 
 		for (int i = 0; i < testResults.size(); i++) {
 			System.out.println("Position " + i + " = " + testResults.get(i));
