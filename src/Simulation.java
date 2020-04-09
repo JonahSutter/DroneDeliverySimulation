@@ -73,7 +73,7 @@ public class Simulation {
 					currentOrders.remove(mealPos);
 				}
 
-				while (currentOrders.size() >= 0) {
+				while (currentOrders.size() > 0) {
 					skippedOrders.add(currentOrders.get(0));
 					currentOrders.remove(0);
 				}
@@ -111,12 +111,13 @@ public class Simulation {
 	private static ArrayList<Double> FIFO(ArrayList<Order> orderList) {
 		int time = 0; 		//Every increment of time = 1 second
 		int pointer = 0; 	//Used to go through the generated orders list
+		int numDelivered = 0;
 
 		//List of current orders the Drone can see
 		ArrayList<Order> currentOrders = new ArrayList<Order>();
 
 		//List of meals we skipped over when doing knapsack packing
-		ArrayList<Order> ordersToDeliver;
+		ArrayList<Order> ordersToDeliver = new ArrayList<Order>();
 
 		//List of each delivery time
 		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
@@ -128,12 +129,10 @@ public class Simulation {
 		double returnTime = 0;			//Tells when the drone is due back
 
 		//Loop through all the orders generated from a 4-hour shift
-		while (pointer < orderList.size()) {
-			//Reset the ordersToDeliver array
-			ordersToDeliver = new ArrayList<Order>();
+		while (numDelivered < orderList.size()) {
 
 			//Add the next order from the list once we pass the time marker
-			if (orderList.get(pointer).getTime()*60 <= time) {
+			if (pointer < orderList.size() && orderList.get(pointer).getTime()*60 <= time) {
 				currentOrders.add(orderList.get(pointer));
 				pointer++;
 			}
@@ -145,6 +144,7 @@ public class Simulation {
 				//Pack the orders using FIFO
 				boolean overweight = false;
 				double currWeight = 0;
+
 				while (currentOrders.size() > 0 && !overweight) {
 					double mealWeight = currentOrders.get(0).getMeal().getWeight();
 					if (currWeight + mealWeight <= maxWeight) {
@@ -176,6 +176,10 @@ public class Simulation {
 					prevPoint = newPoint;
 				}
 				returnTime = timeDroneGone + time + turnAround;
+
+				numDelivered += ordersToDeliver.size();
+				//Reset the ordersToDeliver array
+				ordersToDeliver = new ArrayList<Order>();
 			}
 
 			//Increment the time by one second
@@ -278,11 +282,6 @@ public class Simulation {
 		locationList[24] = new double[] {295,142};
 
 		Orders orderInfo = new Orders(20,20,20,25,mealList.getMeals(),locationList);
-
-
-		for (int i = 0; i < orderInfo.getOrders().size(); i++) {
-			System.out.println("Number " + i +" ordered at " + orderInfo.getOrders().get(i).getTime());
-		}
 
 		ArrayList<Double> testResults = new ArrayList<Double>();
 		testResults = FIFO(orderInfo.getOrders());

@@ -47,7 +47,7 @@ public class Orders {
 
 		while (numSoFar < secondHour) {
 
-			if (rand.nextDouble() <= (secondHour - numSoFar)/(120 - min)){
+			if (rand.nextDouble() <= (secondHour - numSoFar)/(double)(120 - min)){
 				double meal = rand.nextDouble();
 				int location = rand.nextInt(locations.length);
 
@@ -70,7 +70,7 @@ public class Orders {
 
 		while (numSoFar < thirdHour) {
 
-			if (rand.nextDouble() <= (thirdHour - numSoFar)/(180 - min)){
+			if (rand.nextDouble() <= (thirdHour - numSoFar)/(double)(180 - min)){
 				double meal = rand.nextDouble();
 				int location = rand.nextInt(locations.length);
 
@@ -92,7 +92,7 @@ public class Orders {
 
 		while (numSoFar < fourthHour) {
 
-			if (rand.nextDouble() <= (fourthHour - numSoFar)/(240 - min)){
+			if (rand.nextDouble() <= (fourthHour - numSoFar)/(double)(240 - min)){
 				double meal = rand.nextDouble();
 				int location = rand.nextInt(locations.length);
 
