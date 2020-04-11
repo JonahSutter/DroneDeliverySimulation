@@ -567,6 +567,7 @@ public class Main extends Application {
 	        Button addFood = new Button("Add Food");
 	        Button addMeal = new Button("Add Meal");
 	        Button editMeal = new Button("Edit Meal");
+	        Button removeMeal = new Button("Remove Meal");
 
 	        Button home = new Button("Home");
 	        ListView<String> listFood = new ListView<String>();
@@ -582,7 +583,6 @@ public class Main extends Application {
 //			    listFood.setItems(food);
 
 			//Adds meals to the listView from the mealList, displaying their name
-//		    ObservableList<String> meals = FXCollections.observableArrayList();
 		    ArrayList<Meal> mealArray = new ArrayList<Meal>();
 		    mealArray = mealList.getMeals();
 		    for (int i = 0; i < mealArray.size(); i++) {
@@ -596,18 +596,20 @@ public class Main extends Application {
 	        addFood.setLayoutX(180);
 	        addFood.setLayoutY(100);
 	        addMeal.setLayoutX(180);
-	        addMeal.setLayoutY(150);
+	        addMeal.setLayoutY(250);
 	        editMeal.setLayoutX(180);
 	        editMeal.setLayoutY(300);
+	        removeMeal.setLayoutX(180);
+	        removeMeal.setLayoutY(350);
 	        home.setLayoutX(180);
-	        home.setLayoutY(360);
+	        home.setLayoutY(450);
 
 	        //adding remove food button
 	        removeFood.setLayoutX(180);
 	        removeFood.setLayoutY(200);
 	        //adding edit food button
 	        editFood.setLayoutX(180);
-	        editFood.setLayoutY(250);
+	        editFood.setLayoutY(150);
 
 	        //adding remove food button
 	        removeFood.setPrefHeight(40);
@@ -623,6 +625,9 @@ public class Main extends Application {
 
 	        editMeal.setPrefHeight(40);
 	        editMeal.setPrefWidth(140);
+	        
+	        removeMeal.setPrefHeight(40);
+	        removeMeal.setPrefWidth(140);
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
@@ -651,6 +656,7 @@ public class Main extends Application {
 	        root.getChildren().add(home);
 	        root.getChildren().add(foods);
 	        root.getChildren().add(mealsLabel);
+	        root.getChildren().add(removeMeal);
 
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -1143,11 +1149,6 @@ public class Main extends Application {
 		    		"None"
 		    		);
 		    ArrayList<Food> foodArray = new ArrayList<Food>();
-		   // foodArray = foodList.getFoods();
-//		    for (int i = 0; i < foodArray.size(); i++) {
-//		    	foods.add((foodArray.get(i).getName()));
-//		    }
-//			listFoods.setItems(foods);
 			   for (int i = 0; i < foodsList.size(); i++) {
 			    	foods.add((foodsList.get(i).getName()));
 			    }
@@ -1230,11 +1231,9 @@ public class Main extends Application {
 	        foodWeights[3].setTextFormatter(formatter4);
 
 
-	        //Need to change this so that it edits a meal instead of creating a new one **********************************************
 	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
-	            	//Change the name on this>
 	            	ArrayList<Food> newMeal = new ArrayList<Food>();	//list of foods to add to meal
 	            	String newMealName;
 	            	boolean hasValidFood = false;
@@ -1324,11 +1323,6 @@ public class Main extends Application {
     		            	for (int i = 0; i < size; i++ ) {
     		            		System.out.println(mealToBeEdited.getFoods().get(0).getName());
     		            		mealToBeEdited.removeFoodFromMeal(mealToBeEdited.getFoods().get(0));
-    		            	}
-
-    		            	//prints for error checking right now
-    		            	for (int i = 0; i < mealToBeEdited.getFoods().size(); i++ ) {
-    		            		System.out.println(mealToBeEdited.getFoods().get(i).getName());
     		            	}
 
     		            	//Add all foods back in
@@ -1683,8 +1677,8 @@ public class Main extends Application {
         root.getChildren().add(cancel);
         root.getChildren().add(foodName);
 
-        root.getChildren().add(newName);
-        root.getChildren().add(newFoodName);
+//        root.getChildren().add(newName);
+//        root.getChildren().add(newFoodName);
 
         root.getChildren().add(newName);
         root.getChildren().add(newWeight);
