@@ -361,7 +361,7 @@ public class Simulation {
 		testResults = knapSack(orderInfo.getOrders());
 		//Added code for testing displayMethod()
 		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
-		FIFOtestResults = knapSack(orderInfo.getOrders());
+		FIFOtestResults = FIFO(orderInfo.getOrders());
 		displayMethod(FIFOtestResults, testResults);
 		//end changes
 
