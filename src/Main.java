@@ -41,7 +41,9 @@ import javafx.scene.image.*;
 
 public class Main extends Application {
 	//static Foods foodList = new Foods();
-	static Meals mealList = new Meals();
+	private static Meals mealList = new Meals();
+	private static Orders orderList = new Orders(15, 17, 22, 15);
+	private static Foods foodList = new Foods();
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
@@ -50,14 +52,13 @@ public class Main extends Application {
 	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
 
 	public static void main(String[] args) {
+		foodList.addFoodItem(new Food("1/4 lb Hamburger", 6));
+		foodList.addFoodItem(new Food("Fries", 4));
+		foodList.addFoodItem(new Food("12 oz Drink", 14));
 		Food hamburger = new Food("Hamburger",6);
 		Food cheeseburger = new Food("Cheeseburger",7);
 		Food fries = new Food("Fries",3);
 		Food drink = new Food("Drink",9);
-//		foodList.addFoodItem(hamburger);
-//		foodList.addFoodItem(cheeseburger);
-//		foodList.addFoodItem(fries);
-//		foodList.addFoodItem(drink);
 		mealList.addMeal(new Meal("Basic",0.7,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
 		mealList.addMeal(new Meal("Drink Only",0.1,new ArrayList<Food>() {{add(drink);}}));
 		mealList.addMeal(new Meal("Cheesey",0.2,new ArrayList<Food>() {{add(cheeseburger);add(cheeseburger);add(cheeseburger);}}));
@@ -448,8 +449,11 @@ public class Main extends Application {
 
 		    ObservableList<String> shiftLabels =FXCollections.observableArrayList (
 		            "First Shift: ", "Second Shift: ", "Third Shift: ", "Fourth Shift: ");
-		    ObservableList<String> shiftProbs =FXCollections.observableArrayList (
-		            "10", "15", "18", "17");
+		    ObservableList<String> shiftProbs =FXCollections.observableArrayList ();
+		    shiftProbs.add("" + orderList.getFirstHour());
+		    shiftProbs.add("" + orderList.getSecondHour());
+		    shiftProbs.add("" + orderList.getThirdHour());
+		    shiftProbs.add("" + orderList.getFourthHour());
 		    shiftProbabilities.setItems(shiftProbs);
 		    labeledShifts.setItems(shiftLabels);
 
@@ -477,6 +481,11 @@ public class Main extends Application {
 		            	} catch (Exception E) {
 	            			errorLabel2.setText("Invalid Shift Entry: \n\tNot an integer value.");
 		            	}
+		            }
+		            if (errorLabel2.getText() == "") {
+            			ObservableList<String> data = shiftProbabilities.getItems();
+            			orderList.setHourlyRate(Integer.parseInt(data.get(0)), Integer.parseInt(data.get(1)),
+            					Integer.parseInt(data.get(2)), Integer.parseInt(data.get(3)));
 		            }
 		        }
 		    });
