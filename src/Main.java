@@ -32,6 +32,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.image.*;
+
+
 public class Main extends Application {
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6); 
@@ -127,6 +130,8 @@ public class Main extends Application {
 	        Button button2 = new Button("Edit Meals");
 	        Button button3 = new Button("Edit Probabilities");
 	        Button button4 = new Button("Exit");
+	        //adding map button 
+	        Button button5 = new Button("Map"); 
 
 
 
@@ -139,7 +144,10 @@ public class Main extends Application {
 	        button3.setLayoutY(300);
 	        button4.setLayoutX(180);
 	        button4.setLayoutY(350);
-
+	        //adding map button 
+	        button5.setLayoutX(180);
+	        button5.setLayoutY(400);
+	        
 	        button1.setPrefHeight(40);
 	        button1.setPrefWidth(140);
 	        button2.setPrefHeight(40);
@@ -148,11 +156,15 @@ public class Main extends Application {
 	        button3.setPrefWidth(140);
 	        button4.setPrefHeight(40);
 	        button4.setPrefWidth(140);
+	        //adding map button 
+	        button5.setPrefHeight(40);
+	        button5.setPrefWidth(140);
 
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
 	        root.getChildren().add(button3);
 	        root.getChildren().add(button4);
+	        root.getChildren().add(button5); 
 	        root.getChildren().add(label);
 
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
@@ -176,6 +188,12 @@ public class Main extends Application {
 	        button4.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                System.exit(1);
+	            }
+	        });
+	        
+	        button5.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	               // map(primaryStage); 
 	            }
 	        });
 
@@ -1316,6 +1334,26 @@ public class Main extends Application {
         
 	}//ends remove food page
 	
+	public static void map(Stage primaryStage) {
+		try {
+		Image gcc = new Image(Main.class.getResourceAsStream("campusMapGCC.PNG"), 1000.0,1000.0, true, true);
+		ImageView selectedImage = new ImageView(); 
+		selectedImage.setImage(gcc);
+		Pane root = new Pane();
+		root.getChildren().addAll(selectedImage); 
+		
+		Scene scene = new Scene(root,500,500);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			}
+		}.start();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	
