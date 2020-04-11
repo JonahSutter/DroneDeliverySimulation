@@ -68,4 +68,8 @@ public class Meal {
 		this.foodItems.add(food);
 	}
 	
+	public void removeFoodFromMeal(Food food) {
+		this.foodItems.remove(food);
+	}
+	
 }
