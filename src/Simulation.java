@@ -238,7 +238,9 @@ public class Simulation {
 	}
 
 	//Used to get the data from simulation to the GUI
-	public static void displayMethod(ArrayList<Double> FIFO, ArrayList<Double> Knapsack) {
+	public static void displayMethod(ArrayList<Order> orders) {
+		ArrayList<Double> FIFO = FIFO(orders);
+		ArrayList<Double> Knapsack = knapSack(orders);
 		//FIFO data
 		double FIFOAvg = 0;
 		double FIFOWorst = 0;
@@ -358,16 +360,8 @@ public class Simulation {
 		Orders orderInfo = new Orders(20,20,20,25,mealList.getMeals(),locationList);
 
 		ArrayList<Double> testResults = new ArrayList<Double>();
-		testResults = knapSack(orderInfo.getOrders());
 		//Added code for testing displayMethod()
-		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
-		FIFOtestResults = FIFO(orderInfo.getOrders());
-		displayMethod(FIFOtestResults, testResults);
-		//end changes
-
-		for (int i = 0; i < testResults.size(); i++) {
-			System.out.println("Position " + i + " = " + testResults.get(i));
-		}
+		displayMethod(orderInfo.getOrders());
 	}
 
 }

@@ -44,6 +44,7 @@ public class Main extends Application {
 	private static Meals mealList = new Meals();
 	private static Orders orderList = new Orders(15, 17, 22, 15);
 	private static Foods foodList = new Foods();
+	private static double[][] locationList;
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
@@ -63,6 +64,40 @@ public class Main extends Application {
 		mealList.addMeal(new Meal("Drinkless Combo",0.20,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
 		mealList.addMeal(new Meal("Drinkless Double",0.15,new ArrayList<Food>() {{add(hamburger);add(fries);add(hamburger);}}));
 		mealList.addMeal(new Meal("Double Burger",0.10,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);add(hamburger);}}));
+
+		double[][] locationList = new double[25][];
+		for (int i = 0; i < 25; i++) {
+			locationList[i] = new double[2];
+		}
+
+		//Random list of locations
+		//TODO: Replace with actual values from Grove City Campus delivery points
+		locationList[0] = new double[] {0,0};
+		locationList[1] = new double[] {40,50};
+		locationList[2] = new double[] {90,60};
+		locationList[3] = new double[] {100,100};
+		locationList[4] = new double[] {0,100};
+		locationList[5] = new double[] {90,8};
+		locationList[6] = new double[] {10,30};
+		locationList[7] = new double[] {70,65.23};
+		locationList[8] = new double[] {48.32,23.51};
+		locationList[9] = new double[] {109.3,142.6};
+		locationList[10] = new double[] {241,42};
+		locationList[11] = new double[] {123,75};
+		locationList[12] = new double[] {352,129};
+		locationList[13] = new double[] {185,135};
+		locationList[14] = new double[] {185,138};
+		locationList[15] = new double[] {194,144};
+		locationList[16] = new double[] {150,74};
+		locationList[17] = new double[] {143,93};
+		locationList[18] = new double[] {164,103};
+		locationList[19] = new double[] {251,172};
+		locationList[20] = new double[] {214,198};
+		locationList[21] = new double[] {213,164};
+		locationList[22] = new double[] {218,300};
+		locationList[23] = new double[] {245,271};
+		locationList[24] = new double[] {295,142};
+
 		launch(args);
 	}
 

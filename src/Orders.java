@@ -42,7 +42,7 @@ public class Orders {
 		locationList = locations;
 	}
 
-	public ArrayList<Order> getOrders() {
+	public void setOrders() {
 		int numSoFar = 0;
 		int min = 0;
 
@@ -133,7 +133,9 @@ public class Orders {
 
 			min++;
 		}
+	}
 
+	public ArrayList<Order> getOrders() {
 		return orders;
 	}
 
