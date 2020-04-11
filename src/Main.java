@@ -48,20 +48,21 @@ public class Main extends Application {
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
-	private static ArrayList<Food> foodsList = new ArrayList<Food>(Arrays.asList(f1,f2,f3));
-	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
+//	private static ArrayList<Food> foodsList = new ArrayList<Food>(Arrays.asList(f1,f2,f3));
+//	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
 
 	public static void main(String[] args) {
-		foodList.addFoodItem(new Food("1/4 lb Hamburger", 6));
-		foodList.addFoodItem(new Food("Fries", 4));
-		foodList.addFoodItem(new Food("12 oz Drink", 14));
-		Food hamburger = new Food("Hamburger",6);
-		Food cheeseburger = new Food("Cheeseburger",7);
-		Food fries = new Food("Fries",3);
-		Food drink = new Food("Drink",9);
-		mealList.addMeal(new Meal("Basic",0.7,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
-		mealList.addMeal(new Meal("Drink Only",0.1,new ArrayList<Food>() {{add(drink);}}));
-		mealList.addMeal(new Meal("Cheesey",0.2,new ArrayList<Food>() {{add(cheeseburger);add(cheeseburger);add(cheeseburger);}}));
+		Food hamburger = new Food("1/4 lb Hamburger", 6);
+		Food fries = new Food("Fries", 4);
+		Food drink = new Food("12 oz Drink", 14);
+		foodList.addFoodItem(hamburger);
+		foodList.addFoodItem(fries);
+		foodList.addFoodItem(drink);
+		//Adding in basic meal combos as outlined in requirements for the project
+		mealList.addMeal(new Meal("Basic Combo",0.55,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);}}));
+		mealList.addMeal(new Meal("Drinkless Combo",0.20,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
+		mealList.addMeal(new Meal("Drinkless Double",0.15,new ArrayList<Food>() {{add(hamburger);add(fries);add(hamburger);}}));
+		mealList.addMeal(new Meal("Double Burger",0.10,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);add(hamburger);}}));
 		launch(args);
 	}
 
@@ -580,7 +581,10 @@ public class Main extends Application {
 	        Button home = new Button("Home");
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listMeals = new ListView<String>();
-	        ObservableList<String> food =FXCollections.observableArrayList (foodNames);
+	        ObservableList<String> food =FXCollections.observableArrayList ();
+	        for (int i = 0; i < foodList.getFoods().size(); i++) {
+	        	food.add(foodList.getFoods().get(i).getName());
+	        }
 		        listFood.setItems(food);
 
 
@@ -785,8 +789,7 @@ public class Main extends Application {
 	            	double w = Double.parseDouble(foodWeight.getText());
 	      	        //need to figure out how to get the weight
 	      	        Food f = new Food(addName, w);
-	      	        foodsList.add(f);
-	      	        foodNames.add(addName);
+	      	        foodList.addFoodItem(f);
 	                meals(primaryStage);
 	            }
 	            }
@@ -811,8 +814,8 @@ public class Main extends Application {
 	}//ends the method
 	public static boolean checkDuplicateName(TextField t) {
 		String tryName = t.getText();
-		for(int i = 0; i<foodsList.size(); i++) {
-			if(foodsList.get(i).getName().equals(tryName)) {
+		for(int i = 0; i<foodList.getFoods().size(); i++) {
+			if(foodList.getFoods().get(i).getName().equals(tryName)) {
 				failedAlert("This food is already listed");
 				return true;
 			}
@@ -901,8 +904,8 @@ public class Main extends Application {
 //		    	foods.add((foodArray.get(i).getName()));
 //		    }
 //			    listFoods.setItems(foods);
-			    for (int i = 0; i < foodsList.size(); i++) {
-			    	foods.add((foodsList.get(i).getName()));
+			    for (int i = 0; i < foodList.getFoods().size(); i++) {
+			    	foods.add((foodList.getFoods().get(i).getName()));
 			    }
 				    listFoods.setItems(foods);
 
@@ -1157,8 +1160,8 @@ public class Main extends Application {
 //		    	foods.add((foodArray.get(i).getName()));
 //		    }
 //			listFoods.setItems(foods);
-			   for (int i = 0; i < foodsList.size(); i++) {
-			    	foods.add((foodsList.get(i).getName()));
+			   for (int i = 0; i < foodList.getFoods().size(); i++) {
+			    	foods.add((foodList.getFoods().get(i).getName()));
 			    }
 				listFoods.setItems(foods);
 
@@ -1583,9 +1586,9 @@ public class Main extends Application {
 	            	String origName = foodName.getText();
 	            	if(checkNames(foodName) && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
 	            	double newW = Double.parseDouble(newFoodWeight.getText());
-	            	for(int i = 0; i<foodsList.size(); i++) {
-	            		if(foodsList.get(i).getName().equals(origName)) {
-	            			foodsList.get(i).changeWeight(newW);
+	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
+	            		if(foodList.getFoods().get(i).getName().equals(origName)) {
+	            			foodList.getFoods().get(i).changeWeight(newW);
 	            		}//ends if
 	            	}//ends for loop
 	                meals(primaryStage);
@@ -1612,8 +1615,8 @@ public class Main extends Application {
 	}//ends edit food weight
 	public static boolean checkNames(TextField t) {
 		String name = t.getText();
-		for(int i = 0; i<foodNames.size(); i++) {
-			if(foodNames.get(i).equals(name)) {
+		for(int i = 0; i<foodList.getFoods().size(); i++) {
+			if(foodList.getFoods().get(i).getName().equals(name)) {
 				return true;
 			}
 		}
@@ -1695,29 +1698,17 @@ public class Main extends Application {
         root.getChildren().add(newName);
         root.getChildren().add(newFoodName);
 
-        root.getChildren().add(newName);
-        root.getChildren().add(newWeight);
-        root.getChildren().add(newFoodWeight);
-        root.getChildren().add(newFoodName);
-
         root.getChildren().add(label);
         root.getChildren().add(name);
-
-        root.getChildren().add(weight);
 
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
             	if(checkNames(foodName)) {
             	String origName = foodName.getText();
             	String newN = newFoodName.getText();
-            	for(int j = 0; j< foodNames.size(); j++) {
-            		if(foodNames.get(j).equals(origName)) {
-            			foodNames.set(j, newN);
-            		}//ends if
-            	}//ends for
-            	for(int i = 0; i<foodsList.size(); i++) {
-            		if(foodsList.get(i).getName().equals(origName)) {
-            			foodsList.get(i).changeName(newN);
+            	for(int j = 0; j< foodList.getFoods().size(); j++) {
+            		if(foodList.getFoods().get(j).getName().equals(origName)) {
+            			foodList.getFoods().get(j).changeName(newN);
             		}//ends if
             	}//ends for
                 meals(primaryStage);
@@ -1809,15 +1800,9 @@ public class Main extends Application {
 	            	if(checkNames(foodName)) {
 	            	String removeName = foodName.getText();
 	            	//need to remove the food from the array
-	            	for(int i = 0; i<foodsList.size(); i++) {
-	            		if(foodsList.get(i).getName().equals(removeName)) {
-	            			foodsList.remove(foodsList.get(i));
-	            		}
-	            	}
-	            	//removes from the names list for the display
-	            	for(int j = 0; j< foodNames.size(); j++) {
-	            		if(foodNames.get(j).equals(removeName)) {
-	            			foodNames.remove(j);
+	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
+	            		if(foodList.getFoods().get(i).getName().equals(removeName)) {
+	            			foodList.getFoods().remove(foodList.getFoods().get(i));
 	            		}
 	            	}
 	            	//goes back to the meals page
