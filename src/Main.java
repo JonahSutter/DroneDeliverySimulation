@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.swing.event.ChangeListener;
+
+import java.io.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -1461,6 +1466,8 @@ public class Main extends Application {
 
 	        button1.setLayoutX(130);
 	        button1.setPrefWidth(140);
+	        button1.setPrefHeight(40);
+	        button1.setPrefWidth(140);
 	        button2.setPrefHeight(40);
 	        button2.setPrefWidth(140);
 
@@ -1480,9 +1487,22 @@ public class Main extends Application {
 
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	        		FileChooser fileChooser = new FileChooser();
-	        		fileChooser.setTitle("Open Resource File");
-	        		fileChooser.showOpenDialog(primaryStage);
+	           	  FileChooser fileChooser = new FileChooser();
+            	  
+                  //Set extension filter
+                  FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+                  fileChooser.getExtensionFilters().add(extFilter);
+                  
+                  //Show save file dialog
+                  File file = fileChooser.showSaveDialog(primaryStage);
+                  	   
+	                  
+                  fileChooser.getExtensionFilters().add(extFilter);
+
+	                if (file != null) {
+	                	SaveFile(file);
+	                }	      
+	                
 	            }
 	        });
 
@@ -1523,6 +1543,33 @@ public class Main extends Application {
 
 
 	}
+	
+	 private static void SaveFile(File file){
+	        try {
+	   
+	        	File json = new File("temp.json");
+	        	
+	        	Scanner scn = new Scanner(json);
+	        	
+	        	String content = "";
+	        	
+	        	while (scn.hasNextLine()) {
+	        		content += scn.nextLine();
+	        	}
+	        	
+	        	 PrintWriter writer;
+	             writer = new PrintWriter(file);
+	             writer.println(content);
+	             writer.close();
+	        	
+	        	
+	        } catch (IOException ex) {
+	        	
+	           System.out.println("File Logging Error");
+	           
+	        }
+	         
+	    }
 
 
 	public static void editFoodPage(Stage primaryStage) {
