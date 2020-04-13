@@ -1,29 +1,27 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.swing.event.ChangeListener;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+
 
 import java.io.*;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -36,10 +34,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
 
@@ -69,6 +65,8 @@ public class Main extends Application {
 		mealList.addMeal(new Meal("Drinkless Combo",0.20,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
 		mealList.addMeal(new Meal("Drinkless Double",0.15,new ArrayList<Food>() {{add(hamburger);add(fries);add(hamburger);}}));
 		mealList.addMeal(new Meal("Double Burger",0.10,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);add(hamburger);}}));
+
+		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
 
 		double[][] locationList = new double[25][];
 		for (int i = 0; i < 25; i++) {
@@ -102,6 +100,7 @@ public class Main extends Application {
 		locationList[22] = new double[] {218,300};
 		locationList[23] = new double[] {245,271};
 		locationList[24] = new double[] {295,142};
+		orderList.setLocations(locationList);
 
 		launch(args);
 	}
@@ -228,7 +227,7 @@ public class Main extends Application {
 
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                simmulationPage(primaryStage);
+	                simulationPage(primaryStage);
 	            }
 	        });
 
@@ -276,8 +275,17 @@ public class Main extends Application {
 		}
 	}
 
-	public static void simmulationPage(Stage primaryStage) {
+	public static void simulationPage(Stage primaryStage) {
+		Simulation sim = new Simulation(foodList, mealList, orderList);
+		sim.runSimulation();
+
+		JSONParser jsonParser = new JSONParser();
+
+
 		try {
+			FileReader reader = new FileReader("temp.json");
+			Object obj = jsonParser.parse(reader);
+			JSONObject data = (JSONObject) obj;
 
 			primaryStage.setTitle("Simulation Results");
 
@@ -286,11 +294,21 @@ public class Main extends Application {
 			Label label3 = new Label("First in First Out");
 			Label label4 = new Label("Knapsack Packing");
 			//FIFO labels
+			JSONObject FIFOJson = (JSONObject) data.get("FIFO");
+			String fifoAvg = String.format("%.4f sec", FIFOJson.get("avgTime"));
+			String fifoWorst = String.format("%.4f sec", FIFOJson.get("worstTime"));
 			Label fifo1 = new Label("Average Delivery Time:");
 			Label fifo2 = new Label("Worst Delivery Time:");
+			Label fifo3 = new Label(fifoAvg);
+			Label fifo4 = new Label(fifoWorst);
 			//Knapsack Labels
+			JSONObject KnapsackJson = (JSONObject) data.get("Knapsack");
+			String knapsackAvg = String.format("%.4f sec", KnapsackJson.get("avgTime"));
+			String knapsackWorst = String.format("%.4f sec", KnapsackJson.get("worstTime"));
 			Label knap1 = new Label("Average Delivery Time:");
 			Label knap2 = new Label("Worst Delivery Time:");
+			Label knap3 = new Label(knapsackAvg);
+			Label knap4 = new Label(knapsackWorst);
 
 			//Label Settings
 			label.setFont(new Font("Arial", 40));
@@ -311,6 +329,12 @@ public class Main extends Application {
 			fifo2.setFont(new Font("Arial", 18));
 			fifo2.setLayoutX(45);
 			fifo2.setLayoutY(213);
+			fifo3.setFont(new Font("Arial", 18));
+			fifo3.setLayoutX(238);
+			fifo3.setLayoutY(177);
+			fifo4.setFont(new Font("Arial", 18));
+			fifo4.setLayoutX(219);
+			fifo4.setLayoutY(213);
 			//Knapsack labels
 			knap1.setFont(new Font("Arial", 18));
 			knap1.setLayoutX(530);
@@ -318,14 +342,103 @@ public class Main extends Application {
 			knap2.setFont(new Font("Arial", 18));
 			knap2.setLayoutX(530);
 			knap2.setLayoutY(213);
+			knap3.setFont(new Font("Arial", 18));
+			knap3.setLayoutX(722);
+			knap3.setLayoutY(177);
+			knap4.setFont(new Font("Arial", 18));
+			knap4.setLayoutX(701);
+			knap4.setLayoutY(213);
 
 			Button button1 = new Button("Save Data");
 			Button button2 = new Button("Home");
 			Button button3 = new Button("Exit");
 
+			//Bar charts
+			//FIFO chart
+			final CategoryAxis fifoTimeAxis = new CategoryAxis();
+			final NumberAxis fifoNumAxis = new NumberAxis();
+			final BarChart<String, Number> fifoChart = new BarChart<String, Number>(fifoTimeAxis, fifoNumAxis);
+			fifoChart.setTitle("FIFO Delivery Times");
+			fifoTimeAxis.setLabel("Delivery Time");
+			fifoNumAxis.setLabel("Num Delivered");
 
+			//FIFO Data
+			JSONArray fifoData = (JSONArray) FIFOJson.get("data");
+			ArrayList<Integer> fifoTimeData = new ArrayList<Integer>();
+			fifoTimeData.add(0);
+			double time;	//will also be used in knapsack data
+			int timeslot;	//will also be used in knapsack
+			for(int i = 0; i < fifoData.size(); i++){
+				time = (Double) fifoData.get(i);
+				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+
+				if(fifoTimeData.size() <= timeslot){
+					while(fifoTimeData.size() <= timeslot){
+						fifoTimeData.add(0);	//insert 0 until the arraylist is of the correct size
+					}
+					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) +1);
+				}
+				else{
+					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) + 1); //increment the position
+				}
+			}
+
+			String categoryName;
+			XYChart.Series fifoSeries = new XYChart.Series();
+			fifoSeries.setName("Number of Orders Delivered");
+			for(int i = 0; i < fifoTimeData.size(); i++) {	//puts all the data into the graph
+				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				fifoSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
+			}
+			fifoChart.getData().addAll(fifoSeries);
+			fifoChart.setLegendVisible(false);
+
+			//Knapsack Chart
+			final CategoryAxis knapsackTimeAxis = new CategoryAxis();
+			final NumberAxis knapsackNumAxis = new NumberAxis();
+			final BarChart<String, Number> knapsackChart = new BarChart<String, Number>(knapsackTimeAxis, knapsackNumAxis);
+			knapsackChart.setTitle("FIFO Delivery Times");
+			knapsackTimeAxis.setLabel("Delivery Time");
+			knapsackNumAxis.setLabel("Num Delivered");
+
+			//Knapsack Data
+			JSONArray knapsackData = (JSONArray) KnapsackJson.get("data");
+			ArrayList<Integer> knapsackTimeData = new ArrayList<Integer>();
+			knapsackTimeData.add(0);
+			for(int i = 0; i < knapsackData.size(); i++){
+				time = (Double) knapsackData.get(i);
+				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+
+				if(knapsackTimeData.size() <= timeslot){
+					while(knapsackTimeData.size() <= timeslot){
+						knapsackTimeData.add(0);	//insert 0 until the arraylist is of the correct size
+					}
+					knapsackTimeData.set(timeslot, knapsackTimeData.get(timeslot) +1);
+				}
+				else{
+					knapsackTimeData.set(timeslot, knapsackTimeData.get(timeslot) + 1); //increment the position
+				}
+			}
+
+
+			XYChart.Series knapsackSeries = new XYChart.Series();
+			fifoSeries.setName("Number of Orders Delivered");
+			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
+				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				knapsackSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
+			}
+			knapsackChart.getData().addAll(knapsackSeries);
+			knapsackChart.setLegendVisible(false);
 
 			Pane root = new Pane();
+			fifoChart.setLayoutX(0);
+			fifoChart.setLayoutY(249);
+			knapsackChart.setLayoutX(540);
+			knapsackChart.setLayoutY(249);
+
+			fifoChart.setPrefSize(338, 252);
+			knapsackChart.setPrefSize(338, 252);
+
 			button1.setLayoutX(370);
 			button1.setLayoutY(364);
 			button2.setLayoutX(370);
@@ -349,8 +462,14 @@ public class Main extends Application {
 			root.getChildren().add(label4);
 			root.getChildren().add(fifo1);
 			root.getChildren().add(fifo2);
+			root.getChildren().add(fifo3);
+			root.getChildren().add(fifo4);
 			root.getChildren().add(knap1);
 			root.getChildren().add(knap2);
+			root.getChildren().add(knap3);
+			root.getChildren().add(knap4);
+			root.getChildren().add(fifoChart);
+			root.getChildren().add(knapsackChart);
 
 
 			button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
