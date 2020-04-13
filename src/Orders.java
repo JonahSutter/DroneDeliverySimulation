@@ -46,6 +46,8 @@ public class Orders {
 		int numSoFar = 0;
 		int min = 0;
 
+		orders = new ArrayList<Order>();
+
 		Random rand = new Random();
 
 

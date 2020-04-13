@@ -244,6 +244,11 @@ public class Simulation {
 		orderList.setOrders();
 		testResults = knapSack(orderList.getOrders());
 		FIFOtestResults = FIFO(orderList.getOrders());
+		for(int i = 0; i < 49; i++){
+			orderList.setOrders();
+			testResults.addAll(knapSack(orderList.getOrders()));
+			FIFOtestResults.addAll(FIFO(orderList.getOrders()));
+		}
 		displayMethod(FIFOtestResults, testResults);
 	}
 
