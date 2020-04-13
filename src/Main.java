@@ -110,6 +110,8 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
+			
+			//setting labels and buttons 
 			primaryStage.setTitle("Starting Screen");
 
 			Label label = new Label("Dromedary Drones");
@@ -126,18 +128,19 @@ public class Main extends Application {
 	        button2.setPrefWidth(140);
 
 
-
+	        //setting layout of buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
 	        button2.setLayoutY(250);
 
-
+	        //adding to root
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
 	        root.getChildren().add(label);
 
+	        //buttons sends to main page
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
@@ -145,15 +148,15 @@ public class Main extends Application {
 	            }
 	        });
 
-
+	        //button exits
 	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                System.exit(1);
 	            }
 	        });
-
+	        
+	        //show the scene
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -173,10 +176,14 @@ public class Main extends Application {
 
 	}
 
+	/*
+	 * Displaying the mainPage
+	 */
 	public static void mainPage(Stage primaryStage) {
 
 		try {
 
+			//Setting title and buttons
 			primaryStage.setTitle("Main Page");
 
 			Label label = new Label("Dromedary Drones");
@@ -192,7 +199,7 @@ public class Main extends Application {
 	        Button button5 = new Button("Map");
 
 
-
+	        //Setting the layouts of the buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
@@ -218,6 +225,8 @@ public class Main extends Application {
 	        button5.setPrefHeight(40);
 	        button5.setPrefWidth(140);
 
+	        
+	        //adding buttons and labels to root
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
 	        root.getChildren().add(button3);
@@ -225,38 +234,44 @@ public class Main extends Application {
 	        root.getChildren().add(button5);
 	        root.getChildren().add(label);
 
+	        //buttons sends to simulation page
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                simulationPage(primaryStage);
 	            }
 	        });
 
+	      //buttons sends to meals page
 	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
 
+	      //buttons sends to probability page
 	        button3.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                probabilityPage(primaryStage);
 	            }
 	        });
 
+	      //buttons exits
 	        button4.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                System.exit(1);
 	            }
 	        });
 
+	        
+	      //button sends to map page
 	        button5.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	               // map(primaryStage);
 	            }
 	        });
 
+	        //finalize and show page
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -1564,9 +1579,14 @@ public class Main extends Application {
 
 	}
 
+	/*
+	 * page to save info
+	 */
 	public static void saveInformation(Stage primaryStage) {
 
 		try {
+			
+			//setting buttons and title
 			primaryStage.setTitle("Saving Screen");
 
 			Label label = new Label("Dromedary Drones");
@@ -1574,9 +1594,9 @@ public class Main extends Application {
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
-
 	        Button home = new Button("Home");
 
+	        //setting layout and width of buttons
 	        home.setLayoutX(180);
 	        home.setLayoutY(250);
 	        home.setPrefHeight(40);
@@ -1593,18 +1613,21 @@ public class Main extends Application {
 
 
 
+	  
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
 	        button2.setLayoutY(300);
 
-
+	        
+	        //add buttons to root
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
 	        root.getChildren().add(label);
 	        root.getChildren().add(home);
 
+	        //button that sends to file explorer and saves
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	           	  FileChooser fileChooser = new FileChooser();
@@ -1626,7 +1649,8 @@ public class Main extends Application {
 	            }
 	        });
 
-
+	        
+	        //button that sends to main page
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	        		mainPage(primaryStage);
@@ -1635,15 +1659,15 @@ public class Main extends Application {
 
 
 
-
+	        //button that exits
 	        button2.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                System.exit(1);
 	            }
 	        });
 
+	        //show the scene
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -1664,19 +1688,26 @@ public class Main extends Application {
 
 	}
 	
+	/*
+	 * Method to save to a file
+	 * @param file is the file to be saved
+	 */
 	 private static void SaveFile(File file){
 	        try {
 	   
+	        	//get where our data is
 	        	File json = new File("temp.json");
 	        	
 	        	Scanner scn = new Scanner(json);
 	        	
 	        	String content = "";
 	        	
+	        	//save the data to a string
 	        	while (scn.hasNextLine()) {
 	        		content += scn.nextLine();
 	        	}
 	        	
+	        	//write the string to the file
 	        	 PrintWriter writer;
 	             writer = new PrintWriter(file);
 	             writer.println(content);
