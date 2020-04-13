@@ -383,6 +383,7 @@ public class Main extends Application {
 				}
 			}
 
+
 			String categoryName;
 			XYChart.Series fifoSeries = new XYChart.Series();
 			fifoSeries.setName("Number of Orders Delivered");
@@ -397,7 +398,7 @@ public class Main extends Application {
 			final CategoryAxis knapsackTimeAxis = new CategoryAxis();
 			final NumberAxis knapsackNumAxis = new NumberAxis();
 			final BarChart<String, Number> knapsackChart = new BarChart<String, Number>(knapsackTimeAxis, knapsackNumAxis);
-			knapsackChart.setTitle("FIFO Delivery Times");
+			knapsackChart.setTitle("Knapsack Delivery Times");
 			knapsackTimeAxis.setLabel("Delivery Time");
 			knapsackNumAxis.setLabel("Num Delivered");
 
@@ -422,10 +423,10 @@ public class Main extends Application {
 
 
 			XYChart.Series knapsackSeries = new XYChart.Series();
-			fifoSeries.setName("Number of Orders Delivered");
+			knapsackSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
-				knapsackSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
+				knapsackSeries.getData().add(new XYChart.Data(categoryName, knapsackTimeData.get(i)));
 			}
 			knapsackChart.getData().addAll(knapsackSeries);
 			knapsackChart.setLegendVisible(false);
