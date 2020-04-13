@@ -1,12 +1,16 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+//import org.json.simple.JSONException;
+import org.json.simple.JSONObject;
 import java.io.FileWriter;
 
 public class Simulation {
+
+	private static Meals mealList;
+	private static Orders orderList;
+	private static Foods foodList;
 
 	private static ArrayList<Double> knapSack(ArrayList<Order> orderList) {
 		int time = 0; 		//Every increment of time = 1 second
@@ -234,13 +238,24 @@ public class Simulation {
 	}
 
 	public void runSimulation() {
+		ArrayList<Double> testResults = new ArrayList<Double>();
+		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
 
+		orderList.setOrders();
+		testResults = knapSack(orderList.getOrders());
+		FIFOtestResults = FIFO(orderList.getOrders());
+		displayMethod(FIFOtestResults, testResults);
 	}
 
-	//Used to get the data from simulation to the GUI
-	public static void displayMethod(ArrayList<Order> orders) {
-		ArrayList<Double> FIFO = FIFO(orders);
-		ArrayList<Double> Knapsack = knapSack(orders);
+
+	/***
+	 * Takes in delivery times from FIFO and knapsack, processes the data,
+	 * and puts it into a JSON file called temp.json
+	 * @param FIFO arraylist containing delivery times for FIFO
+	 * @param Knapsack arraylist containing delivery times for knapsack
+	 */
+	public static void displayMethod(ArrayList<Double> FIFO, ArrayList<Double> Knapsack) {
+
 		//FIFO data
 		double FIFOAvg = 0;
 		double FIFOWorst = 0;
@@ -274,26 +289,23 @@ public class Simulation {
 		JSONArray FIFOData = new JSONArray();
 		JSONArray KnapData = new JSONArray();
 
-		try {
-			FIFOObj.put("avgTime",FIFOAvg);
-			FIFOObj.put("worstTime", FIFOWorst);
-			for(double time : FIFO){
-				FIFOData.put(time);
-			}
-			FIFOObj.put("data", FIFOData);
 
-			KnapObj.put("avgTime", KnapsackAvg);
-			KnapObj.put("worstTime", KnapsackWorst);
-			for(double time: Knapsack){
-				KnapData.put(time);
-			}
-			KnapObj.put("data", KnapData);
-
-			data.put("FIFO", FIFOObj);
-			data.put("Knapsack", KnapObj);
-		} catch (JSONException e) {
-			e.printStackTrace();
+		FIFOObj.put("avgTime",FIFOAvg);
+		FIFOObj.put("worstTime", FIFOWorst);
+		for(double time : FIFO){
+			FIFOData.add(time);
 		}
+		FIFOObj.put("data", FIFOData);
+
+		KnapObj.put("avgTime", KnapsackAvg);
+		KnapObj.put("worstTime", KnapsackWorst);
+		for(double time: Knapsack){
+			KnapData.add(time);
+		}
+		KnapObj.put("data", KnapData);
+
+		data.put("FIFO", FIFOObj);
+		data.put("Knapsack", KnapObj);
 
 		//System.out.println(data.toString());
 		try {
@@ -360,8 +372,23 @@ public class Simulation {
 		Orders orderInfo = new Orders(20,20,20,25,mealList.getMeals(),locationList);
 
 		ArrayList<Double> testResults = new ArrayList<Double>();
+		testResults = knapSack(orderInfo.getOrders());
 		//Added code for testing displayMethod()
-		displayMethod(orderInfo.getOrders());
+		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
+		FIFOtestResults = knapSack(orderInfo.getOrders());
+		displayMethod(FIFOtestResults, testResults);
+		//end changes
+
+		for (int i = 0; i < testResults.size(); i++) {
+			System.out.println("Position " + i + " = " + testResults.get(i));
+		}
+	}
+
+	public Simulation(Foods fList, Meals mList, Orders oList) {
+		foodList = fList;
+		mealList = mList;
+		orderList = oList;
+
 	}
 
 }
