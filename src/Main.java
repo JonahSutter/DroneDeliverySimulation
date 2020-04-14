@@ -110,8 +110,8 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
-			
-			//setting labels and buttons 
+
+			//setting labels and buttons
 			primaryStage.setTitle("Starting Screen");
 
 			Label label = new Label("Dromedary Drones");
@@ -154,7 +154,7 @@ public class Main extends Application {
 	                System.exit(1);
 	            }
 	        });
-	        
+
 	        //show the scene
 			Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
@@ -225,7 +225,7 @@ public class Main extends Application {
 	        button5.setPrefHeight(40);
 	        button5.setPrefWidth(140);
 
-	        
+
 	        //adding buttons and labels to root
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
@@ -262,7 +262,7 @@ public class Main extends Application {
 	            }
 	        });
 
-	        
+
 	      //button sends to map page
 	        button5.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -530,64 +530,86 @@ public class Main extends Application {
 
 	public static void probabilityPage(Stage primaryStage) {
 		try {
+			//Set the title of the window
 			primaryStage.setTitle("Meal Probabilities");
-			Label label = new Label("Dromedary Drones");
 
+			//Keep the label at the top
+			Label label = new Label("Dromedary Drones");
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
 
+			//Add the meals chart Label
 			Label mealLabel = new Label("Meals:");
 			mealLabel.setFont(new Font("Arial",20));
 			mealLabel.setLayoutX(250);
 			mealLabel.setLayoutY(72);
 
+			//Add the meals chart Probability label
 			Label mealProbLabel = new Label("(%):");
 			mealProbLabel.setFont(new Font("Arial",20));
 			mealProbLabel.setLayoutX(390);
 			mealProbLabel.setLayoutY(72);
 
-			 Label totalLabel = new Label("Percentages Total To:");
+			//Add a label that tells the user what the percentages total to
+			Label totalLabel = new Label("Percentages Total To:");
 		    totalLabel.setFont(new Font("Arial",15));
 		    totalLabel.setLayoutX(245);
 		    totalLabel.setLayoutY(385);
 
-		    Label totalVal = new Label("100");
+		    //Calculate the total percentage of meal probabilities
+		    double total = 0;
+		    for (int i = 0; i < mealList.getMeals().size(); i++) {
+		    	total += mealList.getMeals().get(i).getPercentage();
+		    }
+		    //Add a label with the total percentage of meal probabilities
+		    Label totalVal = new Label(total + "");
 		    totalVal.setFont(new Font("Arial",15));
 		    totalVal.setLayoutX(395);
 		    totalVal.setLayoutY(385);
 
+		    //Create an error label for the Shift order values
 		    Label errorLabel = new Label("");
 		    errorLabel.setFont(new Font("Arial",15));
 		    errorLabel.setLayoutX(135);
 		    errorLabel.setLayoutY(420);
 
+		    //Create an error label for the meal probability values
 		    Label errorLabel2 = new Label("");
 		    errorLabel2.setFont(new Font("Arial", 15));
 		    errorLabel2.setLayoutX(30);
 		    errorLabel2.setLayoutY(325);
 
+		    //Add a label for the Shift order values
 		    Label mealsPerShift = new Label("Meals per shift:");
 		    mealsPerShift.setFont(new Font("Arial",20));
 		    mealsPerShift.setLayoutX(30);
 		    mealsPerShift.setLayoutY(72);
 
+		    //Create a display for the meals
 	        ListView<String> listFood = new ListView<String>();
+	        //Create a display for the meal probabilities
 	        ListView<String> listProbs = new ListView<String>();
 
+	        //Create a list that holds the meal names
 	        ObservableList<String> foodItem =FXCollections.observableArrayList ();
+	        //Create a list that holds the meal probabilities
 		    ObservableList<String> foodProbs =FXCollections.observableArrayList ();
 
+		    //Add the meals and their probabilities to their respective list.
 	        for (int i = 0; i < mealList.getMeals().size(); i++) {
 		    	foodItem.add(mealList.getMeals().get(i).getName());
 		    	foodProbs.add("" + mealList.getMeals().get(i).getPercentage()*100);
 		    }
 
-
+	        //Link the list that holds the valuse to the display values
 		    listFood.setItems(foodItem);
 		    listProbs.setItems(foodProbs);
+
+		    //Allow the list of probabilities to be editable
 		    listProbs.setEditable(true);
 		    listProbs.setCellFactory(TextFieldListCell.forListView());
+		    //Every time a probability is updated, check if it's a valid entry and recalculate total percentage value
 		    listProbs.getItems().addListener(new ListChangeListener<Object>() {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
@@ -620,29 +642,54 @@ public class Main extends Application {
 		        }
 		    });
 
+		  //Set the layout for the meal name display
+	        listFood.setPrefWidth(140);
+	        listFood.setPrefHeight(275);
+	        listFood.setLayoutX(250);
+	        listFood.setLayoutY(100);
+
+	        //Set the layout for the meal probability display
+	        listProbs.setLayoutX(390);
+	        listProbs.setLayoutY(100);
+	        listProbs.setPrefWidth(70);
+	        listProbs.setPrefHeight(275);
+
+
+
+		    //Create a list to display the shifts
 	        ListView<String> labeledShifts = new ListView<String>();
+	        //Create a list to display the shift order values
 	        ListView<String> shiftProbabilities = new ListView<String>();
 
+	        //Create a list to hold the shift titles
 		    ObservableList<String> shiftLabels =FXCollections.observableArrayList (
 		            "First Shift: ", "Second Shift: ", "Third Shift: ", "Fourth Shift: ");
+		    //Create a list to hold the shift order values
 		    ObservableList<String> shiftProbs =FXCollections.observableArrayList ();
+		    //Insert the shift order values into the corresponding list
 		    shiftProbs.add("" + orderList.getFirstHour());
 		    shiftProbs.add("" + orderList.getSecondHour());
 		    shiftProbs.add("" + orderList.getThirdHour());
 		    shiftProbs.add("" + orderList.getFourthHour());
+
+		    //Set the display lists for the shifts to hold their respective items
 		    shiftProbabilities.setItems(shiftProbs);
 		    labeledShifts.setItems(shiftLabels);
 
+		    //Set the layout for the shift labels
 		    labeledShifts.setLayoutX(25);
 		    labeledShifts.setPrefHeight(100);
 		    labeledShifts.setPrefWidth(125);
 		    labeledShifts.setLayoutY(200);
 
+		    //Set the layout for the shift order values
 		    shiftProbabilities.setLayoutX(150);
 		    shiftProbabilities.setPrefHeight(100);
 		    shiftProbabilities.setPrefWidth(60);
 		    shiftProbabilities.setLayoutY(200);
 
+		    //Add a listener to the shift order values that verifies valid entries
+		    //   and updates the value if a the number entered was valid.
 		    shiftProbabilities.getItems().addListener(new ListChangeListener<Object>() {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
@@ -665,28 +712,18 @@ public class Main extends Application {
 		            }
 		        }
 		    });
+		    //Set the shift order values to be editable
 		    shiftProbabilities.setEditable(true);
 		    shiftProbabilities.setCellFactory(TextFieldListCell.forListView());
 
+		    //Create a home button and position it
 	        Button home = new Button("Home");
-	        Pane root = new Pane();
-
 	        home.setLayoutX(130);
 	        home.setLayoutY(385);
 	        home.setPrefWidth(75);
 
-
-	        listFood.setPrefWidth(140);
-	        listFood.setPrefHeight(275);
-	        listProbs.setPrefWidth(70);
-	        listProbs.setPrefHeight(275);
-
-	        listFood.setLayoutX(250);
-	        listFood.setLayoutY(100);
-	        listProbs.setLayoutX(390);
-	        listProbs.setLayoutY(100);
-
-
+	        //Add all the created elements to the screen
+	        Pane root = new Pane();
 	        root.getChildren().add(listProbs);
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
@@ -695,18 +732,12 @@ public class Main extends Application {
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
 	        root.getChildren().addAll(labeledShifts,shiftProbabilities,errorLabel2);
 
+	        //Set the home button to only work if there are no errors on the page
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 
 	            @Override public void handle(ActionEvent e) {
 		            if (errorLabel.getText() == "" && errorLabel2.getText() == "") {
 		            	if (totalVal.getText() == "100") {
-			            	/*
-			    		    for (int i = 0; i < Orders.getMealList().size(); i++) {
-			    		    	String entryValue = listProbs.getItems().get(i);
-			            		double val = Double.parseDouble(entryValue);
-			    		    	Orders.getMealList().get(i).setPercentage(val);
-			    		    }
-			    		    */
 			                mainPage(primaryStage);
 		            	} else {
 			            	errorLabel.setText("Invalid Summation: \n\tMeal percentages must total 100.");
@@ -715,10 +746,11 @@ public class Main extends Application {
 	            }
 	        });
 
+	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -1585,7 +1617,7 @@ public class Main extends Application {
 	public static void saveInformation(Stage primaryStage) {
 
 		try {
-			
+
 			//setting buttons and title
 			primaryStage.setTitle("Saving Screen");
 
@@ -1613,14 +1645,14 @@ public class Main extends Application {
 
 
 
-	  
+
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
 	        button2.setLayoutY(300);
 
-	        
+
 	        //add buttons to root
 	        root.getChildren().add(button1);
 	        root.getChildren().add(button2);
@@ -1631,25 +1663,25 @@ public class Main extends Application {
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	           	  FileChooser fileChooser = new FileChooser();
-            	  
+
                   //Set extension filter
                   FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
                   fileChooser.getExtensionFilters().add(extFilter);
-                  
+
                   //Show save file dialog
                   File file = fileChooser.showSaveDialog(primaryStage);
-                  	   
-	                  
+
+
                   fileChooser.getExtensionFilters().add(extFilter);
 
 	                if (file != null) {
 	                	SaveFile(file);
-	                }	      
-	                
+	                }
+
 	            }
 	        });
 
-	        
+
 	        //button that sends to main page
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -1687,39 +1719,39 @@ public class Main extends Application {
 
 
 	}
-	
+
 	/*
 	 * Method to save to a file
 	 * @param file is the file to be saved
 	 */
 	 private static void SaveFile(File file){
 	        try {
-	   
+
 	        	//get where our data is
 	        	File json = new File("temp.json");
-	        	
+
 	        	Scanner scn = new Scanner(json);
-	        	
+
 	        	String content = "";
-	        	
+
 	        	//save the data to a string
 	        	while (scn.hasNextLine()) {
 	        		content += scn.nextLine();
 	        	}
-	        	
+
 	        	//write the string to the file
 	        	 PrintWriter writer;
 	             writer = new PrintWriter(file);
 	             writer.println(content);
 	             writer.close();
-	        	
-	        	
+
+
 	        } catch (IOException ex) {
-	        	
+
 	           System.out.println("File Logging Error");
-	           
+
 	        }
-	         
+
 	    }
 
 

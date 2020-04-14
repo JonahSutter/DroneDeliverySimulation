@@ -17,14 +17,14 @@ public class Simulation {
 		int pointer = 0; 	//Used to go through the generated orders list
 		int numDelivered = 0;
 
-		//List of current orders the Drone can see
+		//List of the orders the Drone has to load
 		ArrayList<Order> currentOrders = new ArrayList<Order>();
-
-		//List of meals we skipped over when doing knapsack packing
-		ArrayList<Order> skippedOrders = new ArrayList<Order>();
 
 		//List of Orders the Drone is going to deliver this run
 		ArrayList<Order> ordersToDeliver = new ArrayList<Order>();
+
+		//List of meals we skipped over when doing knapsack packing
+		ArrayList<Order> skippedOrders = new ArrayList<Order>();
 
 		//List of each delivery time
 		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
@@ -49,11 +49,14 @@ public class Simulation {
 				//(Except for the first 5 minutes - special case)
 			if (returnTime <= time && currentOrders.size() > 0 && time >= 300) {
 
-				//Pack the orders
+				//Initialize weight of meals on the drone
 				double currWeight = 0;
 				boolean overweight = false;
+				//Keeps track of values necessary to add skipped orders
+				int numAdded = 0;
+				int point = 0;
 
-				//If there are skipped orders, add them onto the delivery.
+				//If there are skipped orders, add them onto the delivery in FIFO order
 				while (skippedOrders.size() > 0 && !overweight) {
 					double mealWeight = skippedOrders.get(0).getMeal().getWeight();
 					if (currWeight + mealWeight <= maxWeight) {
@@ -65,7 +68,7 @@ public class Simulation {
 					}
 				}
 
-				//Pack the orders with Knapsack
+				//If there is room left and orders to be packed, use Knapsack to pack
 				while (currentOrders.size() > 0 && !overweight) {
 					double minWeight = 0;
 					int mealPos = 0;
@@ -81,10 +84,15 @@ public class Simulation {
 
 					//Add the lowest weight meal to the ordersToDeliver
 					ordersToDeliver.add(currentOrders.get(mealPos));
+					//Calculate the highest-positioned meal used
+					point = (point < mealPos + numAdded) ? mealPos + numAdded : point;
+					numAdded++;
 					currentOrders.remove(mealPos);
 				}
 
-				while (currentOrders.size() > 0) {
+
+				//Add all of the skipped meals to the skipped orders list
+				while (point-numAdded > 0) {
 					skippedOrders.add(currentOrders.get(0));
 					currentOrders.remove(0);
 				}
@@ -100,15 +108,18 @@ public class Simulation {
 					double[] newPoint = ordersToDeliver.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 						timeDroneGone += dropOffTime;
+						//Add the time it took to deliver this order to the list of delivery times
 						timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					} else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
 						timeDroneGone += distance/droneSpeed + dropOffTime;
+						//Add the time it took to deliver this order to the list of delivery times
 						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					}
 					prevPoint = newPoint;
 				}
 
+				//Set the drone's return time to AFTER it has returned AND new batteries have been put in
 				returnTime = timeDroneGone + time + turnAround;
 
 				numDelivered += ordersToDeliver.size();
@@ -119,13 +130,14 @@ public class Simulation {
 			time++;
 		}
 
+		//Return the list of times it took to deliver each order.
 		return timeToDelivery;
 	}
 
 	private static ArrayList<Double> FIFO(ArrayList<Order> orderList) {
 		int time = 0; 		//Every increment of time = 1 second
 		int pointer = 0; 	//Used to go through the generated orders list
-		int numDelivered = 0;
+		int numDelivered = 0; //The number of orders delivered so far
 
 		//List of current orders the Drone can see
 		ArrayList<Order> currentOrders = new ArrayList<Order>();
@@ -159,6 +171,7 @@ public class Simulation {
 				boolean overweight = false;
 				double currWeight = 0;
 
+				//If the drone isn't overweight, try and add the next meal in the list
 				while (currentOrders.size() > 0 && !overweight) {
 					double mealWeight = currentOrders.get(0).getMeal().getWeight();
 					if (currWeight + mealWeight <= maxWeight) {
@@ -181,14 +194,18 @@ public class Simulation {
 					double[] newPoint = ordersToDeliver.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 						timeDroneGone += dropOffTime;
+						//Add the time it took to deliver this order to the list of delivery times
 						timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					} else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
 						timeDroneGone += distance/droneSpeed + dropOffTime;
+						//Add the time it took to deliver this order to the list of delivery times
 						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
 					}
 					prevPoint = newPoint;
 				}
+
+				//Set the drone's return time to AFTER it has returned AND new batteries have been put in
 				returnTime = timeDroneGone + time + turnAround;
 
 				numDelivered += ordersToDeliver.size();
@@ -199,6 +216,7 @@ public class Simulation {
 			//Increment the time by one second
 			time++;
 		}
+		//Return the list of times it took to deliver each order.
 		return timeToDelivery;
 	}
 
@@ -328,6 +346,7 @@ public class Simulation {
 
 	}
 
+	/*//Used for testing
 	public static void main(String[] args) {
 		Foods foodList = new Foods();
 		Meals mealList = new Meals();
@@ -387,7 +406,7 @@ public class Simulation {
 		for (int i = 0; i < testResults.size(); i++) {
 			System.out.println("Position " + i + " = " + testResults.get(i));
 		}
-	}
+	} */
 
 	public Simulation(Foods fList, Meals mList, Orders oList) {
 		foodList = fList;
