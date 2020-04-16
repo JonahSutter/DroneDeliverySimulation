@@ -936,11 +936,14 @@ public class Main extends Application {
 
 	public static void addFoodPage(Stage primaryStage) {
 		try {
+			//creates title of page
 			primaryStage.setTitle("Add Food Page");
+			
 			//add the labels
 			Label label = new Label("Dromedary Drones");
 			Label name = new Label("Food Name");
 			Label weight = new Label("Food Weight (oz)");
+			
 			//size the labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
@@ -950,12 +953,15 @@ public class Main extends Application {
 			weight.setFont(new Font("Arial", 12));
 			weight.setLayoutX(180);
 			weight.setLayoutY(230);
-			//add buttons
+			
+			//create buttons
 	        Button saveFood = new Button("Save Food");
 	        Button cancel = new Button("Cancel");
-	        //add text fields
+	        
+	        //create text fields
 	        TextField foodName = new TextField();
 	        TextField foodWeight = new TextField();
+	        
 	        //position of buttons
 	        saveFood.setLayoutX(180);
 	        saveFood.setLayoutY(300);
@@ -965,11 +971,13 @@ public class Main extends Application {
 	        saveFood.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
+	        
 	        //position of text fields
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(200);
 	        foodWeight.setLayoutX(180);
 	        foodWeight.setLayoutY(250);
+	        
 	        //add to the root
 	        Pane root = new Pane();
 	        root.getChildren().add(saveFood);
@@ -980,25 +988,30 @@ public class Main extends Application {
 	        root.getChildren().add(name);
 	        root.getChildren().add(weight);
 
-	        //if you hit the same food button
+	        //if you hit the save button
 	        saveFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	//checks if the text field is empty, if the user is trying to add a food already listed, if the weight is a num, and that the weight is in bounds
 	            	if(!checkIfEmpty(foodName)&& !checkIfEmpty(foodWeight) && !checkDuplicateName(foodName) && checkWeightIsNum(foodWeight) && checkWeight(foodWeight)) {
+	            	//gets info from text fields
 	            	String addName = foodName.getText();
 	            	double w = Double.parseDouble(foodWeight.getText());
-	      	        //need to figure out how to get the weight
+	      	        //creates the new food and adds to list
 	      	        Food f = new Food(addName, w);
 	      	        foodList.addFoodItem(f);
 	                meals(primaryStage);
-	            }
+	            }//ends if 
 	            }
 	        });
-	        //if you hit the cancel button
+	        
+	        //if you hit the cancel button goes back to meals page
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
+	        
+	        //creates a new scene
 			Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -1011,16 +1024,20 @@ public class Main extends Application {
 			e.printStackTrace();
 		}//ends catch
 	}//ends the method
+	
 	public static boolean checkDuplicateName(TextField t) {
+		//gets info from the field 
 		String tryName = t.getText();
+		//iterates list to see if the food already exists and sends failed notification
 		for(int i = 0; i<foodList.getFoods().size(); i++) {
 			if(foodList.getFoods().get(i).getName().equals(tryName)) {
 				failedAlert("This food is already listed");
 				return true;
-			}
-		}
+			}//ends if
+		}//ends for
 		return false;
-	}
+	}//ends checkDuplicateName
+	
 	public static boolean checkWeight(TextField t) {
 		double w = Double.parseDouble(t.getText());
 		//checks that weight is in the right bounds
@@ -1031,31 +1048,37 @@ public class Main extends Application {
 			return false;
 		}
 	}//ends check weight
+	
 	public static boolean checkWeightIsNum(TextField t) {
+		//gets info from text
 		String s = t.getText();
 		for(int i = 0; i<s.length(); i++) {
+			//gets characters and checks if character is number and sends failed alert 
 			char c = s.charAt(i);
 			if(Character.isAlphabetic(c)) {
 				failedAlert("Weight must be only numbers");
 				return false;
-			}
+			}//ends if
 		}//ends for loop
 		return true;
 	}//ends check weight is num
+	
 	public static void failedAlert(String s) {
 		Alert fail = new Alert(AlertType.INFORMATION);
 		fail.setHeaderText("Failed");
 		fail.setContentText(s);
 		fail.showAndWait();
-	}//ends alert message
+	}//ends alert message method
+	
 	public static boolean checkIfEmpty(TextField t) {
 		if(t.getText().trim().isEmpty()) {
 			failedAlert("One or more fields is empty");
 			return true;
 		}else {
 			return false;
-		}
-	}//ends check if empty
+		}//ends else
+	}//ends check if empty method 
+	
 	public static void addMealPage(Stage primaryStage) {
 		try {
 			primaryStage.setTitle("Add Meal Page");
@@ -1725,15 +1748,20 @@ public class Main extends Application {
 
 	public static void editFoodPage(Stage primaryStage) {
 		try {
+			//creates title of the page
 			primaryStage.setTitle("Edit Food Page");
+			//creates label
 			Label label = new Label("Dromedary Drones");
+			
 			//set label positions
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
+			
 			//add buttons
 	        Button editName = new Button("Change Food Name");
 	        Button editWeight = new Button("Change Food Weight");
 	        Button cancel = new Button("Cancel");
+	        
 	        //sets position of buttons
 	        editName.setLayoutX(180);
 	        editName.setLayoutY(250);
@@ -1747,30 +1775,35 @@ public class Main extends Application {
 	        editWeight.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
+	        
 	        //add to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(editName);
 	        root.getChildren().add(editWeight);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(label);
-	        //if you choose edit name
+	        
+	        //if you choose edit name goes to the edit food name
 	        editName.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	editFoodName(primaryStage);
 	            }
 	        });
-	        //if you chose edit weight
+	        
+	        //if you chose edit weight goes to the edit food weight page
 	        editWeight.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	editFoodWeight(primaryStage);
 	            }
 	        });
-	        //if you chose cancel
+	        
+	        //if you chose cancel goes back to the meals page
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	            });
+	        //creates a new scene 
 	        Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -1784,6 +1817,7 @@ public class Main extends Application {
 		}
 
 	}//ends method
+	
 	public static void editFoodWeight(Stage primaryStage) {
 		try {
 			//add label and titles
@@ -1792,6 +1826,7 @@ public class Main extends Application {
 			Label name = new Label("Food Name");
 			Label newWeight = new Label("New Food Weight (oz)");
 			Pane root = new Pane();
+			
 			//set positions of labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
@@ -1801,12 +1836,15 @@ public class Main extends Application {
 			newWeight.setFont(new Font("Arial", 12));
 			newWeight.setLayoutX(180);
 			newWeight.setLayoutY(130);
-			//add buttons
+			
+			//create buttons
 	        Button saveChanges = new Button("Save Changes");
 	        Button cancel = new Button("Cancel");
+	        
 	        //add text fields
 	        TextField foodName = new TextField();
 	        TextField newFoodWeight = new TextField();
+	        
 	        //sets position of buttons
 	        saveChanges.setLayoutX(180);
 	        saveChanges.setLayoutY(300);
@@ -1816,11 +1854,13 @@ public class Main extends Application {
 	        saveChanges.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
+	        
 	        //set position of text box
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(100);
 	        newFoodWeight.setLayoutX(180);
 	        newFoodWeight.setLayoutY(150);
+	        
 	        //adds to the pane
 	        root.getChildren().add(saveChanges);
 	        root.getChildren().add(cancel);
@@ -1829,13 +1869,18 @@ public class Main extends Application {
 	        root.getChildren().add(newFoodWeight);
 	        root.getChildren().add(newWeight);
 	        root.getChildren().add(label);
-	        //if you hit the save button
+	        
+	        //if the user presses the save button 
 	        saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	//gets the text field into
 	            	String origName = foodName.getText();
+	            	//checks that the food is in the list, that a number was entered, that the weight
+	            	//and that the weight is in bounds
 	            	if(checkNames(foodName) && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
 	            	double newW = Double.parseDouble(newFoodWeight.getText());
 	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
+	            		//changes the weight once there is a match
 	            		if(foodList.getFoods().get(i).getName().equals(origName)) {
 	            			foodList.getFoods().get(i).changeWeight(newW);
 	            		}//ends if
@@ -1844,12 +1889,14 @@ public class Main extends Application {
 	            	}//ends if weight
 	            }
 	        });
-	        //if you hit the cancel button
+	        //if you hit the cancel button goes back to the edit food page
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                editFoodPage(primaryStage);
 	            }
 	            });
+	        
+	        //creates a new scene
 	        Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -1862,101 +1909,98 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}//ends edit food weight
+	
 	public static boolean checkNames(TextField t) {
+		//gets the text from the field
 		String name = t.getText();
+		//for all the foods in the list 
 		for(int i = 0; i<foodList.getFoods().size(); i++) {
+			//if there is a food with the name from the text field 
 			if(foodList.getFoods().get(i).getName().equals(name)) {
 				return true;
-			}
-		}
+			}//ends if 
+		}//ends for loop 
+		//gives the user a failed alert
 		failedAlert("That is not a current food");
 		return false;
 
 	}//ends check names method
+	
 	public static void editFoodName(Stage primaryStage) {
 		try {
+		//title of the page
 		primaryStage.setTitle("Change Food Name Page");
+		
+		//create labels 
 		Label label = new Label("Dromedary Drones");
 		Label name = new Label("Current Food Name");
 		Label newName = new Label("New Food Name");
-
 		Label newWeight = new Label("New Food Weight");
 		Label weight = new Label("Current Food Weight");
-
+		
+		//sets fonts and positions of labels
 		label.setFont(new Font("Arial", 40));
 		label.setLayoutX(80);
-
 		name.setFont(new Font("Arial", 12));
 		name.setLayoutX(180);
 		name.setLayoutY(80);
-
 		newName.setFont(new Font("Arial", 12));
 		newName.setLayoutX(180);
 		newName.setLayoutY(130);
-
 		weight.setFont(new Font("Arial", 12));
 		weight.setLayoutX(180);
 		weight.setLayoutY(180);
-
 		newWeight.setFont(new Font("Arial", 12));
 		newWeight.setLayoutX(180);
 		newWeight.setLayoutY(230);
 
+		//create buttons
         Button saveChanges = new Button("Save Changes");
         Button cancel = new Button("Cancel");
 
-        TextField foodName = new TextField();
-
-        TextField newFoodName = new TextField();
-
-        TextField newFoodWeight = new TextField();
-
-
-        Pane root = new Pane();
-
+        //set position of buttons 
         saveChanges.setLayoutX(180);
         saveChanges.setLayoutY(300);
-        cancel.setLayoutX(180);
-        cancel.setLayoutY(350);
-
         saveChanges.setPrefHeight(40);
         saveChanges.setPrefWidth(140);
+        cancel.setLayoutX(180);
+        cancel.setLayoutY(350);
         cancel.setPrefHeight(40);
         cancel.setPrefWidth(140);
 
-        //food name text box is first
+        //create text fields
+        TextField foodName = new TextField();
+        TextField newFoodName = new TextField();
+        TextField newFoodWeight = new TextField();
+        
+        //sets the position of the text fields
         foodName.setLayoutX(180);
         foodName.setLayoutY(100);
-
-
-
-        //new food name goes second
         newFoodName.setLayoutX(180);
         newFoodName.setLayoutY(150);
-
-
-
-        //last is new food weight
         newFoodWeight.setLayoutX(180);
         newFoodWeight.setLayoutY(250);
 
+        //adds everything to the pane
+        Pane root = new Pane();
         root.getChildren().add(saveChanges);
         root.getChildren().add(cancel);
         root.getChildren().add(foodName);
-
-//        root.getChildren().add(newName);
-//        root.getChildren().add(newFoodName);
-
         root.getChildren().add(label);
         root.getChildren().add(name);
 
+        //if the user presses the save button 
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+            	//if the food name exists in the list of foods 
             	if(checkNames(foodName)) {
+            	//gets the info from text fields
             	String origName = foodName.getText();
             	String newN = newFoodName.getText();
+            	//checks teh array of foods for a match
             	for(int j = 0; j< foodList.getFoods().size(); j++) {
             		if(foodList.getFoods().get(j).getName().equals(origName)) {
+            			//changees the name
             			foodList.getFoods().get(j).changeName(newN);
             		}//ends if
             	}//ends for
@@ -1964,113 +2008,104 @@ public class Main extends Application {
             }//ends if
             }
         });
-
+        
+        //if the user presses the cancel button goes back to the edit food page 
         cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 editFoodPage(primaryStage);
             }
             });
+        //creates a new scene
         Scene scene = new Scene(root,500,500);
-
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
-
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-
-
 			}
 		}.start();
 	} catch(Exception e) {
 		e.printStackTrace();
 	}
-
 	}//ends edit food page
 
 	public static void removeFoodPage(Stage primaryStage) {
 		try {
+			//sets the title of the page
 			primaryStage.setTitle("Remove Food Page");
 
-			//add the labels
-
+			//create the labels 
 			Label label = new Label("Dromedary Drones");
 			Label name = new Label("Food Name");
 
-			//add position for labels
-
-
+			//sets the fonts and position of the labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
-
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
 			name.setLayoutY(180);
-			//add the buttons
+			
+			//creates the buttons
 	        Button remove = new Button("Remove");
 	        Button cancel = new Button("Cancel");
 
 	        //add the text fields
-
 	        TextField foodName = new TextField();
 
 	        //set position of text fields and buttons
-
-	        Pane root = new Pane();
-
 	        remove.setLayoutX(180);
 	        remove.setLayoutY(300);
 	        cancel.setLayoutX(180);
 	        cancel.setLayoutY(350);
-
+	        foodName.setLayoutX(180);
+	        foodName.setLayoutY(200);
+	        
+	        //sets the height and width of buttons
 	        remove.setPrefHeight(40);
 	        remove.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
-
 	        cancel.setPrefWidth(140);
-
 	        cancel.setPrefWidth(140);
-
-	        foodName.setLayoutX(180);
-	        foodName.setLayoutY(200);
-
-
-
+	       
+	        //adds to the pane
+	        Pane root = new Pane();
 	        root.getChildren().add(remove);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(foodName);
 	        root.getChildren().add(label);
 	        root.getChildren().add(name);
 
-
+	        //if the user presses the remove button 
 	        remove.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	//if the food is in check names 
 	            	if(checkNames(foodName)) {
 	            	String removeName = foodName.getText();
-	            	//need to remove the food from the array
+	            	//checks all the foods in the array 
 	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
+	            		//if the food equals the name of the food they want to remove
 	            		if(foodList.getFoods().get(i).getName().equals(removeName)) {
+	            			//removes the food 
 	            			foodList.getFoods().remove(foodList.getFoods().get(i));
-	            		}
-	            	}
+	            		}//ends if
+	            	}//ends for
 	            	//goes back to the meals page
 	                meals(primaryStage);
-	            }
+	            }//ends if check names
 	            }//ends if names
-	        });
-
+	        }); //ends remove action
+	        
+	        //if the user presses the cancel button goes back to meals page
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
-	        });
-
+	        }); //ends cancel action
+	        
+	        //creates the scene 
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
@@ -2080,17 +2115,18 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-
 	}//ends remove food page
 
 	public static void map(Stage primaryStage) {
 		try {
+		//creates the image
 		Image gcc = new Image(Main.class.getResourceAsStream("campusMapGCC.PNG"), 1000.0,1000.0, true, true);
 		ImageView selectedImage = new ImageView();
 		selectedImage.setImage(gcc);
+		//adds to the pane
 		Pane root = new Pane();
 		root.getChildren().addAll(selectedImage);
-
+		//creates the scene
 		Scene scene = new Scene(root,500,500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -2102,6 +2138,6 @@ public class Main extends Application {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}//ends map method
 
 }
