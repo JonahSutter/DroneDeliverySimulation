@@ -8,9 +8,9 @@ import java.io.FileWriter;
 
 public class Simulation {
 
-	private static Meals mealList;
-	private static Orders orderList;
-	private static Foods foodList;
+	private static Meals mealList;		//Stores all meal options for the simulation maybe not needed
+	private static Orders orderList;	//Used to generate orders for the simulation
+	private static Foods foodList;		//Stores food options for the simulation maybe not needed
 
 	private static ArrayList<Double> knapSack(ArrayList<Order> orderList) {
 		int time = 0; 		//Every increment of time = 1 second
@@ -255,19 +255,23 @@ public class Simulation {
 		}
 	}
 
+	/***
+	 * Used to run the simulation,
+	 * uses displayMethod to generate a .json file with all data output called temp.json
+	 */
 	public void runSimulation() {
-		ArrayList<Double> testResults = new ArrayList<Double>();
-		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
+		ArrayList<Double> testResults = new ArrayList<Double>();		//stores delivery times for Knapsack simulation
+		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();	//stores delivery times for FIFO simulation
 
-		orderList.setOrders();
-		testResults = knapSack(orderList.getOrders());
+		orderList.setOrders();	//gets the orders class ready
+		testResults = knapSack(orderList.getOrders()); //feed orders into their sims and record results
 		FIFOtestResults = FIFO(orderList.getOrders());
-		for(int i = 0; i < 49; i++){
+		for(int i = 0; i < 49; i++){ //repeat the above so that total # of runs = 50
 			orderList.setOrders();
 			testResults.addAll(knapSack(orderList.getOrders()));
 			FIFOtestResults.addAll(FIFO(orderList.getOrders()));
 		}
-		displayMethod(FIFOtestResults, testResults);
+		displayMethod(FIFOtestResults, testResults); //create the json results file
 	}
 
 
@@ -286,11 +290,11 @@ public class Simulation {
 		for(double time : FIFO){//go through all the times for FIFO
 			FIFOAvg += time;
 
-			if(time > FIFOWorst){
+			if(time > FIFOWorst){	//find the worst delivery time
 				FIFOWorst = time;
 			}
 		}
-		FIFOAvg = FIFOAvg/FIFO.size();
+		FIFOAvg = FIFOAvg/FIFO.size(); //calculate average delivery time
 
 		//Knapsack Data
 		double KnapsackAvg = 0;
@@ -299,22 +303,22 @@ public class Simulation {
 		for(double time: Knapsack){
 			KnapsackAvg += time;
 
-			if(time > KnapsackWorst){
+			if(time > KnapsackWorst){	//find the worst delivery time
 				KnapsackWorst = time;
 			}
 		}
-		KnapsackAvg = KnapsackAvg / Knapsack.size();
+		KnapsackAvg = KnapsackAvg / Knapsack.size(); //calculate avg delivey time
 
 		//Save to JSON doc
-		JSONObject data = new JSONObject();
-		JSONObject FIFOObj = new JSONObject();
-		JSONObject KnapObj = new JSONObject();
-		JSONArray FIFOData = new JSONArray();
-		JSONArray KnapData = new JSONArray();
+		JSONObject data = new JSONObject();		//outermost object
+		JSONObject FIFOObj = new JSONObject();	//data from the FIFO sim
+		JSONObject KnapObj = new JSONObject();	//data from the Knapsack sim
+		JSONArray FIFOData = new JSONArray();	//array of raw FIFO delivery times
+		JSONArray KnapData = new JSONArray();	//array of raw knapsack delivery times
 
 
-		FIFOObj.put("avgTime",FIFOAvg);
-		FIFOObj.put("worstTime", FIFOWorst);
+		FIFOObj.put("avgTime",FIFOAvg);		//set fifo avg delivery time
+		FIFOObj.put("worstTime", FIFOWorst);//set fifo worst delivery time
 		for(double time : FIFO){
 			FIFOData.add(time);
 		}
@@ -331,7 +335,7 @@ public class Simulation {
 		data.put("Knapsack", KnapObj);
 
 		//System.out.println(data.toString());
-		try {
+		try {	//put the json data in a file
 			FileWriter file = new FileWriter("temp.json");
 			file.write(data.toString());
 			file.flush();
@@ -408,6 +412,12 @@ public class Simulation {
 		}
 	} */
 
+	/***
+	 * Creates an instance of the simulation class based on the parameters passed
+	 * @param fList	a list of the potential foods
+	 * @param mList	a list of the potetial meals
+	 * @param oList	an instance of the orders class for generation orders in sim
+	 */
 	public Simulation(Foods fList, Meals mList, Orders oList) {
 		foodList = fList;
 		mealList = mList;
