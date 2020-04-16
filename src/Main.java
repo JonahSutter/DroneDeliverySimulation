@@ -759,14 +759,16 @@ public class Main extends Application {
 	public static void meals(Stage primaryStage) {
 
 		try {
+			//Set the title of the page
 			primaryStage.setTitle("Meals Page");
 
+			//declare labels and set initial values
 			Label label = new Label("Dromedary Drones");
-
 			Label mealsLabel = new Label("Meals");
 			Label foods = new Label("Foods");
 			Label errorLabel = new Label("");
 
+			//set layout, font, and colors of labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
@@ -783,30 +785,33 @@ public class Main extends Application {
 			errorLabel.setLayoutY(60);
 			errorLabel.setTextFill(Color.web("#cc0000"));
 
-			  //adding remove food button
+			
+			//Add buttons and their initial values
 	        Button removeFood = new Button("Remove Food");
-	        //adding edit food button
 	        Button editFood = new Button("Edit Food");
 	        Button addFood = new Button("Add Food");
 	        Button addMeal = new Button("Add Meal");
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
-
 	        Button home = new Button("Home");
+	        
+	        //Set list views to display foods and meals
 	        ListView<String> listFood = new ListView<String>();
 	        ListView<String> listMeals = new ListView<String>();
+	        
+	        //create observable lists
 	        ObservableList<String> food =FXCollections.observableArrayList ();
+		    ObservableList<String> meals =FXCollections.observableArrayList ();
+	        
+	        
+		  //Adds foodss to the listView from the foodList, displaying their name
 	        for (int i = 0; i < foodList.getFoods().size(); i++) {
 	        	food.add(foodList.getFoods().get(i).getName());
 	        }
 		        listFood.setItems(food);
 
 
-		    ObservableList<String> meals =FXCollections.observableArrayList ();
 
-//	        ObservableList<String> food =FXCollections.observableArrayList (
-//			        "Cheeseburger", "Hamburger", "Fries", "Drink");
-//			    listFood.setItems(food);
 
 			//Adds meals to the listView from the mealList, displaying their name
 		    ArrayList<Meal> mealArray = new ArrayList<Meal>();
@@ -817,35 +822,42 @@ public class Main extends Application {
 
 			    listMeals.setItems(meals);
 
+			    
+			//Create the pane    
 	        Pane root = new Pane();
 
+	        //Set layout of Buttons
 	        addFood.setLayoutX(180);
 	        addFood.setLayoutY(100);
+	        
 	        addMeal.setLayoutX(180);
 	        addMeal.setLayoutY(250);
+	        
 	        editMeal.setLayoutX(180);
 	        editMeal.setLayoutY(300);
+	        
 	        removeMeal.setLayoutX(180);
 	        removeMeal.setLayoutY(350);
+	        
 	        home.setLayoutX(180);
 	        home.setLayoutY(450);
 
-	        //adding remove food button
 	        removeFood.setLayoutX(180);
 	        removeFood.setLayoutY(200);
-	        //adding edit food button
+
 	        editFood.setLayoutX(180);
 	        editFood.setLayoutY(150);
 
-	        //adding remove food button
+	        //Set dimensions of buttons
 	        removeFood.setPrefHeight(40);
 	        removeFood.setPrefWidth(140);
-	        //adding edit food button
+
 	        editFood.setPrefHeight(40);
 	        editFood.setPrefWidth(140);
 
 	        addFood.setPrefHeight(40);
 	        addFood.setPrefWidth(140);
+	        
 	        addMeal.setPrefHeight(40);
 	        addMeal.setPrefWidth(140);
 
@@ -858,8 +870,10 @@ public class Main extends Application {
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
 
+	        //Set dimensions and layout of food and Meal lists
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
+	        
 	        listMeals.setPrefWidth(140);
 	        listMeals.setPrefHeight(300);
 
@@ -868,11 +882,10 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
-	      //adding remove food button
-	        root.getChildren().add(removeFood);
-	        //adding edit food button
-	        root.getChildren().add(editFood);
 
+	        //Add Every javaFX element to the pane so it will be displayed
+	        root.getChildren().add(removeFood);
+	        root.getChildren().add(editFood);
 	        root.getChildren().add(addFood);
 	        root.getChildren().add(addMeal);
 	        root.getChildren().add(listFood);
@@ -885,33 +898,35 @@ public class Main extends Application {
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
 
+	        //Give addFood button functionality
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addFoodPage(primaryStage);
 	            }
 	        });
 
-	      //adding removing food button
+	      //Give removeFood button functionality
 	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                removeFoodPage(primaryStage);
 	            }
 	        });
 
-	      //adding removing food button
+	      //Give editFood button functionality
 	        editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                editFoodPage(primaryStage);
 	            }
 	        });
 
-
+	        //Give addMeal button functionality
 	        addMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addMealPage(primaryStage);
 	            }
 	        });
 
+	        //Give editMeal button functionality and basic error checking
 	        editMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	        	@Override public void handle(ActionEvent e) {
 	        		try {
@@ -924,6 +939,7 @@ public class Main extends Application {
 	        	}
 	        });
 
+	        //Give removeMeal button functionality and basic error checking
 	        removeMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	try {
@@ -936,24 +952,26 @@ public class Main extends Application {
 	            }
 	        });
 
+	        //Give home button functionality
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	mainPage(primaryStage);
 	            }
 	        });
 
+	        //Give removeFood button functionality
 			removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 				@Override public void handle(ActionEvent e) {
 					removeFoodPage(primaryStage);
 				}
 			});
 
+			//Create the scene
 			Scene scene = new Scene(root,500,500);
 
+			//Have the GUI page display
 			primaryStage.setScene(scene);
-			primaryStage.show();
-
-
+			primaryStage.show();			
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
@@ -964,8 +982,10 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}	//End meals function
 
+	
+	
 	public static void addFoodPage(Stage primaryStage) {
 		try {
 			//creates title of page
@@ -1110,16 +1130,20 @@ public class Main extends Application {
 			return false;
 		}//ends else
 	}//ends check if empty method 
+
+	
 	
 	public static void addMealPage(Stage primaryStage) {
 		try {
+			//Set the title of the page
 			primaryStage.setTitle("Add Meal Page");
+			
+			//Create labels and set their initial values
 			Label label = new Label("Dromedary Drones");
 			Label mealNameHere = new Label("Meal Name");
 			Label errorLabel = new Label("");
 
-			ListView<String> listFoods = new ListView<String>();
-
+			//Set label fonts, layouts and colors
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
@@ -1132,66 +1156,93 @@ public class Main extends Application {
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
 
+			//Creates buttons and sets their labels
 	        Button saveMeal = new Button("Save Meal");
 	        Button cancel = new Button("Cancel");
 
+	        //Creates text fields for each food item and weight
 	        TextField mealName = new TextField();
-	        mealName.setPromptText("Enter meal name.");
-
 	        TextField mealWeight1 = new TextField();
 	        TextField mealWeight2 = new TextField();
 	        TextField mealWeight3 = new TextField();
 	        TextField mealWeight4 = new TextField();
 
+	        //Sets prompts for text fields
+	        mealName.setPromptText("Enter meal name.");
 	        mealWeight1.setPromptText("0.0");
 	        mealWeight2.setPromptText("0.0");
 	        mealWeight3.setPromptText("0.0");
 	        mealWeight4.setPromptText("0.0");
 
 
+	        //Create observableList to hold foods
 		    ObservableList<String> foods = FXCollections.observableArrayList(
 		    		"None"
 		    		);
-		    ArrayList<Food> foodArray = new ArrayList<Food>();
-//		    foodArray = foodList.getFoods();
-//		    for (int i = 0; i < foodArray.size(); i++) {
-//		    	foods.add((foodArray.get(i).getName()));
-//		    }
-//			    listFoods.setItems(foods);
+		    
+		    
+		    //Fill the observableList foods with food items from foodList
 			    for (int i = 0; i < foodList.getFoods().size(); i++) {
 			    	foods.add((foodList.getFoods().get(i).getName()));
 			    }
 				    listFoods.setItems(foods);
 
 
+			//Create comboBoxes to hold foods options
 	        final ComboBox<String> option1 = new ComboBox<String>(foods);
 	        final ComboBox<String> option2 = new ComboBox<String>(foods);
 	        final ComboBox<String> option3 = new ComboBox<String>(foods);
 	        final ComboBox<String> option4 = new ComboBox<String>(foods);
 
+	        //set combo box to display its first value
 	        option1.setValue(foods.get(0));
 	        option2.setValue(foods.get(0));
 	        option3.setValue(foods.get(0));
 	        option4.setValue(foods.get(0));
 
+	        //Create new pane
 	        Pane root = new Pane();
 
+	        //Set layouts of buttons
 	        saveMeal.setLayoutX(180);
 	        saveMeal.setLayoutY(400);
+	        
 	        cancel.setLayoutX(180);
 	        cancel.setLayoutY(450);
 
+	        //Set dimensions for buttons
 	        saveMeal.setPrefHeight(40);
 	        saveMeal.setPrefWidth(140);
+	        
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
 
+	        //set layout of TextFields
 	        mealName.setLayoutX(180);
 	        mealName.setLayoutY(100);
+	        
+	        mealWeight1.setLayoutX(330);
+	        mealWeight1.setLayoutY(150);
 
+	        mealWeight2.setLayoutX(330);
+	        mealWeight2.setLayoutY(200);
+
+	        mealWeight3.setLayoutX(330);
+	        mealWeight3.setLayoutY(250);
+
+	        mealWeight4.setLayoutX(330);
+	        mealWeight4.setLayoutY(300);
+
+	        //Set dimensions of TextFields
+	        mealWeight1.setPrefWidth(40);
+	        mealWeight2.setPrefWidth(40);
+	        mealWeight3.setPrefWidth(40);
+	        mealWeight4.setPrefWidth(40);
+	        
+	        //Set layout for ComboBoxes
 	        option1.setLayoutX(180);
 	        option1.setLayoutY(150);
-
+	        
 	        option2.setLayoutX(180);
 	        option2.setLayoutY(200);
 
@@ -1201,22 +1252,7 @@ public class Main extends Application {
 	        option4.setLayoutX(180);
 	        option4.setLayoutY(300);
 
-	        mealWeight1.setLayoutX(330);
-	        mealWeight1.setLayoutY(150);
-	        mealWeight1.setPrefWidth(40);
-
-	        mealWeight2.setLayoutX(330);
-	        mealWeight2.setLayoutY(200);
-	        mealWeight2.setPrefWidth(40);
-
-	        mealWeight3.setLayoutX(330);
-	        mealWeight3.setLayoutY(250);
-	        mealWeight3.setPrefWidth(40);
-
-	        mealWeight4.setLayoutX(330);
-	        mealWeight4.setLayoutY(300);
-	        mealWeight4.setPrefWidth(40);
-
+	        //Add javaFX elements to the pane so they are displayed
 	        root.getChildren().add(saveMeal);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(mealName);
@@ -1232,7 +1268,10 @@ public class Main extends Application {
 	        root.getChildren().add(mealWeight4);
 	        root.getChildren().add(errorLabel);
 
+	        //Create pattern to only allow numeric characters and periods ( . ) in a text fields
 	        Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
+	        
+	        //Set formatters to that weights can only recieve numeric values and periods ( . ) 
 	        TextFormatter<String> formatter1 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
 	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
 	        });
@@ -1249,21 +1288,21 @@ public class Main extends Application {
 	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
 	        });
 
+	        //Apply formatters to the textFields for weights
 	        mealWeight1.setTextFormatter(formatter1);
 	        mealWeight2.setTextFormatter(formatter2);
 	        mealWeight3.setTextFormatter(formatter3);
 	        mealWeight4.setTextFormatter(formatter4);
 
 
+	        //Adds functionality and error checking to saveMeal button
 	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
 	            	ArrayList<Food> newMeal = new ArrayList<Food>();	//list of foods to add to meal
-	            	String newMealName;
-	            	boolean hasValidFood = false;
-	            	boolean hasValidWeight = true;
-
-	            	System.out.println(mealName.getText().toString());
+	            	String newMealName;									//Name for new meal
+	            	boolean hasValidFood = false;						//If a valid food is selected
+	            	boolean hasValidWeight = true;						//If a valid weight is entered
 
 	            	//If meal does not have a name, display invalidName
 	            	if (mealName.getText().equals("")) {
@@ -1271,19 +1310,26 @@ public class Main extends Application {
 	            		errorLabel.setText("Invalid Name");
 	            	}
 
+	            	//If meal does have a name, check to see if there are any foods selected
 	            	else if (!option1.getValue().toString().equals("None")
 	            			|| !option2.getValue().toString().equals("None")
 	            			|| !option3.getValue().toString().equals("None")
 	            			|| !option4.getValue().toString().equals("None")) {
 	            		hasValidFood = true;
 
+	            		//If it has a valid food, check the weights now
+	            		
+	            		//If option1 has an option other than "None" selected, check the weight
 	            		if (!option1.getValue().toString().equals("None")) {
+	            			
+	            			//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (mealWeight1.getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	            				errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
 	    		            	String food1Name = (String) option1.getValue();
 	    		            	double food1Weight = Double.parseDouble(mealWeight1.getText());
@@ -1291,13 +1337,18 @@ public class Main extends Application {
 	    		            	newMeal.add(newFood);
 	            			}
 	            		}
+	            		
+	            		//If option2 has an option other than "None" selected, check the weight
 	            		if (!option2.getValue().toString().equals("None")) {
+	            			
+	            			//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (mealWeight2.getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	            				errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
 	    		            	String food2Name = (String) option2.getValue();
 	    		            	double food2Weight = Double.parseDouble(mealWeight2.getText());
@@ -1305,13 +1356,18 @@ public class Main extends Application {
 	    		            	newMeal.add(newFood);
 	            			}
 	            		}
+	            		
+	            		//If option3 has an option other than "None" selected, check the weight
             			if (!option3.getValue().toString().equals("None")) {
+            				
+            				//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (mealWeight3.getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	            				errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
 	    		            	String food3Name = (String) option3.getValue();
 	    		            	double food3Weight = Double.parseDouble(mealWeight3.getText());
@@ -1319,13 +1375,18 @@ public class Main extends Application {
 	    		            	newMeal.add(newFood);
 	            			}
             			}
+            			
+            			//If option4 has an option other than "None" selected, check the weight
             			if (!option4.getValue().toString().equals("None")) {
+            				
+            				//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (mealWeight4.getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	            				errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
 	    		            	String food4Name = (String) option4.getValue();
 	    		            	double food4Weight = Double.parseDouble(mealWeight4.getText());
@@ -1333,6 +1394,8 @@ public class Main extends Application {
 	    		            	newMeal.add(newFood);
 	            			}
             			}
+            			
+            			//If hasValidFood and hasValid weight are true, create a new meal using newMealName and newMeal
             			if (hasValidFood && hasValidWeight) {
     		            	newMealName = mealName.getText().toString();
     		            	Meal testMeal = new Meal(newMealName, 0, newMeal);
@@ -1341,28 +1404,27 @@ public class Main extends Application {
             			}
 	            	}
 
+	            	//If no foods are selected, display an error label
 	            	else {
 	            		errorLabel.setLayoutX(150);
 	            		errorLabel.setText("Please select a food to add to the meal");
 	            	}
-
-	            	System.out.println(option1.getValue().toString());
 	            }
 	        });
 
 
+	        //Adds functionality to the cancel button
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
 
+	        
+	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
-
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
@@ -1373,22 +1435,22 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}	//end EditMealsPage function
 
 	public static void editMealPage(Stage primaryStage, Meal mealToBeEdited) {
 		try {
+			//Create the pane
 			Pane root = new Pane();
-			ArrayList<Food>mealFoods = new ArrayList<Food>();
-			mealFoods = mealToBeEdited.getFoods();
-
+			
+			//Set the title of the page
 			primaryStage.setTitle("Edit Meal Page");
 
+			//Create labels and set their initial values
 			Label label = new Label("Dromedary Drones");
 			Label mealNameHere = new Label("Meal Name");
 			Label errorLabel = new Label("");
-
-			ListView<String> listFoods = new ListView<String>();
-
+			
+			//Set layout, font, and color of labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
 
@@ -1400,17 +1462,48 @@ public class Main extends Application {
 			errorLabel.setLayoutX(220);
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
-
+			
+			//Create buttons and set their text
 	        Button saveMeal = new Button("Save Meal");
 	        Button cancel = new Button("Cancel");
-
+			
+	        //Create textField for the name of the meal
 	        TextField mealName = new TextField();
+	        //Set text to name of the meal to be edited
 	        mealName.setText(mealToBeEdited.getName());
+	        //Set layout of textField
+	        mealName.setLayoutX(180);
+	        mealName.setLayoutY(100);
+	        
+	        //Create a list to hold the foods of the meal to be edited
+			ArrayList<Food>mealFoods = new ArrayList<Food>();
+			//Fill the list with the foods of the meal to be edited
+			mealFoods = mealToBeEdited.getFoods();
+			
+			//Set layout of buttons
+	        saveMeal.setLayoutX(180);
+	        saveMeal.setLayoutY(400);
+	        
+	        cancel.setLayoutX(180);
+	        cancel.setLayoutY(450);
 
+	        //Set button dimensions
+	        saveMeal.setPrefHeight(40);
+	        saveMeal.setPrefWidth(140);
+	        
+	        cancel.setPrefHeight(40);
+	        cancel.setPrefWidth(140);
+
+			//Create listView of foods
+			ListView<String> listFoods = new ListView<String>();
+
+			
+			//Create an observableList to hold the names of foods
 		    ObservableList<String> foods = FXCollections.observableArrayList(
 		    		"None"
 		    		);
-		    ArrayList<Food> foodArray = new ArrayList<Food>();
+		    	
+		       //Fills the observableList with the names of the foods in the meal to be edited
 			   for (int i = 0; i < foodList.getFoods().size(); i++) {
 			    	foods.add((foodList.getFoods().get(i).getName()));
 			    }
@@ -1450,20 +1543,7 @@ public class Main extends Application {
 	        	foodOptions[i].setValue(mealFoods.get(i).getName().toString());
 	        }
 
-
-	        saveMeal.setLayoutX(180);
-	        saveMeal.setLayoutY(400);
-	        cancel.setLayoutX(180);
-	        cancel.setLayoutY(450);
-
-	        saveMeal.setPrefHeight(40);
-	        saveMeal.setPrefWidth(140);
-	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);
-
-	        mealName.setLayoutX(180);
-	        mealName.setLayoutY(100);
-
+	        //Adds javaFX button to pane so they are displayed
 	        root.getChildren().add(saveMeal);
 	        root.getChildren().add(cancel);
 	        root.getChildren().add(mealName);
@@ -1471,7 +1551,10 @@ public class Main extends Application {
 	        root.getChildren().add(mealNameHere);
 	        root.getChildren().add(errorLabel);
 
+	        //Create pattern that only allows numerical characters and periods ( . ) 
 	        Pattern pattern = Pattern.compile("\\d*|\\d+\\.\\d*");
+	        
+	        //Set formatters to that weights can only recieve numeric values and periods ( . ) 
 	        TextFormatter<String> formatter1 = new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) change -> {
 	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
 	        });
@@ -1488,21 +1571,21 @@ public class Main extends Application {
 	            return pattern.matcher(change.getControlNewText()).matches() ? change : null;
 	        });
 
+	        //Appy formatters to textFields for weights
 	        foodWeights[0].setTextFormatter(formatter1);
 	        foodWeights[1].setTextFormatter(formatter2);
 	        foodWeights[2].setTextFormatter(formatter3);
 	        foodWeights[3].setTextFormatter(formatter4);
 
 
+	        //Add functionality and error checking to saveMeal button
 	        saveMeal.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
 	            	ArrayList<Food> newMeal = new ArrayList<Food>();	//list of foods to add to meal
-	            	String newMealName;
-	            	boolean hasValidFood = false;
-	            	boolean hasValidWeight = false;
-
-	            	System.out.println(mealName.getText().toString());
+	            	String newMealName;									//New name of meal to be edited
+	            	boolean hasValidFood = false;						//If has a valid food
+	            	boolean hasValidWeight = false;						//If has a valid weight
 
 	            	//If meal does not have a name, display invalidName, and only do it once
 	            	if (mealName.getText().equals("")) {
@@ -1510,19 +1593,26 @@ public class Main extends Application {
 	            		errorLabel.setText("Invalid Name");
 	            	}
 
+	            	//If meal has a name, check if any foods are selected
 	            	else if (!foodOptions[0].getValue().toString().equals("None")
 	            			|| !foodOptions[1].getValue().toString().equals("None")
 	            			|| !foodOptions[2].getValue().toString().equals("None")
 	            			|| !foodOptions[3].getValue().toString().equals("None")) {
 	            		hasValidFood = true;
 
+	            		//If any foods are selected, check to see if they have a valid weight
+	            		
+	            		//If the first food in foodOptions has an option other than "None" selected, check the weight
 	            		if (!foodOptions[0].getValue().toString().equals("None")) {
+	            			
+	            			//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (foodWeights[0].getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	    	            		errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//If the food has a valid weight, add the food to the newMeal list of foods
 	            			else {
 	    		            	String food1Name = (String) foodOptions[0].getValue();
 	    		            	double food1Weight = Double.parseDouble(foodWeights[0].getText());
@@ -1531,13 +1621,18 @@ public class Main extends Application {
 	    		            	hasValidWeight = true;
 	            			}
 	            		}
+	            		
+	            		//If the second food in foodOptions has an option other than "None" selected, check the weight
 	            		if (!foodOptions[1].getValue().toString().equals("None")) {
+	            			
+	            			//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (foodWeights[1].getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	    	            		errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//If the food has a valid weight, add the food to the newMeal list of foods
 	            			else {
 	    		            	String food2Name = (String) foodOptions[1].getValue();
 	    		            	double food2Weight = Double.parseDouble(foodWeights[1].getText());
@@ -1546,13 +1641,18 @@ public class Main extends Application {
 	    		            	hasValidWeight = true;
 	            			}
 	            		}
+	            		
+	            		//If the third food in foodOptions has an option other than "None" selected, check the weight
             			if (!foodOptions[2].getValue().toString().equals("None")) {
+            				
+            				//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (foodWeights[2].getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	    	            		errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//If the food has a valid weight, add the food to the newMeal list of foods
 	            			else {
 	    		            	String food3Name = (String) foodOptions[2].getValue();
 	    		            	double food3Weight = Double.parseDouble(foodWeights[2].getText());
@@ -1561,13 +1661,18 @@ public class Main extends Application {
 	    		            	hasValidWeight = true;
 	            			}
             			}
+            			
+            			//If the fourth food in foodOptions has an option other than "None" selected, check the weight
             			if (!foodOptions[3].getValue().toString().equals("None")) {
+            				
+            				//If the food does not have a valid weight, display an error label, set hasValidWeight to false
 	            			if (foodWeights[3].getText().toString().equals("")) {
-	            				//skip
 	            				errorLabel.setLayoutX(150);
 	    	            		errorLabel.setText("Please enter a weight for every food");
 	            				hasValidWeight = false;
 	            			}
+	            			
+	            			//If the food has a valid weight, add the food to the newMeal list of foods
 	            			else {
 	    		            	String food4Name = (String) foodOptions[3].getValue();
 	    		            	double food4Weight = Double.parseDouble(foodWeights[3].getText());
@@ -1576,6 +1681,7 @@ public class Main extends Application {
 	    		            	hasValidWeight = true;
 	            			}
             			}
+            			//If the meal has a valid food and each food has a valid weight edit the meal
             			if (hasValidFood && hasValidWeight) {
     		            	newMealName = mealName.getText().toString();
 
@@ -1599,6 +1705,7 @@ public class Main extends Application {
             			}
 	            	}
 
+	            	//If no food is selected, display an error label
 	            	else {
 	            		errorLabel.setLayoutX(150);
 	            		errorLabel.setText("Please select a food to add to the meal");
@@ -1606,18 +1713,18 @@ public class Main extends Application {
 	            }
 	        });
 
+	        //Add functionality for cancel button
 	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                meals(primaryStage);
 	            }
 	        });
 
+	        
+	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
-
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
-
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
@@ -1628,7 +1735,7 @@ public class Main extends Application {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}	//End editMealsPage function
 
 	public static void uploadMapPage(Stage primaryStage) {
 
