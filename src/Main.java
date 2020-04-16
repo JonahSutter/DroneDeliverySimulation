@@ -310,7 +310,7 @@ public class Main extends Application {
 			Label label4 = new Label("Knapsack Packing");
 			//FIFO labels
 			JSONObject FIFOJson = (JSONObject) data.get("FIFO");
-			String fifoAvg = String.format("%.4f sec", FIFOJson.get("avgTime"));
+			String fifoAvg = String.format("%.4f sec", FIFOJson.get("avgTime")); //turn the double data into a formatted string
 			String fifoWorst = String.format("%.4f sec", FIFOJson.get("worstTime"));
 			Label fifo1 = new Label("Average Delivery Time:");
 			Label fifo2 = new Label("Worst Delivery Time:");
@@ -318,7 +318,7 @@ public class Main extends Application {
 			Label fifo4 = new Label(fifoWorst);
 			//Knapsack Labels
 			JSONObject KnapsackJson = (JSONObject) data.get("Knapsack");
-			String knapsackAvg = String.format("%.4f sec", KnapsackJson.get("avgTime"));
+			String knapsackAvg = String.format("%.4f sec", KnapsackJson.get("avgTime")); //turn the double data into a formatted string
 			String knapsackWorst = String.format("%.4f sec", KnapsackJson.get("worstTime"));
 			Label knap1 = new Label("Average Delivery Time:");
 			Label knap2 = new Label("Worst Delivery Time:");
@@ -370,17 +370,17 @@ public class Main extends Application {
 
 			//Bar charts
 			//FIFO chart
-			final CategoryAxis fifoTimeAxis = new CategoryAxis();
-			final NumberAxis fifoNumAxis = new NumberAxis();
+			final CategoryAxis fifoTimeAxis = new CategoryAxis();	//X axis - displays time periods
+			final NumberAxis fifoNumAxis = new NumberAxis();		//Y axis - displays quantity delivered
 			final BarChart<String, Number> fifoChart = new BarChart<String, Number>(fifoTimeAxis, fifoNumAxis);
 			fifoChart.setTitle("FIFO Delivery Times");
 			fifoTimeAxis.setLabel("Delivery Time");
 			fifoNumAxis.setLabel("Num Delivered");
 
 			//FIFO Data
-			JSONArray fifoData = (JSONArray) FIFOJson.get("data");
+			JSONArray fifoData = (JSONArray) FIFOJson.get("data");	//pulls the raw data from the json
 			ArrayList<Integer> fifoTimeData = new ArrayList<Integer>();
-			fifoTimeData.add(0);
+			fifoTimeData.add(0);	//put a 0 in the first position
 			double time;	//will also be used in knapsack data
 			int timeslot;	//will also be used in knapsack
 			for(int i = 0; i < fifoData.size(); i++){
@@ -391,10 +391,10 @@ public class Main extends Application {
 					while(fifoTimeData.size() <= timeslot){
 						fifoTimeData.add(0);	//insert 0 until the arraylist is of the correct size
 					}
-					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) +1);
+					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) +1);	//increment the timeslot
 				}
 				else{
-					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) + 1); //increment the position
+					fifoTimeData.set(timeslot, fifoTimeData.get(timeslot) + 1); //increment the timeslot
 				}
 			}
 
@@ -406,8 +406,8 @@ public class Main extends Application {
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
 				fifoSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
 			}
-			fifoChart.getData().addAll(fifoSeries);
-			fifoChart.setLegendVisible(false);
+			fifoChart.getData().addAll(fifoSeries);//adds all the data from the series to the chart
+			fifoChart.setLegendVisible(false);	//hides the legend
 
 			//Knapsack Chart
 			final CategoryAxis knapsackTimeAxis = new CategoryAxis();
@@ -452,7 +452,7 @@ public class Main extends Application {
 			knapsackChart.setLayoutX(540);
 			knapsackChart.setLayoutY(249);
 
-			fifoChart.setPrefSize(338, 252);
+			fifoChart.setPrefSize(338, 252);	//set the graph's dimensions
 			knapsackChart.setPrefSize(338, 252);
 
 			button1.setLayoutX(370);
