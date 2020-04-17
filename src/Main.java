@@ -266,7 +266,7 @@ public class Main extends Application {
 	      //button sends to map page
 	        button5.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	               // map(primaryStage);
+	               map(primaryStage);
 	            }
 	        });
 
@@ -868,7 +868,7 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
-	      //adding remove food button
+	        //adding remove food button
 	        root.getChildren().add(removeFood);
 	        //adding edit food button
 	        root.getChildren().add(editFood);
@@ -884,21 +884,22 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-
+	        
+	        //if the user selects add food button goes to add food page
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addFoodPage(primaryStage);
 	            }
 	        });
 
-	      //adding removing food button
+	      //if the user selects remove food button goes to remove food page
 	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                removeFoodPage(primaryStage);
 	            }
 	        });
 
-	      //adding removing food button
+	      //if the user selects edit food button goes to the edit food page
 	        editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                editFoodPage(primaryStage);
@@ -2152,9 +2153,12 @@ public class Main extends Application {
 	public static void map(Stage primaryStage) {
 		try {
 		//creates the image
-		Image gcc = new Image(Main.class.getResourceAsStream("campusMapGCC.PNG"), 1000.0,1000.0, true, true);
+		Image gcc = new Image(Main.class.getResourceAsStream("mapGroveCity_WithPoints.jpg")); 
 		ImageView selectedImage = new ImageView();
 		selectedImage.setImage(gcc);
+		//the image will resize with the window
+		selectedImage.fitWidthProperty().bind(primaryStage.widthProperty()); 
+		selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
 		//adds to the pane
 		Pane root = new Pane();
 		root.getChildren().addAll(selectedImage);
