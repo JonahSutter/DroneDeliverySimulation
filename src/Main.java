@@ -1597,7 +1597,7 @@ public class Main extends Application {
 	            	ArrayList<Food> newMeal = new ArrayList<Food>();	//list of foods to add to meal
 	            	String newMealName;									//New name of meal to be edited
 	            	boolean hasValidFood = false;						//If has a valid food
-	            	boolean hasValidWeight = false;						//If has a valid weight
+	            	boolean hasValidWeight = true;						//If has a valid weight
 
 	            	//If meal does not have a name, display invalidName, and only do it once
 	            	if (mealName.getText().equals("")) {
@@ -1630,7 +1630,6 @@ public class Main extends Application {
 	    		            	double food1Weight = Double.parseDouble(foodWeights[0].getText());
 	    		            	Food newFood = new Food(food1Name, food1Weight);
 	    		            	newMeal.add(newFood);
-	    		            	hasValidWeight = true;
 	            			}
 	            		}
 	            		
@@ -1650,7 +1649,6 @@ public class Main extends Application {
 	    		            	double food2Weight = Double.parseDouble(foodWeights[1].getText());
 	    		            	Food newFood = new Food(food2Name, food2Weight);
 	    		            	newMeal.add(newFood);
-	    		            	hasValidWeight = true;
 	            			}
 	            		}
 	            		
@@ -1670,7 +1668,6 @@ public class Main extends Application {
 	    		            	double food3Weight = Double.parseDouble(foodWeights[2].getText());
 	    		            	Food newFood = new Food(food3Name, food3Weight);
 	    		            	newMeal.add(newFood);
-	    		            	hasValidWeight = true;
 	            			}
             			}
             			
@@ -1690,7 +1687,6 @@ public class Main extends Application {
 	    		            	double food4Weight = Double.parseDouble(foodWeights[3].getText());
 	    		            	Food newFood = new Food(food4Name, food4Weight);
 	    		            	newMeal.add(newFood);
-	    		            	hasValidWeight = true;
 	            			}
             			}
             			//If the meal has a valid food and each food has a valid weight edit the meal
