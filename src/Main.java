@@ -2137,6 +2137,8 @@ public class Main extends Application {
         root.getChildren().add(saveChanges);
         root.getChildren().add(cancel);
         root.getChildren().add(foodName);
+        root.getChildren().add(newFoodName); 
+        root.getChildren().add(newName); 
         root.getChildren().add(label);
         root.getChildren().add(name);
 
