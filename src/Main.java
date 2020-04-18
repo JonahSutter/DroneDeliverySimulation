@@ -1185,7 +1185,6 @@ public class Main extends Application {
 			    for (int i = 0; i < foodList.getFoods().size(); i++) {
 			    	foods.add((foodList.getFoods().get(i).getName()));
 			    }
-				    listFoods.setItems(foods);
 
 
 			//Create comboBoxes to hold foods options
