@@ -882,13 +882,6 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
-<<<<<<< HEAD
-	        //adding remove food button
-	        root.getChildren().add(removeFood);
-	        //adding edit food button
-	        root.getChildren().add(editFood);
-=======
->>>>>>> refs/remotes/origin/master
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -904,35 +897,35 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-<<<<<<< HEAD
+
 	        
 	        //if the user selects add food button goes to add food page
-=======
+
 
 	        //Give addFood button functionality
->>>>>>> refs/remotes/origin/master
+
 	        addFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                addFoodPage(primaryStage);
 	            }
 	        });
 
-<<<<<<< HEAD
+
 	      //if the user selects remove food button goes to remove food page
-=======
+
 	      //Give removeFood button functionality
->>>>>>> refs/remotes/origin/master
+
 	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                removeFoodPage(primaryStage);
 	            }
 	        });
 
-<<<<<<< HEAD
+
 	      //if the user selects edit food button goes to the edit food page
-=======
+
 	      //Give editFood button functionality
->>>>>>> refs/remotes/origin/master
+
 	        editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                editFoodPage(primaryStage);
