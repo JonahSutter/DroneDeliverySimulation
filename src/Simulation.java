@@ -66,12 +66,13 @@ public class Simulation {
 						currentOrders.remove(0);
 					} else {
 						overweight = true;
+						System.out.println("Overweight BOI");
 					}
 				}
 
 				//If there is room left and orders to be packed, use Knapsack to pack
 				while (currentOrders.size() > 0 && !overweight) {
-					double minWeight = 0;
+					double minWeight = 1000;
 					int mealPos = 0;
 
 					//Find the lowest weight meal (Greedy Knapsack)
@@ -83,12 +84,18 @@ public class Simulation {
 						}
 					}
 
-					//Add the lowest weight meal to the ordersToDeliver
-					ordersToDeliver.add(currentOrders.get(mealPos));
-					//Calculate the highest-positioned meal used
-					point = (point < mealPos + numAdded) ? mealPos + numAdded : point;
-					numAdded++;
-					currentOrders.remove(mealPos);
+					if (currWeight + currentOrders.get(mealPos).getMeal().getWeight() <= maxWeight) {
+						//Add the lowest weight meal to the ordersToDeliver
+						ordersToDeliver.add(currentOrders.get(mealPos));
+						//Calculate the highest-positioned meal used
+						point = (point < mealPos + numAdded) ? mealPos + numAdded : point;
+						numAdded++;
+						currWeight += currentOrders.get(mealPos).getMeal().getWeight();
+						currentOrders.remove(mealPos);
+					} else {
+						overweight = true;
+						System.out.println("Overweight BOI");
+					}
 				}
 
 
@@ -96,6 +103,7 @@ public class Simulation {
 				while (point-numAdded > 0) {
 					skippedOrders.add(currentOrders.get(0));
 					currentOrders.remove(0);
+					numAdded++;
 				}
 
 				//Do Traveling salesman
@@ -108,14 +116,44 @@ public class Simulation {
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
 					double[] newPoint = ordersToDeliver.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
-						timeDroneGone += dropOffTime;
-						//Add the time it took to deliver this order to the list of delivery times
-						timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
-					} else {
+
+						//If there is time left on the drone's flight, calculate time for order and add
+						if (timeDroneGone + dropOffTime <= maxFlightTime) {
+							timeDroneGone += dropOffTime;
+
+							//Add the time it took to deliver this order to the list of delivery times
+							timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+						}
+
+						//If no time left for the drone to fly, don't calculate delivery time
+						//	and move the rest of the orders back to skippedOrders
+						else {
+							for (int j = i; j < ordersToDeliver.size(); j++) {
+								skippedOrders.add(ordersToDeliver.get(j));
+							}
+							break;
+						}
+					}
+					else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
-						timeDroneGone += distance/droneSpeed + dropOffTime;
-						//Add the time it took to deliver this order to the list of delivery times
-						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+
+						//If there is time left on the drone's flight, calculate time for order and add
+						if (timeDroneGone + distance/droneSpeed + dropOffTime <= maxFlightTime) {
+							timeDroneGone += distance/droneSpeed + dropOffTime;
+
+							//Add the time it took to deliver this order to the list of delivery times
+							timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+						}
+
+
+						//If no time left for the drone to fly, don't calculate delivery time
+						//	and move the rest of the orders back to skippedOrders
+						else {
+							for (int j = i; j < ordersToDeliver.size(); j++) {
+								skippedOrders.add(ordersToDeliver.get(j));
+							}
+							break;
+						}
 					}
 					prevPoint = newPoint;
 				}
@@ -181,6 +219,7 @@ public class Simulation {
 						ordersToDeliver.add((currentOrders.get(0)));
 						currentOrders.remove(0);
 					} else {
+						System.out.println("Overweight BOI");
 						overweight = true;
 					}
 				}
@@ -195,14 +234,46 @@ public class Simulation {
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
 					double[] newPoint = ordersToDeliver.get(i).getLocation();
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
-						timeDroneGone += dropOffTime;
-						//Add the time it took to deliver this order to the list of delivery times
-						timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
-					} else {
+
+						//If there is time left on the drone's flight, calculate time for order and add
+						if (timeDroneGone + dropOffTime <= maxFlightTime) {
+							timeDroneGone += dropOffTime;
+
+							//Add the time it took to deliver this order to the list of delivery times
+							timeToDelivery.add((time + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+						}
+
+						//If no time left for the drone to fly, don't calculate delivery time
+						//	and move the rest of the orders back to currentOrders
+						else {
+							for (int j = i; j < ordersToDeliver.size(); j++) {
+								currentOrders.add(ordersToDeliver.get(j));
+							}
+							System.out.print("Too long flying");
+							break;
+						}
+					}
+					else {
 						double distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
-						timeDroneGone += distance/droneSpeed + dropOffTime;
-						//Add the time it took to deliver this order to the list of delivery times
-						timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+
+						//If there is time left on the drone's flight, calculate time for order and add
+						if (timeDroneGone + distance/droneSpeed + dropOffTime <= maxFlightTime) {
+							timeDroneGone += distance/droneSpeed + dropOffTime;
+
+							//Add the time it took to deliver this order to the list of delivery times
+							timeToDelivery.add((time + distance/droneSpeed + dropOffTime) - ordersToDeliver.get(i).getTime()*60);
+						}
+
+
+						//If no time left for the drone to fly, don't calculate delivery time
+						//	and move the rest of the orders back to currentOrders
+						else {
+							for (int j = i; j < ordersToDeliver.size(); j++) {
+								currentOrders.add(ordersToDeliver.get(j));
+							}
+							System.out.print("Too long flying");
+							break;
+						}
 					}
 					prevPoint = newPoint;
 				}
@@ -352,68 +423,6 @@ public class Simulation {
 
 	}
 
-	/*//Used for testing
-	public static void main(String[] args) {
-		Foods foodList = new Foods();
-		Meals mealList = new Meals();
-		Food hamburger = new Food("Hamburger",6);
-		Food cheeseburger = new Food("Cheeseburger",7);
-		Food fries = new Food("Fries",3);
-		Food drink = new Food("Drink",9);
-		foodList.addFoodItem(hamburger);
-		foodList.addFoodItem(cheeseburger);
-		foodList.addFoodItem(fries);
-		foodList.addFoodItem(drink);
-		mealList.addMeal(new Meal("Basic",0.7,new ArrayList<Food>() {{add(hamburger);add(fries);}}));
-		mealList.addMeal(new Meal("Drink Only",0.1,new ArrayList<Food>() {{add(drink);}}));
-		mealList.addMeal(new Meal("Cheesey",0.2,new ArrayList<Food>() {{add(cheeseburger);add(cheeseburger);add(cheeseburger);}}));
-		ArrayList<Order> orderList = new ArrayList<Order>();
-		double[][] locationList = new double[25][];
-		for (int i = 0; i < 25; i++) {
-			locationList[i] = new double[2];
-		}
-
-		locationList[0] = new double[] {0,0};
-		locationList[1] = new double[] {40,50};
-		locationList[2] = new double[] {90,60};
-		locationList[3] = new double[] {100,100};
-		locationList[4] = new double[] {0,100};
-		locationList[5] = new double[] {90,8};
-		locationList[6] = new double[] {10,30};
-		locationList[7] = new double[] {70,65.23};
-		locationList[8] = new double[] {48.32,23.51};
-		locationList[9] = new double[] {109.3,142.6};
-		locationList[10] = new double[] {241,42};
-		locationList[11] = new double[] {123,75};
-		locationList[12] = new double[] {352,129};
-		locationList[13] = new double[] {185,135};
-		locationList[14] = new double[] {185,138};
-		locationList[15] = new double[] {194,144};
-		locationList[16] = new double[] {150,74};
-		locationList[17] = new double[] {143,93};
-		locationList[18] = new double[] {164,103};
-		locationList[19] = new double[] {251,172};
-		locationList[20] = new double[] {214,198};
-		locationList[21] = new double[] {213,164};
-		locationList[22] = new double[] {218,300};
-		locationList[23] = new double[] {245,271};
-		locationList[24] = new double[] {295,142};
-
-		Orders orderInfo = new Orders(20,20,20,25,mealList.getMeals(),locationList);
-
-		ArrayList<Double> testResults = new ArrayList<Double>();
-		testResults = knapSack(orderInfo.getOrders());
-		//Added code for testing displayMethod()
-		ArrayList<Double> FIFOtestResults = new ArrayList<Double>();
-		FIFOtestResults = knapSack(orderInfo.getOrders());
-		displayMethod(FIFOtestResults, testResults);
-		//end changes
-
-		for (int i = 0; i < testResults.size(); i++) {
-			System.out.println("Position " + i + " = " + testResults.get(i));
-		}
-	} */
-
 	/***
 	 * Creates an instance of the simulation class based on the parameters passed
 	 * @param fList	a list of the potential foods
@@ -424,7 +433,6 @@ public class Simulation {
 		foodList = fList;
 		mealList = mList;
 		orderList = oList;
-
 	}
 
 }
