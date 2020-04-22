@@ -277,9 +277,11 @@ public class Simulation {
 					}
 					prevPoint = newPoint;
 				}
+				//Calculate distance back to "Home Base"
+				double distance = Math.sqrt(Math.pow(prevPoint[0],2)+Math.pow(prevPoint[1], 2));
 
-				//Set the drone's return time to AFTER it has returned AND new batteries have been put in
-				returnTime = timeDroneGone + time + turnAround;
+				//Set the drone's return time to AFTER it has flown home AND new batteries have been put in
+				returnTime = timeDroneGone + time + turnAround + distance/droneSpeed;
 
 				numDelivered += ordersToDeliver.size();
 				//Reset the ordersToDeliver array
