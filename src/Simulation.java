@@ -29,10 +29,11 @@ public class Simulation {
 		//List of each delivery time
 		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
 
-		double droneSpeed = 29.3333; 	//Speed is in feet per second. (20mph)
+		double droneSpeed = 36.6667; 	//Speed is in feet per second. (20mph)
 		double dropOffTime = 30; 		//Time is in seconds (30 sec)
 		double maxWeight = 192; 		//Weight in ounces (12 lbs)
-		double turnAround = 180;		//Time is in seconds (3 min)
+		double turnAround = 150;		//Time is in seconds (2.5 min)
+		double maxFlightTime = 1140;	//Max time drone allowed in air (95% of 20 minutes - in seconds)
 		double returnTime = 0;			//Tells when the drone is due back
 
 		//Loop through all the orders generated from a 4-hour shift
@@ -148,10 +149,11 @@ public class Simulation {
 		//List of each delivery time
 		ArrayList<Double> timeToDelivery = new ArrayList<Double>();
 
-		double droneSpeed = 29.3333; 	//Speed is in feet per second. (20mph)
+		double droneSpeed = 36.6667; 	//Speed is in feet per second. (20mph)
 		double dropOffTime = 30; 		//Time is in seconds (30 sec)
 		double maxWeight = 192; 		//Weight in ounces (12 lbs)
-		double turnAround = 180;		//Time is in seconds (3 min)
+		double turnAround = 150;		//Time is in seconds (2.5 min)
+		double maxFlightTime = 1140;	//Max time drone allowed in air (95% of 20 minutes - in seconds)
 		double returnTime = 0;			//Tells when the drone is due back
 
 		//Loop through all the orders generated from a 4-hour shift
@@ -184,7 +186,7 @@ public class Simulation {
 				}
 
 				//Do Traveling salesman
-				organizeRoute(currentOrders);
+				organizeRoute(ordersToDeliver);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
