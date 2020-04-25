@@ -18,5 +18,9 @@ public class Foods {
 	public void addFoodItem(Food food) {
 		foods.add(food);
 	}
+	
+	public int size() {
+		return foods.size(); 
+	}
 
 }

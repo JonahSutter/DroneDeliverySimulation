@@ -794,6 +794,8 @@ public class Main extends Application {
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
+	        Button saveFoods = new Button("Save Current Foods"); 
+	        Button loadFoods = new Button("Load List of Foods"); 
 
 	        //Set list views to display foods and meals
 	        ListView<String> listFood = new ListView<String>();
@@ -869,7 +871,20 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-
+	        
+	        saveFoods.setPrefHeight(40); 
+	        saveFoods.setPrefWidth(140);
+	        loadFoods.setPrefHeight(40);
+	        loadFoods.setPrefWidth(140);
+	        
+	        
+	        saveFoods.setLayoutX(30); 
+	        saveFoods.setLayoutY(410);
+	        
+	        loadFoods.setLayoutX(30);
+	        loadFoods.setLayoutY(450);
+	        
+	        
 	        //Set dimensions and layout of food and Meal lists
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
@@ -897,8 +912,25 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-
-
+	        
+	        root.getChildren().add(saveFoods); 
+	        root.getChildren().add(loadFoods); 
+	        
+	        
+	        
+	        saveFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	saveFoods(primaryStage); 
+		                
+	            }//ends event handler
+	        });
+	        
+	        loadFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                loadFoodsPage(primaryStage);
+	            }
+	        });
+	        
 	        //if the user selects add food button goes to add food page
 
 
@@ -997,7 +1029,45 @@ public class Main extends Application {
 		}
 	}	//End meals function
 
+	public static void loadFoodsPage(Stage primaryStage) {
+		
+	}//ends loadfoodspage
+	
+	public static void saveFoods(Stage primaryStage) {
+   	 FileChooser fileChooser = new FileChooser();
 
+     //Set extension filter
+     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+     fileChooser.getExtensionFilters().add(extFilter);
+
+     //Show save file dialog
+     File file = fileChooser.showSaveDialog(primaryStage);
+
+
+     fileChooser.getExtensionFilters().add(extFilter);
+
+       if (file != null) {
+       	 try {
+	        	String content = "";
+	        	for(int index = 0; index<foodList.size(); index++ ) {
+	        		content = content + foodList.getFoods().get(index).getName() + " "
+	        				+ foodList.getFoods().get(index).getWeight() + "\n"; 
+	        	}
+	        	//write the string to the file
+	        	 PrintWriter writer;
+	             writer = new PrintWriter(file);
+	             writer.println(content);
+	             writer.close();
+
+
+	        } catch (IOException ex) {
+
+	           System.out.println("File Logging Error");
+
+	        }
+       }
+       
+	}//ends save foods page
 
 	public static void addFoodPage(Stage primaryStage) {
 		try {
