@@ -1030,7 +1030,63 @@ public class Main extends Application {
 	}	//End meals function
 
 	public static void loadFoodsPage(Stage primaryStage) {
-		
+		 FileChooser fileChooser = new FileChooser();
+	     //Set extension filter
+	     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	     fileChooser.getExtensionFilters().add(extFilter);
+	     //Show save file dialog
+	     File file = fileChooser.showOpenDialog(primaryStage);
+	     fileChooser.getExtensionFilters().add(extFilter);
+	     
+	     //as long as the file is not empty
+	       if (file != null) {
+	       	 try {
+		        	Scanner sc = new Scanner(file); 
+		        	while(sc.hasNext()) {
+		        		//reads in the line 
+		        		String s = sc.nextLine(); 
+		        		
+		        		
+		        		//new scanner for the line
+		        		Scanner stringScanner = new Scanner(s); 
+		        		//if there is a comma or a new line
+		        		stringScanner.useDelimiter(",|\\n"); 
+		        		//gets the name and weight from string
+		        		String name = stringScanner.next();
+		        		String weight = stringScanner.next(); 
+		        		double weightDouble = Double.parseDouble(weight); 
+		        		
+		        	
+		        		//checks if the food already exists 
+		        		boolean duplicate = false; 
+		        		for(int i = 0; i<foodList.size(); i++) {
+		        			if(foodList.getFoods().get(i).getName().equals(name)) {
+		        				duplicate = true; 
+		        			}//ends if 
+		        		}//ends for
+		        		
+		        		
+		        		//as long as it isnt a duplicate, adds the food 
+		        		if(duplicate == false) {
+		        		//creates the new food
+		        		Food f = new Food(name, weightDouble); 
+		        		//adds the new food to the list 
+		        		foodList.addFoodItem(f);
+		        		}//ends if 
+		        	}//ends while 
+		        	
+		        	
+		        	//refreshes the page
+		        	meals(primaryStage); 
+		        	
+		        	
+		        } catch (IOException ex) {
+		           System.out.println("File Logging Error");
+
+		        }
+	       }
+	    
+	     
 	}//ends loadfoodspage
 	
 	public static void saveFoods(Stage primaryStage) {
@@ -1050,7 +1106,7 @@ public class Main extends Application {
        	 try {
 	        	String content = "";
 	        	for(int index = 0; index<foodList.size(); index++ ) {
-	        		content = content + foodList.getFoods().get(index).getName() + " "
+	        		content = content + foodList.getFoods().get(index).getName() + ", "
 	        				+ foodList.getFoods().get(index).getWeight() + "\n"; 
 	        	}
 	        	//write the string to the file
