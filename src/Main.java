@@ -34,10 +34,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
+import javafx.scene.input.MouseEvent;
 
 
 public class Main extends Application {
@@ -45,7 +48,8 @@ public class Main extends Application {
 	private static Meals mealList = new Meals();
 	private static Orders orderList = new Orders(38, 45, 60, 30);
 	private static Foods foodList = new Foods();
-	private static double[][] locationList;
+	private static ArrayList<ArrayList<Double>> locationList = new ArrayList<ArrayList<Double>>();
+	private static int feetPerPixel = 1;
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
@@ -68,38 +72,14 @@ public class Main extends Application {
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
 
-		double[][] locationList = new double[25][];
+	
 		for (int i = 0; i < 25; i++) {
-			locationList[i] = new double[2];
+			locationList.add(new ArrayList<Double>());
 		}
+		
+		
+		setLocation(locationList, new File("defaultLocations.txt"));
 
-		//Random list of locations
-		//TODO: Replace with actual values from Grove City Campus delivery points
-		locationList[0] = new double[] {0,0};
-		locationList[1] = new double[] {40,50};
-		locationList[2] = new double[] {90,60};
-		locationList[3] = new double[] {100,100};
-		locationList[4] = new double[] {0,100};
-		locationList[5] = new double[] {90,8};
-		locationList[6] = new double[] {10,30};
-		locationList[7] = new double[] {70,65.23};
-		locationList[8] = new double[] {48.32,23.51};
-		locationList[9] = new double[] {109.3,142.6};
-		locationList[10] = new double[] {241,42};
-		locationList[11] = new double[] {123,75};
-		locationList[12] = new double[] {352,129};
-		locationList[13] = new double[] {185,135};
-		locationList[14] = new double[] {185,138};
-		locationList[15] = new double[] {194,144};
-		locationList[16] = new double[] {150,74};
-		locationList[17] = new double[] {143,93};
-		locationList[18] = new double[] {164,103};
-		locationList[19] = new double[] {251,172};
-		locationList[20] = new double[] {214,198};
-		locationList[21] = new double[] {213,164};
-		locationList[22] = new double[] {218,300};
-		locationList[23] = new double[] {245,271};
-		locationList[24] = new double[] {295,142};
 		orderList.setLocations(locationList);
 
 		launch(args);
@@ -2394,28 +2374,255 @@ public class Main extends Application {
 
 	public static void map(Stage primaryStage) {
 		try {
+
+			//sets the title of the page
+			primaryStage.setTitle("Remove Food Page");
+
+			//create the labels
+			Label label = new Label("Dromedary Drones");
+
+			//sets the fonts and position of the labels
+			label.setFont(new Font("Arial", 40));
+			label.setLayoutX(80);
+
+			//creates the buttons
+	        Button update = new Button("Update Locations");
+	        Button load = new Button("Load Locations");
+	        Button save = new Button("Save Location");
+	        Button home = new Button("Home");
+
+
+	        //set position of text fields and buttons
+	        update.setLayoutX(180);
+	        update.setLayoutY(200);
+	        save.setLayoutX(180);
+	        save.setLayoutY(250);
+	        load.setLayoutX(180);
+	        load.setLayoutY(300);
+	        home.setLayoutX(180);
+	        home.setLayoutY(350);
+
+	        //sets the height and width of buttons
+	        update.setPrefHeight(40);
+	        update.setPrefWidth(140);
+	        load.setPrefHeight(40);
+	        load.setPrefWidth(140);
+	        save.setPrefHeight(40);
+	        save.setPrefWidth(140);
+	        home.setPrefHeight(40);
+	        home.setPrefWidth(140);
+	       
+
+	        //adds to the pane
+	        Pane root = new Pane();
+	        root.getChildren().add(update);
+	        root.getChildren().add(load);
+	        root.getChildren().add(save);
+	        root.getChildren().add(label);
+	        root.getChildren().add(home);
+
+
+	        //if the user presses the cancel button goes back to meals page
+	        update.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                updateMap(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	      //if the user presses the cancel button goes back to meals page
+	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                map(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	      //if the user presses the cancel button goes back to meals page
+	        save.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                map(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	      //if the user presses the cancel button goes back to meals page
+	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                mainPage(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	        //creates the scene
+			Scene scene = new Scene(root,500,500);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+			
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+				}
+			}.start();
+			
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+			
+	}//ends map method
+	
+	public static void updateMap(Stage primaryStage) {
+		try {
+		Pane root = new Pane();
+		
+		
 		//creates the image
-		Image gcc = new Image(Main.class.getResourceAsStream("mapGroveCity_WithPoints.jpg"));
+		Image gcc = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 		ImageView selectedImage = new ImageView();
 		selectedImage.setImage(gcc);
+		
+		
 		//the image will resize with the window
 		selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
 		selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
+		
 		//adds to the pane
-		Pane root = new Pane();
 		root.getChildren().addAll(selectedImage);
+		
+		//creates the buttons
+        Button back = new Button("Back");
+
+        //set position of text fields and buttons
+        back.setLayoutX(0);
+        back.setLayoutY(0);
+
+
+        //sets the height and width of buttons
+        back.setPrefHeight(40);
+        back.setPrefWidth(100);
+        
+        
+        for (ArrayList<Double> location : locationList) {
+        	double x = location.get(0);
+        	double y = location.get(1);
+ 
+		     Button bt = new Button();
+			 bt.setShape(new Circle(5));
+			 
+			 bt.setPrefSize(4, 4);
+			 bt.setStyle("-fx-background-color: Red");
+			 
+			 bt.setLayoutX(x);
+			 bt.setLayoutY(y);
+			 
+
+			 bt.setOnAction(new EventHandler<ActionEvent>() {
+				 @Override public void handle(ActionEvent e) {
+                     //set button pressed values
+					 root.getChildren().remove(bt);
+
+					 for (int i = 0; i < locationList.size(); i++) {
+						 if ((locationList.get(i).get(0) == bt.getLayoutX()) && (locationList.get(i).get(1) == bt.getLayoutY())) {
+							 locationList.remove(locationList.get(i));
+						 }
+					 }
+				 }
+			 });
+		     
+		     root.getChildren().addAll(bt);
+			 
+        }
+
+        //if the user presses the cancel button goes back to meals page
+        back.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                map(primaryStage);
+            }
+        }); //ends cancel action
+
+		//set action 
+		 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			 @Override
+			 public void handle(MouseEvent event) {
+				 //if the button has been pressed
+			     
+			     Button bt = new Button();
+				 bt.setShape(new Circle(5));
+				 
+				 bt.setPrefSize(4, 4);
+				 bt.setStyle("-fx-background-color: Red");
+				 
+				 bt.setTranslateX(event.getSceneX() - 8);
+				 bt.setTranslateY(event.getSceneY() - 8);
+				 
+				 locationList.add(new ArrayList<Double>());
+				 locationList.get(locationList.size() - 1).add(event.getSceneX());
+				 locationList.get(locationList.size() - 1).add(event.getSceneY());
+
+				 bt.setOnAction(new EventHandler<ActionEvent>() {
+					 @Override public void handle(ActionEvent e) {
+                         //set button pressed values
+						 root.getChildren().remove(bt);
+						 
+						 for (int i = 0; i < locationList.size(); i++) {
+							 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
+								 locationList.remove(locationList.get(i));
+							 }
+						 }
+					 }
+				 });
+			     
+			     root.getChildren().addAll(bt);
+			 }
+		 });
+		 
+		root.getChildren().addAll(back);
+		
+		
 		//creates the scene
 		Scene scene = new Scene(root,500,500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
+		
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 			}
 		}.start();
+		
+		
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 	}//ends map method
+	
+	public static ArrayList<ArrayList<Double>> setLocation(ArrayList<ArrayList<Double>> locations, File file){
+
+		try {
+			Scanner scn = new Scanner(file);
+			int counter = 0;
+			
+			while (scn.hasNextLine()) {
+				Scanner scn2 = new Scanner(scn.nextLine());
+				  scn2.useDelimiter(",");
+				  locations.get(counter).add(scn2.nextDouble());
+				  locations.get(counter).add(scn2.nextDouble());
+				  counter++;
+				  
+			 } 
+			
+			scn.close();
+			
+		} 
+		catch (FileNotFoundException e) {
+			System.out.println("File not found");
+			e.printStackTrace();
+		}
+
+		
+		
+		return null;
+	}
 
 }
