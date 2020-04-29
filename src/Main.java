@@ -949,7 +949,13 @@ public class Main extends Application {
 
 	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                removeFoodPage(primaryStage);
+	            	try {
+	            		foodList.deleteFoodItem(foodList.getFoods().get(listFood.getSelectionModel().getSelectedIndex()));
+		                meals(primaryStage);
+	            	}
+	            	catch (Exception f) {
+	            		errorLabel.setText("Please select the food item to delete");
+	            	}
 	            }
 	        });
 
