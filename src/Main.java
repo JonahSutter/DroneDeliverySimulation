@@ -25,7 +25,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.parsers.DocumentBuilder;  
+import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import java.io.*;
@@ -87,8 +87,8 @@ public class Main extends Application {
 		mealList.addMeal(new Meal("Double Burger",0.10,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);add(hamburger);}}));
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
-		
-		
+
+
 		locationList = setLocation(locationList, new File("defaultLocation.xml"));
 
 		orderList.setLocations(locationList);
@@ -226,9 +226,7 @@ public class Main extends Application {
 	        root.getChildren().add(label);
 
 	        //Add styles to buttons and labels
-	        button1.setStyle("-fx-background-color: #ffc38b;");
-	        button1.setOnMouseEntered(e -> button1.setStyle("-fx-background-color: #ffc38b, -fx-outer-border, -fx-inner-border, #ffc38b;"));
-	        button1.setOnMouseExited(e -> button1.setStyle("-fx-background-color: #ffc38b;"));
+	        addButtonStyleNormal(button1);
 
 	        //buttons sends to simulation page
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
@@ -1919,15 +1917,15 @@ public class Main extends Application {
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	           	   FileChooser fileChooser = new FileChooser();
-	
+
 	               //Set extension filter
 	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
 	               fileChooser.getExtensionFilters().add(extFilter);
-	
+
 	               //Show save file dialog
   	               File file = fileChooser.showSaveDialog(primaryStage);
-	
-	
+
+
 	                fileChooser.getExtensionFilters().add(extFilter);
 
 	                if (file != null) {
@@ -2427,7 +2425,7 @@ public class Main extends Application {
 	        save.setPrefWidth(140);
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-	       
+
 
 	        //adds to the pane
 	        Pane root = new Pane();
@@ -2442,13 +2440,13 @@ public class Main extends Application {
 	      //if the user presses the cancel button goes back to meals page
 	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+
 
 	           	   FileChooser fileChooser = new FileChooser();
-	           	
+
 		           	File file = fileChooser.showOpenDialog(primaryStage);
 
-		           	
+
 		           	if (file != null) {
 		           		try {
 			                image = new Image("file:" + file.getAbsolutePath());
@@ -2456,9 +2454,9 @@ public class Main extends Application {
 		           		catch(Exception e1) {
 		           			e1.printStackTrace();
 		           		}
-		                 
+
 		           	}
-		           	
+
 	                updateMap(primaryStage);
 	            }
 	        }); //ends cancel action
@@ -2466,10 +2464,10 @@ public class Main extends Application {
 	        //if the user presses the cancel button goes back to meals page
 	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+
 
 	           	   FileChooser fileChooser = new FileChooser();
-	           	
+
 		           	File file = fileChooser.showOpenDialog(primaryStage);
 	                if (file != null) {
 	                    locationList = setLocation(locationList, file);
@@ -2481,70 +2479,70 @@ public class Main extends Application {
 	        //saving files
 	        save.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+
 	           	   FileChooser fileChooser = new FileChooser();
-	           	
+
 	               //Set extension filter
 	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
 	               fileChooser.getExtensionFilters().add(extFilter);
-	
+
 	               //Show save file dialog
   	               File file = fileChooser.showSaveDialog(primaryStage);
-	
-	
+
+
 	               fileChooser.getExtensionFilters().add(extFilter);
 
 	               if (file != null) {
-	            	   
-	                   
-	                   
+
+
+
 					try {
 						DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-						 
+
 			            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-			 
+
 			            Document document = documentBuilder.newDocument();
-			 
+
 			            // root element
 			            Element root = document.createElement("locations");
-			            
+
 			            for (int i = 0; i < locationList.size(); i++) {
 			            	Element location = document.createElement("location");
-			            	
+
 			            	Element x = document.createElement("x");
 			                x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
-			                
-			                Element y = document.createElement("y");    	
+
+			                Element y = document.createElement("y");
 			                y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
-			                
-			                
+
+
 			                location.appendChild(x);
 			                location.appendChild(y);
-			            	 
+
 			                root.appendChild(location);
 			            }
-			            
+
 			            document.appendChild(root);
-			            
+
 			            TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			            Transformer transformer = transformerFactory.newTransformer();
 			            DOMSource domSource = new DOMSource(document);
 			            StreamResult streamResult = new StreamResult(file);
-			 
+
 			            // If you use
 			            // StreamResult result = new StreamResult(System.out);
 			            // the output will be pushed to the standard output ...
-			            // You can use that for debugging 
-			 
+			            // You can use that for debugging
+
 			            transformer.transform(domSource, streamResult);
-			            
+
 					} catch (ParserConfigurationException | TransformerException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 
 	                }
-		                
+
 	                map(primaryStage);
 	            }
 	        }); //ends cancel action
@@ -2560,37 +2558,37 @@ public class Main extends Application {
 			Scene scene = new Scene(root,500,500);
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			
+
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
 				}
 			}.start();
-			
-		
+
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-			
+
 	}//ends map method
-	
+
 	public static void updateMap(Stage primaryStage) {
 		try {
 		Pane root = new Pane();
-		
-		
+
+
 		//creates the image
 		ImageView selectedImage = new ImageView();
 		selectedImage.setImage(image);
-		
-		
+
+
 		//the image will resize with the window
 		selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
 		selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
-		
+
 		//adds to the pane
 		root.getChildren().addAll(selectedImage);
-		
+
 		//creates the buttons
         Button back = new Button("Back");
 
@@ -2602,21 +2600,21 @@ public class Main extends Application {
         //sets the height and width of buttons
         back.setPrefHeight(40);
         back.setPrefWidth(100);
-        
-        
+
+
         for (ArrayList<Double> location : locationList) {
         	double x = location.get(0);
         	double y = location.get(1);
- 
+
 		     Button bt = new Button();
 			 bt.setShape(new Circle(5));
-			 
+
 			 bt.setPrefSize(4, 4);
 			 bt.setStyle("-fx-background-color: Red");
-			 
+
 			 bt.setLayoutX(x);
 			 bt.setLayoutY(y);
-			 
+
 
 			 bt.setOnAction(new EventHandler<ActionEvent>() {
 				 @Override public void handle(ActionEvent e) {
@@ -2630,9 +2628,9 @@ public class Main extends Application {
 					 }
 				 }
 			 });
-		     
+
 		     root.getChildren().addAll(bt);
-			 
+
         }
 
         //if the user presses the cancel button goes back to meals page
@@ -2642,22 +2640,22 @@ public class Main extends Application {
             }
         }); //ends cancel action
 
-		//set action 
+		//set action
 		 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			 @Override
 			 public void handle(MouseEvent event) {
 				 //if the button has been pressed
-			     
+
 			     Button bt = new Button();
 				 bt.setShape(new Circle(5));
-				 
+
 				 bt.setPrefSize(4, 4);
 				 bt.setStyle("-fx-background-color: Red");
-				 
+
 				 bt.setTranslateX(event.getSceneX() - 8);
 				 bt.setTranslateY(event.getSceneY() - 8);
-				 
+
 				 locationList.add(new ArrayList<Double>());
 				 locationList.get(locationList.size() - 1).add(event.getSceneX());
 				 locationList.get(locationList.size() - 1).add(event.getSceneY());
@@ -2666,7 +2664,7 @@ public class Main extends Application {
 					 @Override public void handle(ActionEvent e) {
                          //set button pressed values
 						 root.getChildren().remove(bt);
-						 
+
 						 for (int i = 0; i < locationList.size(); i++) {
 							 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
 								 locationList.remove(locationList.get(i));
@@ -2674,51 +2672,51 @@ public class Main extends Application {
 						 }
 					 }
 				 });
-			     
+
 			     root.getChildren().addAll(bt);
 			 }
 		 });
-		 
+
 		root.getChildren().addAll(back);
-		
-		
+
+
 		//creates the scene
 		Scene scene = new Scene(root,500,500);
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
-		
+
+
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 			}
 		}.start();
-		
-		
+
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}//ends map method
-	
+
 	public static ArrayList<ArrayList<Double>> setLocation(ArrayList<ArrayList<Double>> locations, File file){
 
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db;
 			db = dbf.newDocumentBuilder();
-			Document doc = db.parse(file);  
-			doc.getDocumentElement().normalize(); 
+			Document doc = db.parse(file);
+			doc.getDocumentElement().normalize();
 
 			NodeList nList = doc.getElementsByTagName("location");
 			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
 
-			
+
 			for (int i = 0; i < nList.getLength(); i++) {
 				tempList.add(new ArrayList<Double>());
 				Node nNode = nList.item(i);
-				
+
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
 
@@ -2726,16 +2724,22 @@ public class Main extends Application {
 					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent()));
 				}
 			}
-			
+
 			return tempList;
-			
-			
+
+
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  
+		}
 		return null;
-		
+
+	}
+
+	public static void addButtonStyleNormal(Button button) {
+		button.setStyle("-fx-background-color: #ffc38b;");
+        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #ffc38b, -fx-outer-border, -fx-inner-border, #ffc38b;"));
+        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #ffc38b;"));
 	}
 
 }
