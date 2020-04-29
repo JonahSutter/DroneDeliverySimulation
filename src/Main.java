@@ -39,6 +39,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -46,6 +47,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -69,9 +71,7 @@ public class Main extends Application {
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
-	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
-//	private static ArrayList<Food> foodsList = new ArrayList<Food>(Arrays.asList(f1,f2,f3));
-//	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
+//	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 
 	public static void main(String[] args) {
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
@@ -101,7 +101,6 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
-
 			//setting labels and buttons
 			primaryStage.setTitle("Starting Screen");
 
@@ -118,13 +117,16 @@ public class Main extends Application {
 	        button2.setPrefHeight(40);
 	        button2.setPrefWidth(140);
 
-
 	        //setting layout of buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
 	        button2.setLayoutY(250);
+
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
 
 	        //adding to root
 	        root.getChildren().add(button1);
@@ -216,6 +218,12 @@ public class Main extends Application {
 	        button5.setPrefHeight(40);
 	        button5.setPrefWidth(140);
 
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
+	        addButtonStyleNormal(button3);
+	        addButtonStyleNormal(button4);
+	        addButtonStyleNormal(button5);
 
 	        //adding buttons and labels to root
 	        root.getChildren().add(button1);
@@ -462,6 +470,11 @@ public class Main extends Application {
 			button2.setPrefWidth(161);
 			button3.setPrefHeight(32);
 			button3.setPrefWidth(135);
+
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
+	        addButtonStyleNormal(button3);
 
 			root.getChildren().add(button1);
 			root.getChildren().add(button2);
@@ -716,6 +729,9 @@ public class Main extends Application {
 	        home.setLayoutY(385);
 	        home.setPrefWidth(75);
 
+	        //Add the button styles
+	        addButtonStyleNormal(home);
+
 	        //Add all the created elements to the screen
 	        Pane root = new Pane();
 	        root.getChildren().add(listProbs);
@@ -891,6 +907,17 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
+
+	      //Add the button styles
+	        addButtonStyleNormal(removeFood);
+	        addButtonStyleNormal(editFood);
+	        addButtonStyleNormal(addFood);
+	        addButtonStyleNormal(addMeal);
+	        addButtonStyleNormal(editMeal);
+	        addButtonStyleNormal(removeMeal);
+	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(saveFoods);
+	        addButtonStyleNormal(loadFoods);
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -1163,6 +1190,10 @@ public class Main extends Application {
 	        foodWeight.setLayoutX(180);
 	        foodWeight.setLayoutY(250);
 
+	      //Add the button styles
+	        addButtonStyleNormal(saveFood);
+	        addButtonStyleNormal(cancel);
+
 	        //add to the root
 	        Pane root = new Pane();
 	        root.getChildren().add(saveFood);
@@ -1383,6 +1414,10 @@ public class Main extends Application {
 
 	        option4.setLayoutX(180);
 	        option4.setLayoutY(300);
+
+	      //Add the button styles
+	        addButtonStyleNormal(saveMeal);
+	        addButtonStyleNormal(cancel);
 
 	        //Add javaFX elements to the pane so they are displayed
 	        root.getChildren().add(saveMeal);
@@ -1675,6 +1710,10 @@ public class Main extends Application {
 	        	foodOptions[i].setValue(mealFoods.get(i).getName().toString());
 	        }
 
+	      //Add the button styles
+	        addButtonStyleNormal(saveMeal);
+	        addButtonStyleNormal(cancel);
+
 	        //Adds javaFX button to pane so they are displayed
 	        root.getChildren().add(saveMeal);
 	        root.getChildren().add(cancel);
@@ -1898,7 +1937,10 @@ public class Main extends Application {
 	        button2.setPrefWidth(140);
 
 
-
+	      //Add the button styles
+	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
 
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
@@ -2038,6 +2080,11 @@ public class Main extends Application {
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
 
+		      //Add the button styles
+	        addButtonStyleNormal(editName);
+	        addButtonStyleNormal(editWeight);
+	        addButtonStyleNormal(cancel);
+
 	        //add to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(editName);
@@ -2122,6 +2169,10 @@ public class Main extends Application {
 	        foodName.setLayoutY(100);
 	        newFoodWeight.setLayoutX(180);
 	        newFoodWeight.setLayoutY(150);
+
+		      //Add the button styles
+	        addButtonStyleNormal(saveChanges);
+	        addButtonStyleNormal(cancel);
 
 	        //adds to the pane
 	        root.getChildren().add(saveChanges);
@@ -2243,6 +2294,10 @@ public class Main extends Application {
         newFoodWeight.setLayoutX(180);
         newFoodWeight.setLayoutY(250);
 
+	      //Add the button styles
+        addButtonStyleNormal(cancel);
+        addButtonStyleNormal(saveChanges);
+
         //adds everything to the pane
         Pane root = new Pane();
         root.getChildren().add(saveChanges);
@@ -2331,6 +2386,10 @@ public class Main extends Application {
 	        cancel.setPrefWidth(140);
 	        cancel.setPrefWidth(140);
 
+		      //Add the button styles
+	        addButtonStyleNormal(remove);
+	        addButtonStyleNormal(cancel);
+
 	        //adds to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(remove);
@@ -2401,7 +2460,6 @@ public class Main extends Application {
 	        Button save = new Button("Save Location");
 	        Button home = new Button("Home");
 
-
 	        //set position of text fields and buttons
 	        update.setLayoutX(180);
 	        update.setLayoutY(200);
@@ -2427,6 +2485,13 @@ public class Main extends Application {
 	        home.setPrefWidth(140);
 
 
+	        //Add the button styles
+	        addButtonStyleNormal(changeImage);
+	        addButtonStyleNormal(update);
+	        addButtonStyleNormal(load);
+	        addButtonStyleNormal(save);
+	        addButtonStyleNormal(home);
+
 	        //adds to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(changeImage);
@@ -2449,7 +2514,7 @@ public class Main extends Application {
 
 		           	if (file != null) {
 		           		try {
-			                image = new Image("file:" + file.getAbsolutePath());
+			                //image = new Image("file:" + file.getAbsolutePath());
 		           		}
 		           		catch(Exception e1) {
 		           			e1.printStackTrace();
@@ -2579,7 +2644,7 @@ public class Main extends Application {
 
 		//creates the image
 		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(image);
+		//selectedImage.setImage(image);
 
 
 		//the image will resize with the window
@@ -2677,6 +2742,9 @@ public class Main extends Application {
 			 }
 		 });
 
+		//Add the button styles
+		 addButtonStyleNormal(back);
+
 		root.getChildren().addAll(back);
 
 
@@ -2737,9 +2805,67 @@ public class Main extends Application {
 	}
 
 	public static void addButtonStyleNormal(Button button) {
-		button.setStyle("-fx-background-color: #ffc38b;");
-        button.setOnMouseEntered(e -> button.setStyle("-fx-background-color: #ffc38b, -fx-outer-border, -fx-inner-border, #ffc38b;"));
-        button.setOnMouseExited(e -> button.setStyle("-fx-background-color: #ffc38b;"));
+		String mainStyle = "-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
+				"-fx-background-color:linear-gradient(to bottom, #e6daa8 5%, #a88759 100%);" +
+				"-fx-background-radius:18px;" +
+				"-fx-border-radius:12px;" +
+				"-fx-border-width:2px;" +
+				"-fx-border-style: solid;"+
+				"-fx-border-color: #a88759;" +
+				"-fx-display:inline-block;" +
+				"-fx-cursor:pointer;" +
+				"-fx-text-color:#000000;" +
+				"-fx-font-family:Arial;" +
+				"-fx-font-size:12px;" +
+				"-fx-font-weight:bold;" +
+				"-fx-padding:10px 10px;" +
+				"-fx-text-decoration:none;";
+
+		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #d4c19b 5%, #967a55 100%);" +
+				"-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
+				"-fx-background-radius:18px;" +
+				"-fx-border-radius:12px;" +
+				"-fx-border-width:2px;" +
+				"-fx-border-style: solid;"+
+				"-fx-border-color: #a88759;" +
+				"-fx-display:inline-block;" +
+				"-fx-cursor:pointer;" +
+				"-fx-text-color:#000000;" +
+				"-fx-font-family:Arial;" +
+				"-fx-font-size:12px;" +
+				"-fx-font-weight:bold;" +
+				"-fx-padding:10px 10px;" +
+				"-fx-text-decoration:none;";
+
+		String clickStyle = "position:relative;" +
+			"top:1px;" +
+			"-fx-background-color:linear-gradient(to bottom, #967a55 5%, #d4c19b  100%);" +
+			"-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
+			"-fx-background-radius:18px;" +
+			"-fx-border-radius:12px;" +
+			"-fx-border-width:2px;" +
+			"-fx-border-style: solid;"+
+			"-fx-border-color: #a88759;" +
+			"-fx-display:inline-block;" +
+			"-fx-cursor:pointer;" +
+			"-fx-text-color:#000000;" +
+			"-fx-font-family:Arial;" +
+			"-fx-font-size:12px;" +
+			"-fx-font-weight:bold;" +
+			"-fx-padding:10px 10px;" +
+			"-fx-text-decoration:none;";
+
+		//Set the button's main style
+		button.setStyle(mainStyle);
+		button.setTextOverrun(OverrunStyle.CLIP);
+
+		//Set the button to do special things on Hover and revert after
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(mainStyle));
+
+        //Set the button to "move down" when clicked and "go back" when released
+        button.setOnMousePressed(e -> button.setStyle(clickStyle));
+        button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
 
 }
