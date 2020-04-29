@@ -234,6 +234,11 @@ public class Main extends Application {
 	        root.getChildren().add(button5);
 	        root.getChildren().add(label);
 
+	        //Add styles to buttons and labels
+	        button1.setStyle("-fx-background-color: #ffc38b;");
+	        button1.setOnMouseEntered(e -> button1.setStyle("-fx-background-color: #ffc38b, -fx-outer-border, -fx-inner-border, #ffc38b;"));
+	        button1.setOnMouseExited(e -> button1.setStyle("-fx-background-color: #ffc38b;"));
+
 	        //buttons sends to simulation page
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -794,8 +799,8 @@ public class Main extends Application {
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
-	        Button saveFoods = new Button("Save Current Foods"); 
-	        Button loadFoods = new Button("Load List of Foods"); 
+	        Button saveFoods = new Button("Save Current Foods");
+	        Button loadFoods = new Button("Load List of Foods");
 
 	        //Set list views to display foods and meals
 	        ListView<String> listFood = new ListView<String>();
@@ -871,20 +876,20 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-	        
-	        saveFoods.setPrefHeight(40); 
+
+	        saveFoods.setPrefHeight(40);
 	        saveFoods.setPrefWidth(140);
 	        loadFoods.setPrefHeight(40);
 	        loadFoods.setPrefWidth(140);
-	        
-	        
-	        saveFoods.setLayoutX(30); 
+
+
+	        saveFoods.setLayoutX(30);
 	        saveFoods.setLayoutY(410);
-	        
+
 	        loadFoods.setLayoutX(30);
 	        loadFoods.setLayoutY(450);
-	        
-	        
+
+
 	        //Set dimensions and layout of food and Meal lists
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
@@ -912,25 +917,25 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-	        
-	        root.getChildren().add(saveFoods); 
-	        root.getChildren().add(loadFoods); 
-	        
-	        
-	        
+
+	        root.getChildren().add(saveFoods);
+	        root.getChildren().add(loadFoods);
+
+
+
 	        saveFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	saveFoods(primaryStage); 
-		                
+	            	saveFoods(primaryStage);
+
 	            }//ends event handler
 	        });
-	        
+
 	        loadFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                loadFoodsPage(primaryStage);
 	            }
 	        });
-	        
+
 	        //if the user selects add food button goes to add food page
 
 
@@ -1037,58 +1042,58 @@ public class Main extends Application {
 	     //Show save file dialog
 	     File file = fileChooser.showOpenDialog(primaryStage);
 	     fileChooser.getExtensionFilters().add(extFilter);
-	     
+
 	     //as long as the file is not empty
 	       if (file != null) {
 	       	 try {
-		        	Scanner sc = new Scanner(file); 
+		        	Scanner sc = new Scanner(file);
 		        	while(sc.hasNext()) {
-		        		//reads in the line 
-		        		String s = sc.nextLine(); 
-		        		
-		        		
+		        		//reads in the line
+		        		String s = sc.nextLine();
+
+
 		        		//new scanner for the line
-		        		Scanner stringScanner = new Scanner(s); 
+		        		Scanner stringScanner = new Scanner(s);
 		        		//if there is a comma or a new line
-		        		stringScanner.useDelimiter(",|\\n"); 
+		        		stringScanner.useDelimiter(",|\\n");
 		        		//gets the name and weight from string
 		        		String name = stringScanner.next();
-		        		String weight = stringScanner.next(); 
-		        		double weightDouble = Double.parseDouble(weight); 
-		        		
-		        	
-		        		//checks if the food already exists 
-		        		boolean duplicate = false; 
+		        		String weight = stringScanner.next();
+		        		double weightDouble = Double.parseDouble(weight);
+
+
+		        		//checks if the food already exists
+		        		boolean duplicate = false;
 		        		for(int i = 0; i<foodList.size(); i++) {
 		        			if(foodList.getFoods().get(i).getName().equals(name)) {
-		        				duplicate = true; 
-		        			}//ends if 
+		        				duplicate = true;
+		        			}//ends if
 		        		}//ends for
-		        		
-		        		
-		        		//as long as it isnt a duplicate, adds the food 
+
+
+		        		//as long as it isnt a duplicate, adds the food
 		        		if(duplicate == false) {
 		        		//creates the new food
-		        		Food f = new Food(name, weightDouble); 
-		        		//adds the new food to the list 
+		        		Food f = new Food(name, weightDouble);
+		        		//adds the new food to the list
 		        		foodList.addFoodItem(f);
-		        		}//ends if 
-		        	}//ends while 
-		        	
-		        	
+		        		}//ends if
+		        	}//ends while
+
+
 		        	//refreshes the page
-		        	meals(primaryStage); 
-		        	
-		        	
+		        	meals(primaryStage);
+
+
 		        } catch (IOException ex) {
 		           System.out.println("File Logging Error");
 
 		        }
 	       }
-	    
-	     
+
+
 	}//ends loadfoodspage
-	
+
 	public static void saveFoods(Stage primaryStage) {
    	 FileChooser fileChooser = new FileChooser();
 
@@ -1107,7 +1112,7 @@ public class Main extends Application {
 	        	String content = "";
 	        	for(int index = 0; index<foodList.size(); index++ ) {
 	        		content = content + foodList.getFoods().get(index).getName() + ", "
-	        				+ foodList.getFoods().get(index).getWeight() + "\n"; 
+	        				+ foodList.getFoods().get(index).getWeight() + "\n";
 	        	}
 	        	//write the string to the file
 	        	 PrintWriter writer;
@@ -1122,7 +1127,7 @@ public class Main extends Application {
 
 	        }
        }
-       
+
 	}//ends save foods page
 
 	public static void addFoodPage(Stage primaryStage) {
