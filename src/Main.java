@@ -71,7 +71,7 @@ public class Main extends Application {
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
-//	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
+	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 
 	public static void main(String[] args) {
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
@@ -2514,7 +2514,7 @@ public class Main extends Application {
 
 		           	if (file != null) {
 		           		try {
-			                //image = new Image("file:" + file.getAbsolutePath());
+			                image = new Image("file:" + file.getAbsolutePath());
 		           		}
 		           		catch(Exception e1) {
 		           			e1.printStackTrace();
@@ -2644,7 +2644,7 @@ public class Main extends Application {
 
 		//creates the image
 		ImageView selectedImage = new ImageView();
-		//selectedImage.setImage(image);
+		selectedImage.setImage(image);
 
 
 		//the image will resize with the window
