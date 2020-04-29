@@ -51,6 +51,8 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -67,11 +69,14 @@ public class Main extends Application {
 	private static Foods foodList = new Foods();
 	private static ArrayList<ArrayList<Double>> locationList = new ArrayList<ArrayList<Double>>();
 	private static int feetPerPixel = 1;
+	private static Background bg = new Background(
+			new BackgroundFill(Color.web("#fffcf0"), null, null));
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
-	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
+//	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
+
 
 	public static void main(String[] args) {
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
@@ -150,6 +155,8 @@ public class Main extends Application {
 
 	        //show the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -274,6 +281,8 @@ public class Main extends Application {
 
 	        //finalize and show page
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -516,7 +525,8 @@ public class Main extends Application {
 			});
 
 			Scene scene = new Scene(root,900,500);
-
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -758,6 +768,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -1034,6 +1046,8 @@ public class Main extends Application {
 
 			//Create the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 
 			//Have the GUI page display
 			primaryStage.setScene(scene);
@@ -1229,6 +1243,8 @@ public class Main extends Application {
 
 	        //creates a new scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1590,6 +1606,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1890,6 +1908,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1996,6 +2016,8 @@ public class Main extends Application {
 
 	        //show the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -2114,6 +2136,8 @@ public class Main extends Application {
 	            });
 	        //creates a new scene
 	        Scene scene = new Scene(root,500,500);
+	      //Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2211,6 +2235,8 @@ public class Main extends Application {
 
 	        //creates a new scene
 	        Scene scene = new Scene(root,500,500);
+	      //Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2336,6 +2362,8 @@ public class Main extends Application {
             });
         //creates a new scene
         Scene scene = new Scene(root,500,500);
+      //Color the scene background
+		root.setBackground(bg);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		new AnimationTimer() {
@@ -2427,6 +2455,8 @@ public class Main extends Application {
 
 	        //creates the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2514,7 +2544,7 @@ public class Main extends Application {
 
 		           	if (file != null) {
 		           		try {
-			                image = new Image("file:" + file.getAbsolutePath());
+//			                image = new Image("file:" + file.getAbsolutePath());
 		           		}
 		           		catch(Exception e1) {
 		           			e1.printStackTrace();
@@ -2621,6 +2651,8 @@ public class Main extends Application {
 
 	        //creates the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -2644,7 +2676,7 @@ public class Main extends Application {
 
 		//creates the image
 		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(image);
+//		selectedImage.setImage(image);
 
 
 		//the image will resize with the window
@@ -2750,6 +2782,8 @@ public class Main extends Application {
 
 		//creates the scene
 		Scene scene = new Scene(root,500,500);
+		//Color the scene background
+		root.setBackground(bg);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -2805,13 +2839,12 @@ public class Main extends Application {
 	}
 
 	public static void addButtonStyleNormal(Button button) {
-		String mainStyle = "-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
-				"-fx-background-color:linear-gradient(to bottom, #e6daa8 5%, #a88759 100%);" +
+		String basic = "-fx-effect: dropshadow(gaussian, #828282, 10, 0.1, 0, 5);" +
 				"-fx-background-radius:18px;" +
 				"-fx-border-radius:12px;" +
 				"-fx-border-width:2px;" +
 				"-fx-border-style: solid;"+
-				"-fx-border-color: #a88759;" +
+				"-fx-border-color: #f7b4a1;" +
 				"-fx-display:inline-block;" +
 				"-fx-cursor:pointer;" +
 				"-fx-text-color:#000000;" +
@@ -2821,39 +2854,16 @@ public class Main extends Application {
 				"-fx-padding:10px 10px;" +
 				"-fx-text-decoration:none;";
 
-		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #d4c19b 5%, #967a55 100%);" +
-				"-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
-				"-fx-background-radius:18px;" +
-				"-fx-border-radius:12px;" +
-				"-fx-border-width:2px;" +
-				"-fx-border-style: solid;"+
-				"-fx-border-color: #a88759;" +
-				"-fx-display:inline-block;" +
-				"-fx-cursor:pointer;" +
-				"-fx-text-color:#000000;" +
-				"-fx-font-family:Arial;" +
-				"-fx-font-size:12px;" +
-				"-fx-font-weight:bold;" +
-				"-fx-padding:10px 10px;" +
-				"-fx-text-decoration:none;";
+		String mainStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 5%, #e6ca9c 100%);" +
+				basic;
+
+		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 15%, #ffbdab  100%);" +
+				basic;
 
 		String clickStyle = "position:relative;" +
 			"top:1px;" +
-			"-fx-background-color:linear-gradient(to bottom, #967a55 5%, #d4c19b  100%);" +
-			"-fx-effect: dropshadow(gaussian, #041400, 10, 0.1, 0, 5);" +
-			"-fx-background-radius:18px;" +
-			"-fx-border-radius:12px;" +
-			"-fx-border-width:2px;" +
-			"-fx-border-style: solid;"+
-			"-fx-border-color: #a88759;" +
-			"-fx-display:inline-block;" +
-			"-fx-cursor:pointer;" +
-			"-fx-text-color:#000000;" +
-			"-fx-font-family:Arial;" +
-			"-fx-font-size:12px;" +
-			"-fx-font-weight:bold;" +
-			"-fx-padding:10px 10px;" +
-			"-fx-text-decoration:none;";
+			"-fx-background-color:linear-gradient(to bottom, #f2d3a0 45%, #f7b4a1 100%);" +
+			basic;
 
 		//Set the button's main style
 		button.setStyle(mainStyle);
