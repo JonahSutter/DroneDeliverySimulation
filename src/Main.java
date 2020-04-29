@@ -69,6 +69,7 @@ public class Main extends Application {
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
+	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 //	private static ArrayList<Food> foodsList = new ArrayList<Food>(Arrays.asList(f1,f2,f3));
 //	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
 
@@ -198,10 +199,10 @@ public class Main extends Application {
 	        button3.setLayoutX(180);
 	        button3.setLayoutY(300);
 	        button4.setLayoutX(180);
-	        button4.setLayoutY(350);
+	        button4.setLayoutY(400);
 	        //adding map button
 	        button5.setLayoutX(180);
-	        button5.setLayoutY(400);
+	        button5.setLayoutY(350);
 
 	        button1.setPrefHeight(40);
 	        button1.setPrefWidth(140);
@@ -2391,6 +2392,7 @@ public class Main extends Application {
 			label.setLayoutX(80);
 
 			//creates the buttons
+			Button changeImage = new Button("Change image");
 	        Button update = new Button("Update Locations");
 	        Button load = new Button("Load Locations");
 	        Button save = new Button("Save Location");
@@ -2404,10 +2406,14 @@ public class Main extends Application {
 	        save.setLayoutY(250);
 	        load.setLayoutX(180);
 	        load.setLayoutY(300);
+	        changeImage.setLayoutX(180);
+	        changeImage.setLayoutY(350);
 	        home.setLayoutX(180);
-	        home.setLayoutY(350);
+	        home.setLayoutY(400);
 
 	        //sets the height and width of buttons
+	        changeImage.setPrefHeight(40);
+	        changeImage.setPrefWidth(140);
 	        update.setPrefHeight(40);
 	        update.setPrefWidth(140);
 	        load.setPrefHeight(40);
@@ -2420,6 +2426,7 @@ public class Main extends Application {
 
 	        //adds to the pane
 	        Pane root = new Pane();
+	        root.getChildren().add(changeImage);
 	        root.getChildren().add(update);
 	        root.getChildren().add(load);
 	        root.getChildren().add(save);
@@ -2427,9 +2434,26 @@ public class Main extends Application {
 	        root.getChildren().add(home);
 
 
-	        //if the user presses the cancel button goes back to meals page
-	        update.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	      //if the user presses the cancel button goes back to meals page
+	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	
+
+	           	   FileChooser fileChooser = new FileChooser();
+	           	
+		           	File file = fileChooser.showOpenDialog(primaryStage);
+
+		           	
+		           	if (file != null) {
+		           		try {
+			                image = new Image("file:" + file.getAbsolutePath());
+		           		}
+		           		catch(Exception e1) {
+		           			e1.printStackTrace();
+		           		}
+		                 
+		           	}
+		           	
 	                updateMap(primaryStage);
 	            }
 	        }); //ends cancel action
@@ -2493,9 +2517,6 @@ public class Main extends Application {
 			                location.appendChild(y);
 			            	 
 			                root.appendChild(location);
-			                
-			     
-			                
 			            }
 			            
 			            document.appendChild(root);
@@ -2554,9 +2575,8 @@ public class Main extends Application {
 		
 		
 		//creates the image
-		Image gcc = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(gcc);
+		selectedImage.setImage(image);
 		
 		
 		//the image will resize with the window
