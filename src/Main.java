@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -9,10 +11,23 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
-
-
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.DocumentBuilder;  
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import java.io.*;
 
 import javafx.animation.AnimationTimer;
@@ -71,14 +86,9 @@ public class Main extends Application {
 		mealList.addMeal(new Meal("Double Burger",0.10,new ArrayList<Food>() {{add(hamburger);add(fries);add(drink);add(hamburger);}}));
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
-
-	
-		for (int i = 0; i < 25; i++) {
-			locationList.add(new ArrayList<Double>());
-		}
 		
 		
-		setLocation(locationList, new File("defaultLocations.txt"));
+		locationList = setLocation(locationList, new File("defaultLocation.xml"));
 
 		orderList.setLocations(locationList);
 
@@ -384,7 +394,7 @@ public class Main extends Application {
 			fifoSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < fifoTimeData.size(); i++) {	//puts all the data into the graph
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
-				fifoSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
+				fifoSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, fifoTimeData.get(i)));
 			}
 			fifoChart.getData().addAll(fifoSeries);//adds all the data from the series to the chart
 			fifoChart.setLegendVisible(false);	//hides the legend
@@ -421,7 +431,7 @@ public class Main extends Application {
 			knapsackSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
-				knapsackSeries.getData().add(new XYChart.Data(categoryName, knapsackTimeData.get(i)));
+				knapsackSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, knapsackTimeData.get(i)));
 			}
 			knapsackChart.getData().addAll(knapsackSeries);
 			knapsackChart.setLegendVisible(false);
@@ -1449,7 +1459,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food1Name = (String) option1.getValue();
+	    		            	String food1Name = option1.getValue();
 	    		            	double food1Weight = Double.parseDouble(mealWeight1.getText());
 	    		            	Food newFood = new Food(food1Name, food1Weight);
 	    		            	newMeal.add(newFood);
@@ -1468,7 +1478,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food2Name = (String) option2.getValue();
+	    		            	String food2Name = option2.getValue();
 	    		            	double food2Weight = Double.parseDouble(mealWeight2.getText());
 	    		            	Food newFood = new Food(food2Name, food2Weight);
 	    		            	newMeal.add(newFood);
@@ -1487,7 +1497,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food3Name = (String) option3.getValue();
+	    		            	String food3Name = option3.getValue();
 	    		            	double food3Weight = Double.parseDouble(mealWeight3.getText());
 	    		            	Food newFood = new Food(food3Name, food3Weight);
 	    		            	newMeal.add(newFood);
@@ -1506,7 +1516,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food4Name = (String) option4.getValue();
+	    		            	String food4Name = option4.getValue();
 	    		            	double food4Weight = Double.parseDouble(mealWeight4.getText());
 	    		            	Food newFood = new Food(food4Name, food4Weight);
 	    		            	newMeal.add(newFood);
@@ -1851,10 +1861,6 @@ public class Main extends Application {
 		}
 	}	//End editMealsPage function
 
-	public static void uploadMapPage(Stage primaryStage) {
-
-	}
-
 	/*
 	 * page to save info
 	 */
@@ -1906,17 +1912,17 @@ public class Main extends Application {
 	        //button that sends to file explorer and saves
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	           	  FileChooser fileChooser = new FileChooser();
-
-                  //Set extension filter
-                  FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-                  fileChooser.getExtensionFilters().add(extFilter);
-
-                  //Show save file dialog
-                  File file = fileChooser.showSaveDialog(primaryStage);
-
-
-                  fileChooser.getExtensionFilters().add(extFilter);
+	           	   FileChooser fileChooser = new FileChooser();
+	
+	               //Set extension filter
+	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	               fileChooser.getExtensionFilters().add(extFilter);
+	
+	               //Show save file dialog
+  	               File file = fileChooser.showSaveDialog(primaryStage);
+	
+	
+	                fileChooser.getExtensionFilters().add(extFilter);
 
 	                if (file != null) {
 	                	SaveFile(file);
@@ -1995,8 +2001,7 @@ public class Main extends Application {
 	           System.out.println("File Logging Error");
 
 	        }
-
-	    }
+	 }
 
 
 	public static void editFoodPage(Stage primaryStage) {
@@ -2429,21 +2434,96 @@ public class Main extends Application {
 	            }
 	        }); //ends cancel action
 
-	      //if the user presses the cancel button goes back to meals page
+	        //if the user presses the cancel button goes back to meals page
 	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                map(primaryStage);
+	            	
+
+	           	   FileChooser fileChooser = new FileChooser();
+	           	
+		           	File file = fileChooser.showOpenDialog(primaryStage);
+	                if (file != null) {
+	                    locationList = setLocation(locationList, file);
+	                }
+	                //map(primaryStage);
 	            }
 	        }); //ends cancel action
 
-	      //if the user presses the cancel button goes back to meals page
+	        //saving files
 	        save.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	
+	           	   FileChooser fileChooser = new FileChooser();
+	           	
+	               //Set extension filter
+	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	               fileChooser.getExtensionFilters().add(extFilter);
+	
+	               //Show save file dialog
+  	               File file = fileChooser.showSaveDialog(primaryStage);
+	
+	
+	               fileChooser.getExtensionFilters().add(extFilter);
+
+	               if (file != null) {
+	            	   
+	                   
+	                   
+					try {
+						DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+						 
+			            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+			 
+			            Document document = documentBuilder.newDocument();
+			 
+			            // root element
+			            Element root = document.createElement("locations");
+			            
+			            for (int i = 0; i < locationList.size(); i++) {
+			            	Element location = document.createElement("location");
+			            	
+			            	Element x = document.createElement("x");
+			                x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
+			                
+			                Element y = document.createElement("y");    	
+			                y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
+			                
+			                
+			                location.appendChild(x);
+			                location.appendChild(y);
+			            	 
+			                root.appendChild(location);
+			                
+			     
+			                
+			            }
+			            
+			            document.appendChild(root);
+			            
+			            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			            Transformer transformer = transformerFactory.newTransformer();
+			            DOMSource domSource = new DOMSource(document);
+			            StreamResult streamResult = new StreamResult(file);
+			 
+			            // If you use
+			            // StreamResult result = new StreamResult(System.out);
+			            // the output will be pushed to the standard output ...
+			            // You can use that for debugging 
+			 
+			            transformer.transform(domSource, streamResult);
+			            
+					} catch (ParserConfigurationException | TransformerException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+	                }
+		                
 	                map(primaryStage);
 	            }
 	        }); //ends cancel action
 
-	      //if the user presses the cancel button goes back to meals page
+	        //if the user presses the cancel button goes back to meals page
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                mainPage(primaryStage);
@@ -2600,29 +2680,37 @@ public class Main extends Application {
 	public static ArrayList<ArrayList<Double>> setLocation(ArrayList<ArrayList<Double>> locations, File file){
 
 		try {
-			Scanner scn = new Scanner(file);
-			int counter = 0;
-			
-			while (scn.hasNextLine()) {
-				Scanner scn2 = new Scanner(scn.nextLine());
-				  scn2.useDelimiter(",");
-				  locations.get(counter).add(scn2.nextDouble());
-				  locations.get(counter).add(scn2.nextDouble());
-				  counter++;
-				  
-			 } 
-			
-			scn.close();
-			
-		} 
-		catch (FileNotFoundException e) {
-			System.out.println("File not found");
-			e.printStackTrace();
-		}
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db;
+			db = dbf.newDocumentBuilder();
+			Document doc = db.parse(file);  
+			doc.getDocumentElement().normalize(); 
 
-		
-		
+			NodeList nList = doc.getElementsByTagName("location");
+			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+			
+			for (int i = 0; i < nList.getLength(); i++) {
+				tempList.add(new ArrayList<Double>());
+				Node nNode = nList.item(i);
+				
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+
+					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent()));
+					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent()));
+				}
+			}
+			
+			return tempList;
+			
+			
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
 		return null;
+		
 	}
 
 }
