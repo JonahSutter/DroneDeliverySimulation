@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -9,10 +11,23 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
-
-
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import java.io.*;
 
 import javafx.animation.AnimationTimer;
@@ -24,6 +39,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -31,13 +47,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
+import javafx.scene.input.MouseEvent;
 
 
 public class Main extends Application {
@@ -45,13 +67,16 @@ public class Main extends Application {
 	private static Meals mealList = new Meals();
 	private static Orders orderList = new Orders(38, 45, 60, 30);
 	private static Foods foodList = new Foods();
-	private static double[][] locationList;
+	private static ArrayList<ArrayList<Double>> locationList = new ArrayList<ArrayList<Double>>();
+	private static int feetPerPixel = 1;
+	private static Background bg = new Background(
+			new BackgroundFill(Color.web("#fffcf0"), null, null));
 
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
-//	private static ArrayList<Food> foodsList = new ArrayList<Food>(Arrays.asList(f1,f2,f3));
-//	private static ArrayList<String> foodNames = new ArrayList<String>(Arrays.asList("1/4 lb Hamburger", "Fries", "12 oz Drink"));
+	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
+
 
 	public static void main(String[] args) {
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
@@ -68,38 +93,9 @@ public class Main extends Application {
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
 
-		double[][] locationList = new double[25][];
-		for (int i = 0; i < 25; i++) {
-			locationList[i] = new double[2];
-		}
 
-		//Random list of locations
-		//TODO: Replace with actual values from Grove City Campus delivery points
-		locationList[0] = new double[] {0,0};
-		locationList[1] = new double[] {40,50};
-		locationList[2] = new double[] {90,60};
-		locationList[3] = new double[] {100,100};
-		locationList[4] = new double[] {0,100};
-		locationList[5] = new double[] {90,8};
-		locationList[6] = new double[] {10,30};
-		locationList[7] = new double[] {70,65.23};
-		locationList[8] = new double[] {48.32,23.51};
-		locationList[9] = new double[] {109.3,142.6};
-		locationList[10] = new double[] {241,42};
-		locationList[11] = new double[] {123,75};
-		locationList[12] = new double[] {352,129};
-		locationList[13] = new double[] {185,135};
-		locationList[14] = new double[] {185,138};
-		locationList[15] = new double[] {194,144};
-		locationList[16] = new double[] {150,74};
-		locationList[17] = new double[] {143,93};
-		locationList[18] = new double[] {164,103};
-		locationList[19] = new double[] {251,172};
-		locationList[20] = new double[] {214,198};
-		locationList[21] = new double[] {213,164};
-		locationList[22] = new double[] {218,300};
-		locationList[23] = new double[] {245,271};
-		locationList[24] = new double[] {295,142};
+		locationList = setLocation(locationList, new File("defaultLocation.xml"));
+
 		orderList.setLocations(locationList);
 
 		launch(args);
@@ -110,7 +106,6 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
-
 			//setting labels and buttons
 			primaryStage.setTitle("Starting Screen");
 
@@ -127,13 +122,16 @@ public class Main extends Application {
 	        button2.setPrefHeight(40);
 	        button2.setPrefWidth(140);
 
-
 	        //setting layout of buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
 	        button1.setLayoutY(200);
 	        button2.setLayoutX(180);
 	        button2.setLayoutY(250);
+
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
 
 	        //adding to root
 	        root.getChildren().add(button1);
@@ -157,6 +155,8 @@ public class Main extends Application {
 
 	        //show the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -208,10 +208,10 @@ public class Main extends Application {
 	        button3.setLayoutX(180);
 	        button3.setLayoutY(300);
 	        button4.setLayoutX(180);
-	        button4.setLayoutY(350);
+	        button4.setLayoutY(400);
 	        //adding map button
 	        button5.setLayoutX(180);
-	        button5.setLayoutY(400);
+	        button5.setLayoutY(350);
 
 	        button1.setPrefHeight(40);
 	        button1.setPrefWidth(140);
@@ -225,6 +225,12 @@ public class Main extends Application {
 	        button5.setPrefHeight(40);
 	        button5.setPrefWidth(140);
 
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
+	        addButtonStyleNormal(button3);
+	        addButtonStyleNormal(button4);
+	        addButtonStyleNormal(button5);
 
 	        //adding buttons and labels to root
 	        root.getChildren().add(button1);
@@ -233,6 +239,9 @@ public class Main extends Application {
 	        root.getChildren().add(button4);
 	        root.getChildren().add(button5);
 	        root.getChildren().add(label);
+
+	        //Add styles to buttons and labels
+	        addButtonStyleNormal(button1);
 
 	        //buttons sends to simulation page
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
@@ -272,6 +281,8 @@ public class Main extends Application {
 
 	        //finalize and show page
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -404,7 +415,7 @@ public class Main extends Application {
 			fifoSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < fifoTimeData.size(); i++) {	//puts all the data into the graph
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
-				fifoSeries.getData().add(new XYChart.Data(categoryName, fifoTimeData.get(i)));
+				fifoSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, fifoTimeData.get(i)));
 			}
 			fifoChart.getData().addAll(fifoSeries);//adds all the data from the series to the chart
 			fifoChart.setLegendVisible(false);	//hides the legend
@@ -441,7 +452,7 @@ public class Main extends Application {
 			knapsackSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
 				categoryName = String.format("%d - %d", i*30, (i+1)*30);
-				knapsackSeries.getData().add(new XYChart.Data(categoryName, knapsackTimeData.get(i)));
+				knapsackSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, knapsackTimeData.get(i)));
 			}
 			knapsackChart.getData().addAll(knapsackSeries);
 			knapsackChart.setLegendVisible(false);
@@ -468,6 +479,11 @@ public class Main extends Application {
 			button2.setPrefWidth(161);
 			button3.setPrefHeight(32);
 			button3.setPrefWidth(135);
+
+	        //Add the button styles
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
+	        addButtonStyleNormal(button3);
 
 			root.getChildren().add(button1);
 			root.getChildren().add(button2);
@@ -509,7 +525,8 @@ public class Main extends Application {
 			});
 
 			Scene scene = new Scene(root,900,500);
-
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -722,6 +739,9 @@ public class Main extends Application {
 	        home.setLayoutY(385);
 	        home.setPrefWidth(75);
 
+	        //Add the button styles
+	        addButtonStyleNormal(home);
+
 	        //Add all the created elements to the screen
 	        Pane root = new Pane();
 	        root.getChildren().add(listProbs);
@@ -748,6 +768,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -794,8 +816,8 @@ public class Main extends Application {
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
-	        Button saveFoods = new Button("Save Current Foods"); 
-	        Button loadFoods = new Button("Load List of Foods"); 
+	        Button saveFoods = new Button("Save Current Foods");
+	        Button loadFoods = new Button("Load List of Foods");
 
 	        //Set list views to display foods and meals
 	        ListView<String> listFood = new ListView<String>();
@@ -871,20 +893,20 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-	        
-	        saveFoods.setPrefHeight(40); 
+
+	        saveFoods.setPrefHeight(40);
 	        saveFoods.setPrefWidth(140);
 	        loadFoods.setPrefHeight(40);
 	        loadFoods.setPrefWidth(140);
-	        
-	        
-	        saveFoods.setLayoutX(30); 
+
+
+	        saveFoods.setLayoutX(30);
 	        saveFoods.setLayoutY(410);
-	        
+
 	        loadFoods.setLayoutX(30);
 	        loadFoods.setLayoutY(450);
-	        
-	        
+
+
 	        //Set dimensions and layout of food and Meal lists
 	        listFood.setPrefWidth(140);
 	        listFood.setPrefHeight(300);
@@ -897,6 +919,17 @@ public class Main extends Application {
 	        listMeals.setLayoutX(330);
 	        listMeals.setLayoutY(100);
 
+
+	      //Add the button styles
+	        addButtonStyleNormal(removeFood);
+	        addButtonStyleNormal(editFood);
+	        addButtonStyleNormal(addFood);
+	        addButtonStyleNormal(addMeal);
+	        addButtonStyleNormal(editMeal);
+	        addButtonStyleNormal(removeMeal);
+	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(saveFoods);
+	        addButtonStyleNormal(loadFoods);
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -912,25 +945,25 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-	        
-	        root.getChildren().add(saveFoods); 
-	        root.getChildren().add(loadFoods); 
-	        
-	        
-	        
+
+	        root.getChildren().add(saveFoods);
+	        root.getChildren().add(loadFoods);
+
+
+
 	        saveFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	saveFoods(primaryStage); 
-		                
+	            	saveFoods(primaryStage);
+
 	            }//ends event handler
 	        });
-	        
+
 	        loadFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	                loadFoodsPage(primaryStage);
 	            }
 	        });
-	        
+
 	        //if the user selects add food button goes to add food page
 
 
@@ -1019,6 +1052,8 @@ public class Main extends Application {
 
 			//Create the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 
 			//Have the GUI page display
 			primaryStage.setScene(scene);
@@ -1043,58 +1078,58 @@ public class Main extends Application {
 	     //Show save file dialog
 	     File file = fileChooser.showOpenDialog(primaryStage);
 	     fileChooser.getExtensionFilters().add(extFilter);
-	     
+
 	     //as long as the file is not empty
 	       if (file != null) {
 	       	 try {
-		        	Scanner sc = new Scanner(file); 
+		        	Scanner sc = new Scanner(file);
 		        	while(sc.hasNext()) {
-		        		//reads in the line 
-		        		String s = sc.nextLine(); 
-		        		
-		        		
+		        		//reads in the line
+		        		String s = sc.nextLine();
+
+
 		        		//new scanner for the line
-		        		Scanner stringScanner = new Scanner(s); 
+		        		Scanner stringScanner = new Scanner(s);
 		        		//if there is a comma or a new line
-		        		stringScanner.useDelimiter(",|\\n"); 
+		        		stringScanner.useDelimiter(",|\\n");
 		        		//gets the name and weight from string
 		        		String name = stringScanner.next();
-		        		String weight = stringScanner.next(); 
-		        		double weightDouble = Double.parseDouble(weight); 
-		        		
-		        	
-		        		//checks if the food already exists 
-		        		boolean duplicate = false; 
+		        		String weight = stringScanner.next();
+		        		double weightDouble = Double.parseDouble(weight);
+
+
+		        		//checks if the food already exists
+		        		boolean duplicate = false;
 		        		for(int i = 0; i<foodList.size(); i++) {
 		        			if(foodList.getFoods().get(i).getName().equals(name)) {
-		        				duplicate = true; 
-		        			}//ends if 
+		        				duplicate = true;
+		        			}//ends if
 		        		}//ends for
-		        		
-		        		
-		        		//as long as it isnt a duplicate, adds the food 
+
+
+		        		//as long as it isnt a duplicate, adds the food
 		        		if(duplicate == false) {
 		        		//creates the new food
-		        		Food f = new Food(name, weightDouble); 
-		        		//adds the new food to the list 
+		        		Food f = new Food(name, weightDouble);
+		        		//adds the new food to the list
 		        		foodList.addFoodItem(f);
-		        		}//ends if 
-		        	}//ends while 
-		        	
-		        	
+		        		}//ends if
+		        	}//ends while
+
+
 		        	//refreshes the page
-		        	meals(primaryStage); 
-		        	
-		        	
+		        	meals(primaryStage);
+
+
 		        } catch (IOException ex) {
 		           System.out.println("File Logging Error");
 
 		        }
 	       }
-	    
-	     
+
+
 	}//ends loadfoodspage
-	
+
 	public static void saveFoods(Stage primaryStage) {
    	 FileChooser fileChooser = new FileChooser();
 
@@ -1113,7 +1148,7 @@ public class Main extends Application {
 	        	String content = "";
 	        	for(int index = 0; index<foodList.size(); index++ ) {
 	        		content = content + foodList.getFoods().get(index).getName() + ", "
-	        				+ foodList.getFoods().get(index).getWeight() + "\n"; 
+	        				+ foodList.getFoods().get(index).getWeight() + "\n";
 	        	}
 	        	//write the string to the file
 	        	 PrintWriter writer;
@@ -1128,7 +1163,7 @@ public class Main extends Application {
 
 	        }
        }
-       
+
 	}//ends save foods page
 
 	public static void addFoodPage(Stage primaryStage) {
@@ -1175,6 +1210,10 @@ public class Main extends Application {
 	        foodWeight.setLayoutX(180);
 	        foodWeight.setLayoutY(250);
 
+	      //Add the button styles
+	        addButtonStyleNormal(saveFood);
+	        addButtonStyleNormal(cancel);
+
 	        //add to the root
 	        Pane root = new Pane();
 	        root.getChildren().add(saveFood);
@@ -1210,6 +1249,8 @@ public class Main extends Application {
 
 	        //creates a new scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1396,6 +1437,10 @@ public class Main extends Application {
 	        option4.setLayoutX(180);
 	        option4.setLayoutY(300);
 
+	      //Add the button styles
+	        addButtonStyleNormal(saveMeal);
+	        addButtonStyleNormal(cancel);
+
 	        //Add javaFX elements to the pane so they are displayed
 	        root.getChildren().add(saveMeal);
 	        root.getChildren().add(cancel);
@@ -1475,7 +1520,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food1Name = (String) option1.getValue();
+	    		            	String food1Name = option1.getValue();
 	    		            	double food1Weight = Double.parseDouble(mealWeight1.getText());
 	    		            	Food newFood = new Food(food1Name, food1Weight);
 	    		            	newMeal.add(newFood);
@@ -1494,7 +1539,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food2Name = (String) option2.getValue();
+	    		            	String food2Name = option2.getValue();
 	    		            	double food2Weight = Double.parseDouble(mealWeight2.getText());
 	    		            	Food newFood = new Food(food2Name, food2Weight);
 	    		            	newMeal.add(newFood);
@@ -1513,7 +1558,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food3Name = (String) option3.getValue();
+	    		            	String food3Name = option3.getValue();
 	    		            	double food3Weight = Double.parseDouble(mealWeight3.getText());
 	    		            	Food newFood = new Food(food3Name, food3Weight);
 	    		            	newMeal.add(newFood);
@@ -1532,7 +1577,7 @@ public class Main extends Application {
 
 	            			//if the food has a valid weight, add the food to the newMeal list
 	            			else {
-	    		            	String food4Name = (String) option4.getValue();
+	    		            	String food4Name = option4.getValue();
 	    		            	double food4Weight = Double.parseDouble(mealWeight4.getText());
 	    		            	Food newFood = new Food(food4Name, food4Weight);
 	    		            	newMeal.add(newFood);
@@ -1567,6 +1612,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1686,6 +1733,10 @@ public class Main extends Application {
 	        	foodWeights[i].setText(Double.toString(mealFoods.get(i).getWeight()));
 	        	foodOptions[i].setValue(mealFoods.get(i).getName().toString());
 	        }
+
+	      //Add the button styles
+	        addButtonStyleNormal(saveMeal);
+	        addButtonStyleNormal(cancel);
 
 	        //Adds javaFX button to pane so they are displayed
 	        root.getChildren().add(saveMeal);
@@ -1863,6 +1914,8 @@ public class Main extends Application {
 
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -1876,10 +1929,6 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}	//End editMealsPage function
-
-	public static void uploadMapPage(Stage primaryStage) {
-
-	}
 
 	/*
 	 * page to save info
@@ -1914,7 +1963,10 @@ public class Main extends Application {
 	        button2.setPrefWidth(140);
 
 
-
+	      //Add the button styles
+	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(button1);
+	        addButtonStyleNormal(button2);
 
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
@@ -1932,17 +1984,17 @@ public class Main extends Application {
 	        //button that sends to file explorer and saves
 	        button1.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	           	  FileChooser fileChooser = new FileChooser();
+	           	   FileChooser fileChooser = new FileChooser();
 
-                  //Set extension filter
-                  FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-                  fileChooser.getExtensionFilters().add(extFilter);
+	               //Set extension filter
+	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	               fileChooser.getExtensionFilters().add(extFilter);
 
-                  //Show save file dialog
-                  File file = fileChooser.showSaveDialog(primaryStage);
+	               //Show save file dialog
+  	               File file = fileChooser.showSaveDialog(primaryStage);
 
 
-                  fileChooser.getExtensionFilters().add(extFilter);
+	                fileChooser.getExtensionFilters().add(extFilter);
 
 	                if (file != null) {
 	                	SaveFile(file);
@@ -1970,6 +2022,8 @@ public class Main extends Application {
 
 	        //show the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 
@@ -2021,8 +2075,7 @@ public class Main extends Application {
 	           System.out.println("File Logging Error");
 
 	        }
-
-	    }
+	 }
 
 
 	public static void editFoodPage(Stage primaryStage) {
@@ -2055,6 +2108,11 @@ public class Main extends Application {
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
 
+		      //Add the button styles
+	        addButtonStyleNormal(editName);
+	        addButtonStyleNormal(editWeight);
+	        addButtonStyleNormal(cancel);
+
 	        //add to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(editName);
@@ -2084,6 +2142,8 @@ public class Main extends Application {
 	            });
 	        //creates a new scene
 	        Scene scene = new Scene(root,500,500);
+	      //Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2140,6 +2200,10 @@ public class Main extends Application {
 	        newFoodWeight.setLayoutX(180);
 	        newFoodWeight.setLayoutY(150);
 
+		      //Add the button styles
+	        addButtonStyleNormal(saveChanges);
+	        addButtonStyleNormal(cancel);
+
 	        //adds to the pane
 	        root.getChildren().add(saveChanges);
 	        root.getChildren().add(cancel);
@@ -2177,6 +2241,8 @@ public class Main extends Application {
 
 	        //creates a new scene
 	        Scene scene = new Scene(root,500,500);
+	      //Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2260,6 +2326,10 @@ public class Main extends Application {
         newFoodWeight.setLayoutX(180);
         newFoodWeight.setLayoutY(250);
 
+	      //Add the button styles
+        addButtonStyleNormal(cancel);
+        addButtonStyleNormal(saveChanges);
+
         //adds everything to the pane
         Pane root = new Pane();
         root.getChildren().add(saveChanges);
@@ -2298,6 +2368,8 @@ public class Main extends Application {
             });
         //creates a new scene
         Scene scene = new Scene(root,500,500);
+      //Color the scene background
+		root.setBackground(bg);
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		new AnimationTimer() {
@@ -2348,6 +2420,10 @@ public class Main extends Application {
 	        cancel.setPrefWidth(140);
 	        cancel.setPrefWidth(140);
 
+		      //Add the button styles
+	        addButtonStyleNormal(remove);
+	        addButtonStyleNormal(cancel);
+
 	        //adds to the pane
 	        Pane root = new Pane();
 	        root.getChildren().add(remove);
@@ -2385,6 +2461,8 @@ public class Main extends Application {
 
 	        //creates the scene
 			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			new AnimationTimer() {
@@ -2400,28 +2478,409 @@ public class Main extends Application {
 
 	public static void map(Stage primaryStage) {
 		try {
+
+			//sets the title of the page
+			primaryStage.setTitle("Remove Food Page");
+
+			//create the labels
+			Label label = new Label("Dromedary Drones");
+
+			//sets the fonts and position of the labels
+			label.setFont(new Font("Arial", 40));
+			label.setLayoutX(80);
+
+			//creates the buttons
+			Button changeImage = new Button("Change image");
+	        Button update = new Button("Update Locations");
+	        Button load = new Button("Load Locations");
+	        Button save = new Button("Save Location");
+	        Button home = new Button("Home");
+
+	        //set position of text fields and buttons
+	        update.setLayoutX(180);
+	        update.setLayoutY(200);
+	        save.setLayoutX(180);
+	        save.setLayoutY(250);
+	        load.setLayoutX(180);
+	        load.setLayoutY(300);
+	        changeImage.setLayoutX(180);
+	        changeImage.setLayoutY(350);
+	        home.setLayoutX(180);
+	        home.setLayoutY(400);
+
+	        //sets the height and width of buttons
+	        changeImage.setPrefHeight(40);
+	        changeImage.setPrefWidth(140);
+	        update.setPrefHeight(40);
+	        update.setPrefWidth(140);
+	        load.setPrefHeight(40);
+	        load.setPrefWidth(140);
+	        save.setPrefHeight(40);
+	        save.setPrefWidth(140);
+	        home.setPrefHeight(40);
+	        home.setPrefWidth(140);
+
+
+	        //Add the button styles
+	        addButtonStyleNormal(changeImage);
+	        addButtonStyleNormal(update);
+	        addButtonStyleNormal(load);
+	        addButtonStyleNormal(save);
+	        addButtonStyleNormal(home);
+
+	        //adds to the pane
+	        Pane root = new Pane();
+	        root.getChildren().add(changeImage);
+	        root.getChildren().add(update);
+	        root.getChildren().add(load);
+	        root.getChildren().add(save);
+	        root.getChildren().add(label);
+	        root.getChildren().add(home);
+
+
+	      //if the user presses the cancel button goes back to meals page
+	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+
+
+	           	   FileChooser fileChooser = new FileChooser();
+
+		           	File file = fileChooser.showOpenDialog(primaryStage);
+
+
+		           	if (file != null) {
+		           		try {
+			                image = new Image("file:" + file.getAbsolutePath());
+		           		}
+		           		catch(Exception e1) {
+		           			e1.printStackTrace();
+		           		}
+
+		           	}
+
+	                updateMap(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	        //if the user presses the cancel button goes back to meals page
+	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+
+
+	           	   FileChooser fileChooser = new FileChooser();
+
+		           	File file = fileChooser.showOpenDialog(primaryStage);
+	                if (file != null) {
+	                    locationList = setLocation(locationList, file);
+	                }
+	                //map(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	        //saving files
+	        save.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+
+	           	   FileChooser fileChooser = new FileChooser();
+
+	               //Set extension filter
+	               FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	               fileChooser.getExtensionFilters().add(extFilter);
+
+	               //Show save file dialog
+  	               File file = fileChooser.showSaveDialog(primaryStage);
+
+
+	               fileChooser.getExtensionFilters().add(extFilter);
+
+	               if (file != null) {
+
+
+
+					try {
+						DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+
+			            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+
+			            Document document = documentBuilder.newDocument();
+
+			            // root element
+			            Element root = document.createElement("locations");
+
+			            for (int i = 0; i < locationList.size(); i++) {
+			            	Element location = document.createElement("location");
+
+			            	Element x = document.createElement("x");
+			                x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
+
+			                Element y = document.createElement("y");
+			                y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
+
+
+			                location.appendChild(x);
+			                location.appendChild(y);
+
+			                root.appendChild(location);
+			            }
+
+			            document.appendChild(root);
+
+			            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			            Transformer transformer = transformerFactory.newTransformer();
+			            DOMSource domSource = new DOMSource(document);
+			            StreamResult streamResult = new StreamResult(file);
+
+			            // If you use
+			            // StreamResult result = new StreamResult(System.out);
+			            // the output will be pushed to the standard output ...
+			            // You can use that for debugging
+
+			            transformer.transform(domSource, streamResult);
+
+					} catch (ParserConfigurationException | TransformerException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+	                }
+
+	                map(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	        //if the user presses the cancel button goes back to meals page
+	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	                mainPage(primaryStage);
+	            }
+	        }); //ends cancel action
+
+	        //creates the scene
+			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+				}
+			}.start();
+
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+
+	}//ends map method
+
+	public static void updateMap(Stage primaryStage) {
+		try {
+		Pane root = new Pane();
+
+
 		//creates the image
-		Image gcc = new Image(Main.class.getResourceAsStream("mapGroveCity_WithPoints.jpg"));
 		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(gcc);
+		selectedImage.setImage(image);
+
+
 		//the image will resize with the window
 		selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
 		selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
+
 		//adds to the pane
-		Pane root = new Pane();
 		root.getChildren().addAll(selectedImage);
+
+		//creates the buttons
+        Button back = new Button("Back");
+
+        //set position of text fields and buttons
+        back.setLayoutX(0);
+        back.setLayoutY(0);
+
+
+        //sets the height and width of buttons
+        back.setPrefHeight(40);
+        back.setPrefWidth(100);
+
+
+        for (ArrayList<Double> location : locationList) {
+        	double x = location.get(0);
+        	double y = location.get(1);
+
+		     Button bt = new Button();
+			 bt.setShape(new Circle(5));
+
+			 bt.setPrefSize(4, 4);
+			 bt.setStyle("-fx-background-color: Red");
+
+			 bt.setLayoutX(x);
+			 bt.setLayoutY(y);
+
+
+			 bt.setOnAction(new EventHandler<ActionEvent>() {
+				 @Override public void handle(ActionEvent e) {
+                     //set button pressed values
+					 root.getChildren().remove(bt);
+
+					 for (int i = 0; i < locationList.size(); i++) {
+						 if ((locationList.get(i).get(0) == bt.getLayoutX()) && (locationList.get(i).get(1) == bt.getLayoutY())) {
+							 locationList.remove(locationList.get(i));
+						 }
+					 }
+				 }
+			 });
+
+		     root.getChildren().addAll(bt);
+
+        }
+
+        //if the user presses the cancel button goes back to meals page
+        back.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                map(primaryStage);
+            }
+        }); //ends cancel action
+
+		//set action
+		 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			 @Override
+			 public void handle(MouseEvent event) {
+				 //if the button has been pressed
+
+			     Button bt = new Button();
+				 bt.setShape(new Circle(5));
+
+				 bt.setPrefSize(4, 4);
+				 bt.setStyle("-fx-background-color: Red");
+
+				 bt.setTranslateX(event.getSceneX() - 8);
+				 bt.setTranslateY(event.getSceneY() - 8);
+
+				 locationList.add(new ArrayList<Double>());
+				 locationList.get(locationList.size() - 1).add(event.getSceneX());
+				 locationList.get(locationList.size() - 1).add(event.getSceneY());
+
+				 bt.setOnAction(new EventHandler<ActionEvent>() {
+					 @Override public void handle(ActionEvent e) {
+                         //set button pressed values
+						 root.getChildren().remove(bt);
+
+						 for (int i = 0; i < locationList.size(); i++) {
+							 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
+								 locationList.remove(locationList.get(i));
+							 }
+						 }
+					 }
+				 });
+
+			     root.getChildren().addAll(bt);
+			 }
+		 });
+
+		//Add the button styles
+		 addButtonStyleNormal(back);
+
+		root.getChildren().addAll(back);
+
+
 		//creates the scene
 		Scene scene = new Scene(root,500,500);
+		//Color the scene background
+		root.setBackground(bg);
 		primaryStage.setScene(scene);
 		primaryStage.show();
+
+
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 			}
 		}.start();
+
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+
+
 	}//ends map method
+
+	public static ArrayList<ArrayList<Double>> setLocation(ArrayList<ArrayList<Double>> locations, File file){
+
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db;
+			db = dbf.newDocumentBuilder();
+			Document doc = db.parse(file);
+			doc.getDocumentElement().normalize();
+
+			NodeList nList = doc.getElementsByTagName("location");
+			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+
+			for (int i = 0; i < nList.getLength(); i++) {
+				tempList.add(new ArrayList<Double>());
+				Node nNode = nList.item(i);
+
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+
+					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent()));
+					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent()));
+				}
+			}
+
+			return tempList;
+
+
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public static void addButtonStyleNormal(Button button) {
+		String basic = "-fx-effect: dropshadow(gaussian, #828282, 10, 0.1, 0, 5);" +
+				"-fx-background-radius:14px;" +
+				"-fx-border-radius:12px;" +
+				"-fx-border-width:1.5px;" +
+				"-fx-border-style: solid;"+
+				"-fx-border-color: #f7b4a1;" +
+				"-fx-display:inline-block;" +
+				"-fx-cursor:pointer;" +
+				"-fx-text-color:#000000;" +
+				"-fx-font-family:Arial;" +
+				"-fx-font-size:12px;" +
+				"-fx-font-weight:bold;" +
+				"-fx-padding:10px 10px;" +
+				"-fx-text-decoration:none;";
+
+		String mainStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 5%, #e6ca9c 100%);" +
+				basic;
+
+		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 15%, #ffbdab  100%);" +
+				basic;
+
+		String clickStyle =
+			"-fx-background-color:linear-gradient(to bottom, #f2d3a0 45%, #f7b4a1 100%);" +
+			basic;
+
+		//Set the button's main style
+		button.setStyle(mainStyle);
+		button.setTextOverrun(OverrunStyle.CLIP);
+
+		//Set the button to do special things on Hover and revert after
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(mainStyle));
+
+        //Set the button to "move down" when clicked and "go back" when released
+        button.setOnMousePressed(e -> button.setStyle(clickStyle));
+        button.setOnMouseReleased(e -> button.setStyle(mainStyle));
+	}
 
 }

@@ -1,7 +1,8 @@
+import java.util.ArrayList;
 
 public class Order {
 	private int timeStamp;
-	private double[] location = new double[2];
+	private ArrayList<Double> location = new ArrayList<Double>();
 	private Meal meal;
 
 	/*
@@ -10,11 +11,11 @@ public class Order {
 	 * @location array representing the location
 	 * @meal Meal that contains the meal info
 	 */
-	public Order(int timeStamp, double[] location, Meal meal) {
+	public Order(int timeStamp, ArrayList<Double> location, Meal meal) {
 		this.meal = meal;
 		this.timeStamp = timeStamp;
-		this.location[0] = location[0];
-		this.location[1] = location[1];
+		this.location.add(location.get(0));
+		this.location.add(location.get(1));
 	}
 
 	/*
@@ -29,7 +30,7 @@ public class Order {
 	 * Getter for location
 	 * @returns locations
 	 */
-	public double[] getLocation() {
+	public ArrayList<Double> getLocation() {
 		return location;
 	}
 
