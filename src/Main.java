@@ -2840,9 +2840,9 @@ public class Main extends Application {
 
 	public static void addButtonStyleNormal(Button button) {
 		String basic = "-fx-effect: dropshadow(gaussian, #828282, 10, 0.1, 0, 5);" +
-				"-fx-background-radius:18px;" +
+				"-fx-background-radius:14px;" +
 				"-fx-border-radius:12px;" +
-				"-fx-border-width:2px;" +
+				"-fx-border-width:1.5px;" +
 				"-fx-border-style: solid;"+
 				"-fx-border-color: #f7b4a1;" +
 				"-fx-display:inline-block;" +
@@ -2860,8 +2860,7 @@ public class Main extends Application {
 		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 15%, #ffbdab  100%);" +
 				basic;
 
-		String clickStyle = "position:relative;" +
-			"top:1px;" +
+		String clickStyle =
 			"-fx-background-color:linear-gradient(to bottom, #f2d3a0 45%, #f7b4a1 100%);" +
 			basic;
 
