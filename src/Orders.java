@@ -8,7 +8,7 @@ public class Orders {
 	private int thirdHour;
 	private int fourthHour;
 	private ArrayList<Meal> mealList;
-	private double[][] locationList;
+	private ArrayList<ArrayList<Double>> locationList;
 	private ArrayList<Order> orders = new ArrayList<Order>();
 
 	
@@ -36,8 +36,8 @@ public class Orders {
 	/* sets the locations
 	 * @locations array of values representing the locations to be used
 	 */
-	public void setLocations(double[][] locations) {
-		locationList = locations;
+	public void setLocations(ArrayList<ArrayList<Double>> locationList) {
+		this.locationList = locationList;
 	}
 
 	/*
@@ -65,13 +65,13 @@ public class Orders {
 	 * @meals ArrayList<Meal> containing the meals to be used
 	 * @locations array of values representing the locations to be used
 	 */
-	public Orders(int firstHour, int secondHour, int thirdHour, int fourthHour, ArrayList<Meal> meals, double[][] locations) {
+	public Orders(int firstHour, int secondHour, int thirdHour, int fourthHour, ArrayList<Meal> meals, ArrayList<ArrayList<Double>> locationList) {
 		this.firstHour = firstHour;
 		this.secondHour = secondHour;
 		this.thirdHour = thirdHour;
 		this.fourthHour = fourthHour;
 		mealList = meals;
-		locationList = locations;
+		this.locationList = locationList;
 	}
 
 	/*
@@ -91,7 +91,7 @@ public class Orders {
 		while (numSoFar < firstHour) {
 			if (rand.nextDouble() <= (firstHour - numSoFar)/(double)(60 - min)){
 				double meal = rand.nextDouble();
-				int location = rand.nextInt(locationList.length);
+				int location = rand.nextInt(locationList.size());
 
 				int mealPos = 0;
 				double totalPercent = 0;
@@ -100,7 +100,7 @@ public class Orders {
 					mealPos++;
 				}
 				numSoFar++;
-				orders.add(new Order(min, locationList[location], mealList.get(mealPos)));
+				orders.add(new Order(min, locationList.get(location), mealList.get(mealPos)));
 			}
 			min++;
 		}
@@ -114,7 +114,7 @@ public class Orders {
 
 			if (rand.nextDouble() <= (secondHour - numSoFar)/(double)(120 - min)){
 				double meal = rand.nextDouble();
-				int location = rand.nextInt(locationList.length);
+				int location = rand.nextInt(locationList.size());
 
 				int mealPos = 0;
 				double totalPercent = 0;
@@ -123,7 +123,7 @@ public class Orders {
 					mealPos++;
 				}
 				numSoFar++;
-				orders.add(new Order(min, locationList[location], mealList.get(mealPos)));
+				orders.add(new Order(min, locationList.get(location), mealList.get(mealPos)));
 			}
 
 			min++;
@@ -138,7 +138,7 @@ public class Orders {
 
 			if (rand.nextDouble() <= (thirdHour - numSoFar)/(double)(180 - min)){
 				double meal = rand.nextDouble();
-				int location = rand.nextInt(locationList.length);
+				int location = rand.nextInt(locationList.size());
 
 				int mealPos = 0;
 				double totalPercent = 0;
@@ -147,7 +147,7 @@ public class Orders {
 					mealPos++;
 				}
 				numSoFar++;
-				orders.add(new Order(min, locationList[location], mealList.get(mealPos)));
+				orders.add(new Order(min, locationList.get(location), mealList.get(mealPos)));
 			}
 
 			min++;
@@ -162,7 +162,7 @@ public class Orders {
 
 			if (rand.nextDouble() <= (fourthHour - numSoFar)/(double)(240 - min)){
 				double meal = rand.nextDouble();
-				int location = rand.nextInt(locationList.length);
+				int location = rand.nextInt(locationList.size());
 
 				int mealPos = 0;
 				double totalPercent = 0;
@@ -171,7 +171,7 @@ public class Orders {
 					mealPos++;
 				}
 				numSoFar++;
-				orders.add(new Order(min, locationList[location], mealList.get(mealPos)));
+				orders.add(new Order(min, locationList.get(location), mealList.get(mealPos)));
 			}
 
 			min++;

@@ -114,7 +114,8 @@ public class Simulation {
 				double[] prevPoint = new double[] {0,0};
 				double timeDroneGone = 0;
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
-					double[] newPoint = ordersToDeliver.get(i).getLocation();
+					double[] newPoint = {ordersToDeliver.get(i).getLocation().get(0), ordersToDeliver.get(i).getLocation().get(0)};
+					
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 
 						//If there is time left on the drone's flight, calculate time for order and add
@@ -232,7 +233,7 @@ public class Simulation {
 				double[] prevPoint = new double[] {0,0};
 				double timeDroneGone = 0;
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
-					double[] newPoint = ordersToDeliver.get(i).getLocation();
+					double[] newPoint = {ordersToDeliver.get(i).getLocation().get(0), ordersToDeliver.get(i).getLocation().get(0)};
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 
 						//If there is time left on the drone's flight, calculate time for order and add
@@ -299,7 +300,8 @@ public class Simulation {
 		double[] prevPoint = new double[] {0,0};
 		//Greedy Traveling Salesman (Done by re-organizing the list of current Orders)
 		for (int i = 0; i < currentOrders.size(); i++) {
-			double[] comparisonPoint = currentOrders.get(i).getLocation();
+			
+			double[] comparisonPoint = {currentOrders.get(i).getLocation().get(0), currentOrders.get(i).getLocation().get(0)};
 			double minDist;
 			int pos = i;
 			if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
@@ -308,7 +310,7 @@ public class Simulation {
 				minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
 				for (int j = i; j < currentOrders.size(); j++) {
 					double distance;
-					double[] newPoint = currentOrders.get(j).getLocation();
+					double[] newPoint = {currentOrders.get(j).getLocation().get(0), currentOrders.get(j).getLocation().get(0)};
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 						distance = 0;
 					} else {

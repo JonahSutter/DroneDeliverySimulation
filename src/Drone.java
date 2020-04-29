@@ -1,4 +1,3 @@
-
 public class Drone {
 	private String name;
 	private double maxWeight;
