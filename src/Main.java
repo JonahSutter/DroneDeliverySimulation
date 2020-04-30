@@ -738,15 +738,22 @@ public class Main extends Application {
 	        home.setLayoutX(130);
 	        home.setLayoutY(385);
 	        home.setPrefWidth(75);
+	        //create save button
+	        Button save = new Button("Save");
+	        save.setLayoutX(130);
+	        save.setLayoutY(430);
+	        save.setPrefWidth(75);
 
 	        //Add the button styles
 	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(save);
 
 	        //Add all the created elements to the screen
 	        Pane root = new Pane();
 	        root.getChildren().add(listProbs);
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
+	        root.getChildren().add(save);
 	        root.getChildren().add(label);
 	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
@@ -766,6 +773,12 @@ public class Main extends Application {
 	            }
 	        });
 
+	        save.setOnAction((EventHandler <ActionEvent>) new EventHandler<ActionEvent>(){
+	        	@Override public void handle(ActionEvent e){
+	        		saveProbabilities(primaryStage);
+				}
+			});
+
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
 			//Color the scene background
@@ -777,6 +790,34 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
+
+	public static void saveProbabilities(Stage primaryStage){
+		FileChooser save = new FileChooser();
+
+		//set extension to json
+		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json");
+		save.getExtensionFilters().add(extension);
+
+		//save file dialog box
+		File saveFile = save.showSaveDialog(primaryStage);
+
+		if(saveFile != null){
+			try{
+				JSONObject saveData = orderList.saveOrders();
+				PrintWriter out = new PrintWriter(saveFile);
+
+				out.print(saveData.toString());
+				out.flush();
+				out.close();
+
+			}
+			catch(IOException e){
+				System.out.println("File Error");
+				System.out.println(e.getStackTrace().toString());
+			}
+		}
+	}
+
 
 	public static void meals(Stage primaryStage) {
 
