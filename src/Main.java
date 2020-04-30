@@ -816,6 +816,8 @@ public class Main extends Application {
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
+	        Button saveMeals = new Button("Save Current Meals");
+	        Button loadMeals = new Button("Load List of Meals");
 	        Button saveFoods = new Button("Save Current Foods");
 	        Button loadFoods = new Button("Load List of Foods");
 
@@ -893,6 +895,16 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
+	        
+	        saveMeals.setPrefHeight(40);
+	        saveMeals.setPrefWidth(140);
+	        loadMeals.setPrefHeight(40);
+	        loadMeals.setPrefWidth(140);
+	        
+	        saveMeals.setLayoutX(330);
+	        saveMeals.setLayoutY(410);
+	        loadMeals.setLayoutX(330);
+	        loadMeals.setLayoutY(450);
 
 	        saveFoods.setPrefHeight(40);
 	        saveFoods.setPrefWidth(140);
@@ -930,6 +942,8 @@ public class Main extends Application {
 	        addButtonStyleNormal(home);
 	        addButtonStyleNormal(saveFoods);
 	        addButtonStyleNormal(loadFoods);
+	        addButtonStyleNormal(saveMeals);
+	        addButtonStyleNormal(loadMeals);
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -945,11 +959,25 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-
+	        root.getChildren().add(saveMeals);
+	        root.getChildren().add(loadMeals);
 	        root.getChildren().add(saveFoods);
 	        root.getChildren().add(loadFoods);
 
 
+	        loadMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	loadMealsPage(primaryStage);
+
+	            }//ends event handler
+	        });
+	        
+	        saveMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	saveMeals(primaryStage);
+
+	            }//ends event handler
+	        });
 
 	        saveFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -1176,6 +1204,172 @@ public class Main extends Application {
 		e.printStackTrace();
 	}		
 	}
+	
+	public static void saveMeals(Stage primaryStage) {
+	   	 FileChooser fileChooser = new FileChooser();
+
+	     //Set extension filter
+	     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	     //Show save file dialog
+	     File file = fileChooser.showSaveDialog(primaryStage);
+
+
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	       if (file != null) {
+	       	 try {
+		        	String content = "";
+		        	for(int index = 0; index < mealList.getMeals().size(); index++ ) {
+		        		content = content + mealList.getMeals().get(index).getName() + ","
+		        				+ mealList.getMeals().get(index).getPercentage() + ",";
+		        		for (int i = 0; i < mealList.getMeals().get(index).getFoods().size(); i++) {
+		        			if (i != 0) {
+		        				content = content + ",";
+		        			}
+		        			content = content + mealList.getMeals().get(index).getFoods().get(i).getName();
+		        		}
+		        		content = content + "\n";
+		        	}
+		        	//write the string to the file
+		        	 PrintWriter writer;
+		             writer = new PrintWriter(file);
+		             writer.println(content);
+		             writer.close();
+
+
+		        } catch (IOException ex) {
+
+		           System.out.println("File Logging Error");
+
+		        }
+	       }
+
+		}
+	
+	
+	public static void loadMealsPage(Stage primaryStage) {
+		 FileChooser fileChooser = new FileChooser();
+	     //Set extension filter
+	     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	     fileChooser.getExtensionFilters().add(extFilter);
+	     //Show save file dialog
+	     File file = fileChooser.showOpenDialog(primaryStage);
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	     //as long as the file is not empty
+	       if (file != null) {
+	       	 try {
+		        	Scanner sc = new Scanner(file);
+		        	boolean isFormattingGood = true;
+		        	while(sc.hasNext()) {
+		        		//reads in the line
+		        		String s = sc.nextLine();
+		        		System.out.println(checkMeal(s));
+		        		if (checkMeal(s) == false) {
+		        			System.out.println("Invalid formatting?");
+		        			isFormattingGood = false;
+		        			break;
+		        		}
+
+		        	}//ends while
+		        	
+		        	if (isFormattingGood == true) {
+			        	//now have to make the new meals, and replace the old ones with them.
+			        	while (mealList.getMeals().size() != 0) {
+			        		mealList.deleteMeal(mealList.getMeals().get(0));
+			        	}
+			        	
+			        	
+			        	sc = new Scanner(file);
+			        	while (sc.hasNext()) {
+				        	String s = sc.nextLine();
+				        	
+				        	Scanner stringScanner = new Scanner(s);
+				        	//if there is a comma or a new line
+							stringScanner.useDelimiter(",|\\n");
+							
+							//get meal name
+							String mealName = stringScanner.next();
+							//get meal percentage then turn it into a double
+							String percentage = stringScanner.next();
+							double percentageDouble = Double.parseDouble(percentage);
+							
+							
+							ArrayList<Food> mealFoods = new ArrayList<Food>();
+							while (stringScanner.hasNext()) {
+								String foodName = stringScanner.next();
+								System.out.println(foodName);
+								for (int i = 0; i < foodList.getFoods().size(); i++) {
+									if (foodName.equals(foodList.getFoods().get(i).getName())) {
+										mealFoods.add(foodList.getFoods().get(i));
+										break;
+									}
+								}
+							}
+							Meal newMeal = new Meal(mealName, percentageDouble, mealFoods);
+							mealList.addMeal(newMeal);
+							System.out.println(mealList.getMeals().size());
+							//sc.next();
+			        	}
+		        	}
+
+		        	//System.out.println(mealList.getMeals().get(0).getFoods().get(0));
+		        	//refreshes the page
+		        	meals(primaryStage);
+
+
+		        } catch (IOException ex) {
+		           System.out.println("File Logging Error");
+
+		        }
+	       }
+
+
+	}//ends loadmealspage
+	
+	public static boolean checkMeal(String meal) {
+		
+		try {
+			boolean hasFood = false;
+			Scanner stringScanner = new Scanner(meal);
+			//if there is a comma or a new line
+			stringScanner.useDelimiter(",|\\n");
+			
+			String mealName = stringScanner.next();
+			if (mealName.equals("")) {
+				return false;
+			}
+			
+			String percentage = stringScanner.next();
+			double percentageDouble = Double.parseDouble(percentage);
+			if (percentageDouble < 0) {
+				return false;
+			}
+			
+			while (stringScanner.hasNext()) {
+				hasFood = false;
+				//check to see if the food exists
+				String foodName = stringScanner.next();
+				for (int i = 0; i < foodList.getFoods().size(); i++) {
+					if (foodName.equals(foodList.getFoods().get(i).getName())) {
+						hasFood = true;
+					}
+				}
+				if (hasFood = false) {
+					return false;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Invalid formatting");
+			return false;
+		}
+		
+		return true;
+	}
+
 	
 	public static void loadFoodsPage(Stage primaryStage) {
 		 FileChooser fileChooser = new FileChooser();
