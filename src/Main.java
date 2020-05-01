@@ -2795,15 +2795,15 @@ public class Main extends Application {
 
 	        //set position of text fields and buttons
 	        update.setLayoutX(180);
-	        update.setLayoutY(200);
+	        update.setLayoutY(100);
 	        save.setLayoutX(180);
-	        save.setLayoutY(250);
+	        save.setLayoutY(150);
 	        load.setLayoutX(180);
-	        load.setLayoutY(300);
+	        load.setLayoutY(200);
 	        changeImage.setLayoutX(180);
-	        changeImage.setLayoutY(350);
+	        changeImage.setLayoutY(250);
 	        home.setLayoutX(180);
-	        home.setLayoutY(400);
+	        home.setLayoutY(300);
 
 	        //sets the height and width of buttons
 	        changeImage.setPrefHeight(40);
