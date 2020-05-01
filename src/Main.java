@@ -2530,6 +2530,13 @@ public class Main extends Application {
 	        root.getChildren().add(save);
 	        root.getChildren().add(label);
 	        root.getChildren().add(home);
+	        
+		      //if the user presses the cancel button goes back to meals page
+	        update.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	updateMap(primaryStage);
+	            }
+	        }); //ends cancel action
 
 
 	      //if the user presses the cancel button goes back to meals page
