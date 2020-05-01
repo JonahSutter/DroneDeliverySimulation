@@ -202,16 +202,16 @@ public class Main extends Application {
 	        //Setting the layouts of the buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
-	        button1.setLayoutY(200);
+	        button1.setLayoutY(100);
 	        button2.setLayoutX(180);
-	        button2.setLayoutY(250);
+	        button2.setLayoutY(150);
 	        button3.setLayoutX(180);
-	        button3.setLayoutY(300);
+	        button3.setLayoutY(200);
 	        button4.setLayoutX(180);
-	        button4.setLayoutY(400);
+	        button4.setLayoutY(250);
 	        //adding map button
 	        button5.setLayoutX(180);
-	        button5.setLayoutY(350);
+	        button5.setLayoutY(300);
 
 	        button1.setPrefHeight(40);
 	        button1.setPrefWidth(140);
@@ -816,6 +816,8 @@ public class Main extends Application {
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
+	        Button saveMeals = new Button("Save Current Meals");
+	        Button loadMeals = new Button("Load List of Meals");
 	        Button saveFoods = new Button("Save Current Foods");
 	        Button loadFoods = new Button("Load List of Foods");
 
@@ -893,6 +895,16 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
+	        
+	        saveMeals.setPrefHeight(40);
+	        saveMeals.setPrefWidth(140);
+	        loadMeals.setPrefHeight(40);
+	        loadMeals.setPrefWidth(140);
+	        
+	        saveMeals.setLayoutX(330);
+	        saveMeals.setLayoutY(410);
+	        loadMeals.setLayoutX(330);
+	        loadMeals.setLayoutY(450);
 
 	        saveFoods.setPrefHeight(40);
 	        saveFoods.setPrefWidth(140);
@@ -930,6 +942,8 @@ public class Main extends Application {
 	        addButtonStyleNormal(home);
 	        addButtonStyleNormal(saveFoods);
 	        addButtonStyleNormal(loadFoods);
+	        addButtonStyleNormal(saveMeals);
+	        addButtonStyleNormal(loadMeals);
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -945,11 +959,25 @@ public class Main extends Application {
 	        root.getChildren().add(mealsLabel);
 	        root.getChildren().add(removeMeal);
 	        root.getChildren().add(errorLabel);
-
+	        root.getChildren().add(saveMeals);
+	        root.getChildren().add(loadMeals);
 	        root.getChildren().add(saveFoods);
 	        root.getChildren().add(loadFoods);
 
 
+	        loadMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	loadMealsPage(primaryStage);
+
+	            }//ends event handler
+	        });
+	        
+	        saveMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+	            @Override public void handle(ActionEvent e) {
+	            	saveMeals(primaryStage);
+
+	            }//ends event handler
+	        });
 
 	        saveFoods.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -982,7 +1010,13 @@ public class Main extends Application {
 
 	        removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                removeFoodPage(primaryStage);
+	            	try {
+	            		foodList.deleteFoodItem(foodList.getFoods().get(listFood.getSelectionModel().getSelectedIndex()));
+		                meals(primaryStage);
+	            	}
+	            	catch (Exception f) {
+	            		errorLabel.setText("Please select the food item to delete");
+	            	}
 	            }
 	        });
 
@@ -993,7 +1027,12 @@ public class Main extends Application {
 
 	        editFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                editFoodPage(primaryStage);
+	            	try {
+	        			editFoodPageNew(primaryStage, foodList.getFoods().get(listFood.getSelectionModel().getSelectedIndex()));
+	        		}
+	        		catch (Exception f){
+	        			errorLabel.setText("Please select a food");
+	        		}
 	            }
 	        });
 
@@ -1037,12 +1076,12 @@ public class Main extends Application {
 	            }
 	        });
 
-	        //Give removeFood button functionality
-			removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-				@Override public void handle(ActionEvent e) {
-					removeFoodPage(primaryStage);
-				}
-			});
+//	        //Give removeFood button functionality
+//			removeFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+//				@Override public void handle(ActionEvent e) {
+//					removeFoodPage(primaryStage);
+//				}
+//			});
 
 			//Create the scene
 			Scene scene = new Scene(root,500,500);
@@ -1063,7 +1102,275 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}	//End meals function
+	
+	public static void editFoodPageNew(Stage primaryStage, Food foodToBeEdited) {
+		try {
+		//title of the page
+		primaryStage.setTitle("Edit Food Page");
 
+		//create labels
+		Label label = new Label("Dromedary Drones");
+		label.setFont(new Font("Arial", 40));
+		label.setLayoutX(80);
+		
+        //create name
+        Label name = new Label("Food Name");
+		name.setFont(new Font("Arial", 12));
+		name.setLayoutX(180);
+		name.setLayoutY(80);
+        TextField newFoodName = new TextField();
+        newFoodName.setText(foodToBeEdited.getName());
+        newFoodName.setLayoutX(180);
+        newFoodName.setLayoutY(100);
+        
+        //create weight
+      	Label weight = new Label("Food Weight");
+      	weight.setFont(new Font("Arial", 12));
+      	weight.setLayoutX(180);
+      	weight.setLayoutY(130);
+      	TextField newFoodWeight = new TextField();
+      	newFoodWeight.setText(Double.toString(foodToBeEdited.getWeight()));
+      	newFoodWeight.setLayoutX(180);
+      	newFoodWeight.setLayoutY(150);
+        
+
+		//create buttons
+        Button saveChanges = new Button("Save Changes");
+        Button cancel = new Button("Cancel");
+
+        //set position of buttons
+        saveChanges.setLayoutX(180);
+        saveChanges.setLayoutY(300);
+        saveChanges.setPrefHeight(40);
+        saveChanges.setPrefWidth(140);
+        cancel.setLayoutX(180);
+        cancel.setLayoutY(350);
+        cancel.setPrefHeight(40);
+        cancel.setPrefWidth(140);
+
+
+	    //Add the button styles
+        addButtonStyleNormal(cancel);
+        addButtonStyleNormal(saveChanges);
+
+        //adds everything to the pane
+        Pane root = new Pane();
+        //adds the labels 
+        root.getChildren().add(label);
+        root.getChildren().add(name);
+        root.getChildren().add(weight); 
+        //adds the text fields 
+        root.getChildren().add(newFoodName);
+        root.getChildren().add(newFoodWeight); 
+        //add buttons 
+        root.getChildren().add(saveChanges);
+        root.getChildren().add(cancel);
+        
+        //if the user presses the save button
+        saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+            	
+            	//gets the info from text fields
+            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName) 
+            	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
+            	String newN = newFoodName.getText(); 
+            	double newW = Double.parseDouble(newFoodWeight.getText());  
+            	foodToBeEdited.changeName(newN);
+            	foodToBeEdited.changeWeight(newW);
+                meals(primaryStage);
+            	}
+            
+            }
+        });
+
+        //if the user presses the cancel button goes back to the edit food page
+        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                meals(primaryStage);
+            }
+            });
+        //creates a new scene
+        Scene scene = new Scene(root,500,500);
+      //Color the scene background
+		root.setBackground(bg);
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+			}
+		}.start();
+	} catch(Exception e) {
+		e.printStackTrace();
+	}		
+	}
+	
+	public static void saveMeals(Stage primaryStage) {
+	   	 FileChooser fileChooser = new FileChooser();
+
+	     //Set extension filter
+	     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	     //Show save file dialog
+	     File file = fileChooser.showSaveDialog(primaryStage);
+
+
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	       if (file != null) {
+	       	 try {
+		        	String content = "";
+		        	for(int index = 0; index < mealList.getMeals().size(); index++ ) {
+		        		content = content + mealList.getMeals().get(index).getName() + ","
+		        				+ mealList.getMeals().get(index).getPercentage() + ",";
+		        		for (int i = 0; i < mealList.getMeals().get(index).getFoods().size(); i++) {
+		        			if (i != 0) {
+		        				content = content + ",";
+		        			}
+		        			content = content + mealList.getMeals().get(index).getFoods().get(i).getName();
+		        		}
+		        		content = content + "\n";
+		        	}
+		        	//write the string to the file
+		        	 PrintWriter writer;
+		             writer = new PrintWriter(file);
+		             writer.println(content);
+		             writer.close();
+
+
+		        } catch (IOException ex) {
+
+		           System.out.println("File Logging Error");
+
+		        }
+	       }
+
+		}
+	
+	
+	public static void loadMealsPage(Stage primaryStage) {
+		 FileChooser fileChooser = new FileChooser();
+	     //Set extension filter
+	     FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+	     fileChooser.getExtensionFilters().add(extFilter);
+	     //Show save file dialog
+	     File file = fileChooser.showOpenDialog(primaryStage);
+	     fileChooser.getExtensionFilters().add(extFilter);
+
+	     //as long as the file is not empty
+	       if (file != null) {
+	       	 try {
+		        	Scanner sc = new Scanner(file);
+		        	boolean isFormattingGood = true;
+		        	while(sc.hasNext()) {
+		        		//reads in the line
+		        		String s = sc.nextLine();
+		        		System.out.println(checkMeal(s));
+		        		if (checkMeal(s) == false) {
+		        			System.out.println("Invalid formatting?");
+		        			isFormattingGood = false;
+		        			break;
+		        		}
+
+		        	}//ends while
+		        	
+		        	if (isFormattingGood == true) {
+			        	//now have to make the new meals, and replace the old ones with them.
+			        	while (mealList.getMeals().size() != 0) {
+			        		mealList.deleteMeal(mealList.getMeals().get(0));
+			        	}
+			        	
+			        	
+			        	sc = new Scanner(file);
+			        	while (sc.hasNext()) {
+				        	String s = sc.nextLine();
+				        	
+				        	Scanner stringScanner = new Scanner(s);
+				        	//if there is a comma or a new line
+							stringScanner.useDelimiter(",|\\n");
+							
+							//get meal name
+							String mealName = stringScanner.next();
+							//get meal percentage then turn it into a double
+							String percentage = stringScanner.next();
+							double percentageDouble = Double.parseDouble(percentage);
+							
+							
+							ArrayList<Food> mealFoods = new ArrayList<Food>();
+							while (stringScanner.hasNext()) {
+								String foodName = stringScanner.next();
+								System.out.println(foodName);
+								for (int i = 0; i < foodList.getFoods().size(); i++) {
+									if (foodName.equals(foodList.getFoods().get(i).getName())) {
+										mealFoods.add(foodList.getFoods().get(i));
+										break;
+									}
+								}
+							}
+							Meal newMeal = new Meal(mealName, percentageDouble, mealFoods);
+							mealList.addMeal(newMeal);
+							System.out.println(mealList.getMeals().size());
+							//sc.next();
+			        	}
+		        	}
+
+		        	//System.out.println(mealList.getMeals().get(0).getFoods().get(0));
+		        	//refreshes the page
+		        	meals(primaryStage);
+
+
+		        } catch (IOException ex) {
+		           System.out.println("File Logging Error");
+
+		        }
+	       }
+
+
+	}//ends loadmealspage
+	
+	public static boolean checkMeal(String meal) {
+		
+		try {
+			boolean hasFood = false;
+			Scanner stringScanner = new Scanner(meal);
+			//if there is a comma or a new line
+			stringScanner.useDelimiter(",|\\n");
+			
+			String mealName = stringScanner.next();
+			if (mealName.equals("")) {
+				return false;
+			}
+			
+			String percentage = stringScanner.next();
+			double percentageDouble = Double.parseDouble(percentage);
+			if (percentageDouble < 0) {
+				return false;
+			}
+			
+			while (stringScanner.hasNext()) {
+				hasFood = false;
+				//check to see if the food exists
+				String foodName = stringScanner.next();
+				for (int i = 0; i < foodList.getFoods().size(); i++) {
+					if (foodName.equals(foodList.getFoods().get(i).getName())) {
+						hasFood = true;
+					}
+				}
+				if (hasFood = false) {
+					return false;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Invalid formatting");
+			return false;
+		}
+		
+		return true;
+	}
+
+	
 	public static void loadFoodsPage(Stage primaryStage) {
 		 FileChooser fileChooser = new FileChooser();
 	     //Set extension filter
@@ -1167,26 +1474,28 @@ public class Main extends Application {
 
 			//add the labels
 			Label label = new Label("Dromedary Drones");
-			Label name = new Label("Food Name");
-			Label weight = new Label("Food Weight (oz)");
-
-			//size the labels
 			label.setFont(new Font("Arial", 40));
 			label.setLayoutX(80);
+			
+			Label name = new Label("Food Name");
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
-			name.setLayoutY(180);
+			name.setLayoutY(80);
+	        TextField foodName = new TextField();
+	        foodName.setLayoutX(180);
+	        foodName.setLayoutY(100);
+	        
+			Label weight = new Label("Food Weight (oz)");
 			weight.setFont(new Font("Arial", 12));
 			weight.setLayoutX(180);
-			weight.setLayoutY(230);
-
+			weight.setLayoutY(130);
+	        TextField foodWeight = new TextField();
+	        foodWeight.setLayoutX(180);
+	        foodWeight.setLayoutY(150);
+	        
 			//create buttons
 	        Button saveFood = new Button("Save Food");
 	        Button cancel = new Button("Cancel");
-
-	        //create text fields
-	        TextField foodName = new TextField();
-	        TextField foodWeight = new TextField();
 
 	        //position of buttons
 	        saveFood.setLayoutX(180);
@@ -1197,12 +1506,6 @@ public class Main extends Application {
 	        saveFood.setPrefWidth(140);
 	        cancel.setPrefHeight(40);
 	        cancel.setPrefWidth(140);
-
-	        //position of text fields
-	        foodName.setLayoutX(180);
-	        foodName.setLayoutY(200);
-	        foodWeight.setLayoutX(180);
-	        foodWeight.setLayoutY(250);
 
 	      //Add the button styles
 	        addButtonStyleNormal(saveFood);
