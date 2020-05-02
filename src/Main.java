@@ -554,15 +554,11 @@ public class Main extends Application {
 
 			//Add the meals chart Label
 			Label mealLabel = new Label("Meals:");
-			mealLabel.setFont(new Font("Arial",20));
-			mealLabel.setLayoutX(250);
-			mealLabel.setLayoutY(72);
+			setMediumLabelStyle(mealLabel,250,69);
 
 			//Add the meals chart Probability label
 			Label mealProbLabel = new Label("(%):");
-			mealProbLabel.setFont(new Font("Arial",20));
-			mealProbLabel.setLayoutX(390);
-			mealProbLabel.setLayoutY(72);
+			setMediumLabelStyle(mealProbLabel,390,69);
 
 			//Add a label that tells the user what the percentages total to
 			Label totalLabel = new Label("Percentages Total To:");
@@ -576,7 +572,7 @@ public class Main extends Application {
 		    	total += mealList.getMeals().get(i).getPercentage()*10000/100;
 		    }
 		    //Add a label with the total percentage of meal probabilities
-		    Label totalVal = new Label(total + "");
+		    Label totalVal = new Label(total + "%");
 		    totalVal.setFont(new Font("Arial Black",15));
 		    totalVal.setLayoutX(160);
 		    totalVal.setLayoutY(250);
@@ -584,9 +580,7 @@ public class Main extends Application {
 
 		    //Add a label for the Shift order values
 		    Label mealsPerShift = new Label("Meals per shift:");
-		    mealsPerShift.setFont(new Font("Arial",20));
-		    mealsPerShift.setLayoutX(30);
-		    mealsPerShift.setLayoutY(72);
+		    setMediumLabelStyle(mealsPerShift,30,69);
 
 		    //Create a display for the meals
 	        ListView<String> listFood = new ListView<String>();
@@ -616,7 +610,7 @@ public class Main extends Application {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
 		        	String results = testMealProbabilities(listProbs, totalVal, foodProbs);
-		        	if (!results.equalsIgnoreCase("Success")) {
+		        	if (!results.equalsIgnoreCase("Success") && !results.equalsIgnoreCase("SuccessParsing")) {
 		        		failedAlert(results);
 		        	}
 		        }
@@ -741,22 +735,23 @@ public class Main extends Application {
         		}
         		total += val;
         	} catch (Exception E) {
-    			return("Invalid Meal Percentage: \n\t A non-numer value was entered.");
+    			return("Invalid Meal Percentage: \n\t A non-numerical value was entered.");
         	}
-        }
-        total = (total * 1000)/1000;
-        if (total == 100) {
-            totalVal.setText("100");
-            totalVal.setTextFill(Color.web("#1f942f"));
-        } else {
-        	totalVal.setText(String.format("%3.2f",total));
-        	totalVal.setTextFill(Color.web("#9c291c"));
         }
         for (int i = 0; i < mealList.getMeals().size(); i++) {
         	double percent = Double.parseDouble(foodProbs.get(i))/100;
         	mealList.getMeals().get(i).setPercentage(percent);
 	    }
-        return "Success";
+        total = (total * 1000)/1000;
+        if (total == 100) {
+            totalVal.setText("100.00%");
+            totalVal.setTextFill(Color.web("#1f942f"));
+            return "Success";
+        } else {
+        	totalVal.setText(String.format("%3.2f%%",total));
+        	totalVal.setTextFill(Color.web("#9c291c"));
+        	return "SuccessParsing";
+        }
 	}
 
 	public static String testProbabilities(ListView shiftProbabilities) {
@@ -1616,7 +1611,7 @@ public class Main extends Application {
 
 	public static void failedAlert(String s) {
 		Alert fail = new Alert(AlertType.INFORMATION);
-		fail.setHeaderText("Failed");
+		fail.setHeaderText("ERROR");
 		fail.setContentText(s);
 		fail.showAndWait();
 	}//ends alert message method
