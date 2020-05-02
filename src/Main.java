@@ -82,8 +82,8 @@ public class Main extends Application {
 	private static Food f3 = new Food("12 oz Drink", 14);
 
 	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
-	private static double imageWidth = 4224;
-	private static double imageHeight = 4224;
+	private static double imageWidth = 3696;
+	private static double imageHeight = 3696;
 	private static double feetPerPixelWidth = imageWidth/500;
 	private static double feetPerPixelHeight = imageHeight/500;
 	private static double x0 = 420 * feetPerPixelWidth;
@@ -2974,8 +2974,8 @@ public class Main extends Application {
 	        javafx.util.StringConverter<Double> converter = new DoubleStringConverter();
 
 	        
-			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 4200.0);
-			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 4200.0);
+			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 3696.0);
+			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 3696.0);
 
 			x.setTextFormatter(xformat);
 			y.setTextFormatter(yformat);
