@@ -63,7 +63,7 @@ public class Simulation {
 					if (currWeight + mealWeight <= maxWeight) {
 						currWeight += mealWeight;
 						ordersToDeliver.add((skippedOrders.get(0)));
-						currentOrders.remove(0);
+						skippedOrders.remove(0);
 					} else {
 						overweight = true;
 						System.out.println("Overweight BOI");

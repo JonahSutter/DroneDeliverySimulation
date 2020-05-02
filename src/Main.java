@@ -48,6 +48,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -68,7 +69,7 @@ public class Main extends Application {
 	private static Orders orderList = new Orders(38, 45, 60, 30);
 	private static Foods foodList = new Foods();
 	private static ArrayList<ArrayList<Double>> locationList = new ArrayList<ArrayList<Double>>();
-	private static int feetPerPixel = 1;
+	private static ArrayList<ArrayList<Double>> locationToSend = new ArrayList<ArrayList<Double>>();
 	private static Background bg = new Background(
 			new BackgroundFill(Color.web("#fffcf0"), null, null));
 
@@ -76,9 +77,24 @@ public class Main extends Application {
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
 	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
+	private static double imageWidth = 4224;
+	private static double imageHeight = 4224;
+	private static double feetPerPixelWidth = imageWidth/500;
+	private static double feetPerPixelHeight = imageHeight/500;
+	private static double x0 = 420 * feetPerPixelWidth;
+	private static double y0 = 310 * feetPerPixelHeight;
 
 
 	public static void main(String[] args) {
+		
+		
+		System.out.println(image.getWidth());
+		System.out.println(image.getHeight());
+		System.out.println(feetPerPixelWidth);
+		System.out.println(feetPerPixelHeight);
+		System.out.println(x0);
+		System.out.println(y0);
+		
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
 		Food fries = new Food("Fries", 4);
 		Food drink = new Food("12 oz Drink", 14);
@@ -93,10 +109,7 @@ public class Main extends Application {
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
 
-
-		locationList = setLocation(locationList, new File("defaultLocation.xml"));
-
-		orderList.setLocations(locationList);
+		setLocation(locationList, new File("defaultLocation.xml"));
 
 		launch(args);
 	}
@@ -106,6 +119,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
+			
 			//setting labels and buttons
 			primaryStage.setTitle("Starting Screen");
 
@@ -2846,7 +2860,6 @@ public class Main extends Application {
 	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
-
 	           	   FileChooser fileChooser = new FileChooser();
 
 		           	File file = fileChooser.showOpenDialog(primaryStage);
@@ -2870,12 +2883,11 @@ public class Main extends Application {
 	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
-
 	           	   FileChooser fileChooser = new FileChooser();
 
 		           	File file = fileChooser.showOpenDialog(primaryStage);
 	                if (file != null) {
-	                    locationList = setLocation(locationList, file);
+	                    setLocation(locationList, file);
 	                }
 	                //map(primaryStage);
 	            }
@@ -3000,8 +3012,8 @@ public class Main extends Application {
         Button back = new Button("Back");
 
         //set position of text fields and buttons
-        back.setLayoutX(0);
-        back.setLayoutY(0);
+        back.setLayoutX(400);
+        back.setLayoutY(450);
 
 
         //sets the height and width of buttons
@@ -3033,8 +3045,11 @@ public class Main extends Application {
 							 locationList.remove(locationList.get(i));
 						 }
 					 }
+					 
+					updateToSend();
 				 }
-			 });
+			 });		
+				
 
 		     root.getChildren().addAll(bt);
 
@@ -3066,6 +3081,9 @@ public class Main extends Application {
 				 locationList.add(new ArrayList<Double>());
 				 locationList.get(locationList.size() - 1).add(event.getSceneX());
 				 locationList.get(locationList.size() - 1).add(event.getSceneY());
+				 
+				locationToSend = updateToSend();
+				orderList.setLocations(locationToSend);
 
 				 bt.setOnAction(new EventHandler<ActionEvent>() {
 					 @Override public void handle(ActionEvent e) {
@@ -3075,6 +3093,8 @@ public class Main extends Application {
 						 for (int i = 0; i < locationList.size(); i++) {
 							 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
 								 locationList.remove(locationList.get(i));
+									locationToSend = updateToSend();
+									orderList.setLocations(locationToSend);
 							 }
 						 }
 					 }
@@ -3112,7 +3132,7 @@ public class Main extends Application {
 
 	}//ends map method
 
-	public static ArrayList<ArrayList<Double>> setLocation(ArrayList<ArrayList<Double>> locations, File file){
+	public static void setLocation(ArrayList<ArrayList<Double>> locations, File file){
 
 		try {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -3131,20 +3151,25 @@ public class Main extends Application {
 
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-
-					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent()));
-					tempList.get(i).add(Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent()));
+					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
+					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
+					
+					tempList.get(i).add(x);
+					tempList.get(i).add(y);
+					
 				}
 			}
-
-			return tempList;
+			
+			locationList = tempList;
+			
+			locationToSend = updateToSend();
+			orderList.setLocations(locationToSend);
 
 
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
 
 	}
 
@@ -3185,6 +3210,48 @@ public class Main extends Application {
         //Set the button to "move down" when clicked and "go back" when released
         button.setOnMousePressed(e -> button.setStyle(clickStyle));
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
+	}
+	
+	public static ArrayList<ArrayList<Double>> updateToSend(){
+
+		
+		ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+		
+		for (ArrayList<Double> location: locationList) {
+
+			ArrayList<Double> temp = new ArrayList<Double>();
+			
+			double x = location.get(0);
+			double y = location.get(1);
+			
+			x = x * feetPerPixelWidth;
+			y = y * feetPerPixelHeight;
+			
+			
+			if (x < x0) {
+				x = x - x0;
+			}
+			else {
+				x = x - x0;
+			}
+			
+			if (y < x0) {
+				y = (-y) + y0;
+			}
+			else {
+				y = (-y) + y0;
+			}
+			
+			temp.add(x);
+			temp.add(y);
+			
+			tempList.add(temp);
+			
+			System.out.println(x + " " + y);
+			
+		}
+		
+		return tempList;
 	}
 
 }
