@@ -57,6 +57,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
@@ -76,6 +77,7 @@ public class Main extends Application {
 	private static Food f1 = new Food("1/4 lb Hamburger", 6);
 	private static Food f2 = new Food("Fries", 4);
 	private static Food f3 = new Food("12 oz Drink", 14);
+
 	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 	private static double imageWidth = 4224;
 	private static double imageHeight = 4224;
@@ -124,9 +126,7 @@ public class Main extends Application {
 			primaryStage.setTitle("Starting Screen");
 
 			Label label = new Label("Dromedary Drones");
-
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
+			dromedaryDronesTextStyle(label);
 
 	        Button button1 = new Button("Open");
 	        Button button2 = new Button("Exit");
@@ -201,9 +201,7 @@ public class Main extends Application {
 			primaryStage.setTitle("Main Page");
 
 			Label label = new Label("Dromedary Drones");
-
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
+			dromedaryDronesTextStyle(label);
 
 	        Button button1 = new Button("Start Simulation");
 	        Button button2 = new Button("Edit Meals");
@@ -216,16 +214,16 @@ public class Main extends Application {
 	        //Setting the layouts of the buttons
 	        Pane root = new Pane();
 	        button1.setLayoutX(180);
-	        button1.setLayoutY(100);
+	        button1.setLayoutY(160);
 	        button2.setLayoutX(180);
-	        button2.setLayoutY(150);
+	        button2.setLayoutY(210);
 	        button3.setLayoutX(180);
-	        button3.setLayoutY(200);
+	        button3.setLayoutY(260);
 	        button4.setLayoutX(180);
-	        button4.setLayoutY(250);
+	        button4.setLayoutY(360);
 	        //adding map button
 	        button5.setLayoutX(180);
-	        button5.setLayoutY(300);
+	        button5.setLayoutY(310);
 
 	        button1.setPrefHeight(40);
 	        button1.setPrefWidth(140);
@@ -330,6 +328,9 @@ public class Main extends Application {
 			primaryStage.setTitle("Simulation Results");
 
 			Label label = new Label("Dromedary Drones");
+			dromedaryDronesTextStyle(label);
+			label.setLayoutX(250);
+
 			Label label2 = new Label("Simulation Complete!");
 			Label label3 = new Label("First in First Out");
 			Label label4 = new Label("Knapsack Packing");
@@ -351,8 +352,6 @@ public class Main extends Application {
 			Label knap4 = new Label(knapsackWorst);
 
 			//Label Settings
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(280);
 			label2.setFont(new Font("Arial", 36));
 			label2.setLayoutX(278);
 			label2.setLayoutY(65);
@@ -566,56 +565,37 @@ public class Main extends Application {
 
 			//Keep the label at the top
 			Label label = new Label("Dromedary Drones");
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-
+			dromedaryDronesTextStyle(label);
 
 			//Add the meals chart Label
 			Label mealLabel = new Label("Meals:");
-			mealLabel.setFont(new Font("Arial",20));
-			mealLabel.setLayoutX(250);
-			mealLabel.setLayoutY(72);
+			setMediumLabelStyle(mealLabel,250,69);
 
 			//Add the meals chart Probability label
 			Label mealProbLabel = new Label("(%):");
-			mealProbLabel.setFont(new Font("Arial",20));
-			mealProbLabel.setLayoutX(390);
-			mealProbLabel.setLayoutY(72);
+			setMediumLabelStyle(mealProbLabel,390,69);
 
 			//Add a label that tells the user what the percentages total to
 			Label totalLabel = new Label("Percentages Total To:");
 		    totalLabel.setFont(new Font("Arial",15));
-		    totalLabel.setLayoutX(245);
-		    totalLabel.setLayoutY(385);
+		    totalLabel.setLayoutX(25);
+		    totalLabel.setLayoutY(230);
 
 		    //Calculate the total percentage of meal probabilities
 		    double total = 0;
 		    for (int i = 0; i < mealList.getMeals().size(); i++) {
-		    	total += mealList.getMeals().get(i).getPercentage();
+		    	total += mealList.getMeals().get(i).getPercentage()*10000/100;
 		    }
 		    //Add a label with the total percentage of meal probabilities
-		    Label totalVal = new Label(total + "");
-		    totalVal.setFont(new Font("Arial",15));
-		    totalVal.setLayoutX(395);
-		    totalVal.setLayoutY(385);
-
-		    //Create an error label for the Shift order values
-		    Label errorLabel = new Label("");
-		    errorLabel.setFont(new Font("Arial",15));
-		    errorLabel.setLayoutX(135);
-		    errorLabel.setLayoutY(420);
-
-		    //Create an error label for the meal probability values
-		    Label errorLabel2 = new Label("");
-		    errorLabel2.setFont(new Font("Arial", 15));
-		    errorLabel2.setLayoutX(30);
-		    errorLabel2.setLayoutY(325);
+		    Label totalVal = new Label(total + "%");
+		    totalVal.setFont(new Font("Arial Black",15));
+		    totalVal.setLayoutX(160);
+		    totalVal.setLayoutY(250);
+            totalVal.setTextFill(Color.web("#1f942f"));
 
 		    //Add a label for the Shift order values
 		    Label mealsPerShift = new Label("Meals per shift:");
-		    mealsPerShift.setFont(new Font("Arial",20));
-		    mealsPerShift.setLayoutX(30);
-		    mealsPerShift.setLayoutY(72);
+		    setMediumLabelStyle(mealsPerShift,30,69);
 
 		    //Create a display for the meals
 	        ListView<String> listFood = new ListView<String>();
@@ -630,7 +610,7 @@ public class Main extends Application {
 		    //Add the meals and their probabilities to their respective list.
 	        for (int i = 0; i < mealList.getMeals().size(); i++) {
 		    	foodItem.add(mealList.getMeals().get(i).getName());
-		    	foodProbs.add("" + mealList.getMeals().get(i).getPercentage()*100);
+		    	foodProbs.add("" + mealList.getMeals().get(i).getPercentage()*10000/100);
 		    }
 
 	        //Link the list that holds the valuse to the display values
@@ -644,38 +624,16 @@ public class Main extends Application {
 		    listProbs.getItems().addListener(new ListChangeListener<Object>() {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
-		        	double total = 0;
-		        	errorLabel.setText("");
-		            for (int i = 0; i < listProbs.getItems().size(); i++) {
-		            	try {
-		            		String entryValue = listProbs.getItems().get(i);
-		            		double val = Double.parseDouble(entryValue);
-		            		if (val < 0) {
-		            			errorLabel.setText("Invalid Meal Percentage: \n\t A value less than 0 was entered.");
-		            		} else if (val > 100) {
-		            			errorLabel.setText("Invalid Meal Percentage: \n\t A value greater than 100 was entered.");
-		            		}
-		            		total += val;
-		            	} catch (Exception E) {
-	            			errorLabel.setText("Invalid Meal Percentage: \n\t A non-numer value was entered.");
-		            	}
-		            }
-		            total = (total * 1000)/1000;
-		            if (total == 100) {
-		                totalVal.setText("100");
-		            } else {
-		            	totalVal.setText(String.format("%3.2f",total));
-		            }
-		            for (int i = 0; i < mealList.getMeals().size(); i++) {
-		            	double percent = Double.parseDouble(foodProbs.get(i))/100;
-		            	mealList.getMeals().get(i).setPercentage(percent);
-				    }
+		        	String results = testMealProbabilities(listProbs, totalVal, foodProbs);
+		        	if (!results.equalsIgnoreCase("Success") && !results.equalsIgnoreCase("SuccessParsing")) {
+		        		failedAlert(results);
+		        	}
 		        }
 		    });
 
 		  //Set the layout for the meal name display
 	        listFood.setPrefWidth(140);
-	        listFood.setPrefHeight(275);
+	        listFood.setPrefHeight(200);
 	        listFood.setLayoutX(250);
 	        listFood.setLayoutY(100);
 
@@ -683,7 +641,7 @@ public class Main extends Application {
 	        listProbs.setLayoutX(390);
 	        listProbs.setLayoutY(100);
 	        listProbs.setPrefWidth(70);
-	        listProbs.setPrefHeight(275);
+	        listProbs.setPrefHeight(200);
 
 
 
@@ -711,36 +669,23 @@ public class Main extends Application {
 		    labeledShifts.setLayoutX(25);
 		    labeledShifts.setPrefHeight(100);
 		    labeledShifts.setPrefWidth(125);
-		    labeledShifts.setLayoutY(200);
+		    labeledShifts.setLayoutY(100);
 
 		    //Set the layout for the shift order values
 		    shiftProbabilities.setLayoutX(150);
 		    shiftProbabilities.setPrefHeight(100);
 		    shiftProbabilities.setPrefWidth(60);
-		    shiftProbabilities.setLayoutY(200);
+		    shiftProbabilities.setLayoutY(100);
 
 		    //Add a listener to the shift order values that verifies valid entries
 		    //   and updates the value if a the number entered was valid.
 		    shiftProbabilities.getItems().addListener(new ListChangeListener<Object>() {
 		        @Override
 		        public void onChanged(ListChangeListener.Change change) {
-		        	errorLabel2.setText("");
-		            for (int i = 0; i < shiftProbabilities.getItems().size(); i++) {
-		            	try {
-		            		String entryValue = shiftProbabilities.getItems().get(i);
-		            		int val = Integer.parseInt(entryValue);
-		            		if (val < 0) {
-		            			errorLabel2.setText("Invalid Shift Entry: \t\nValue less than 0)");
-		            		}
-		            	} catch (Exception E) {
-	            			errorLabel2.setText("Invalid Shift Entry: \n\tNot an integer value.");
-		            	}
-		            }
-		            if (errorLabel2.getText() == "") {
-            			ObservableList<String> data = shiftProbabilities.getItems();
-            			orderList.setHourlyRate(Integer.parseInt(data.get(0)), Integer.parseInt(data.get(1)),
-            					Integer.parseInt(data.get(2)), Integer.parseInt(data.get(3)));
-		            }
+		        	String results = testProbabilities(shiftProbabilities);
+		        	if (!results.equalsIgnoreCase("Success")) {
+		        		failedAlert(results);
+		        	}
 		        }
 		    });
 		    //Set the shift order values to be editable
@@ -749,9 +694,9 @@ public class Main extends Application {
 
 		    //Create a home button and position it
 	        Button home = new Button("Home");
-	        home.setLayoutX(130);
-	        home.setLayoutY(385);
-	        home.setPrefWidth(75);
+	        home.setLayoutX(180);
+	        home.setLayoutY(320);
+	        home.setPrefWidth(140);
 
 	        //Add the button styles
 	        addButtonStyleNormal(home);
@@ -762,20 +707,20 @@ public class Main extends Application {
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
 	        root.getChildren().add(label);
-	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
+	        root.getChildren().addAll(totalVal,totalLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
-	        root.getChildren().addAll(labeledShifts,shiftProbabilities,errorLabel2);
+	        root.getChildren().addAll(labeledShifts,shiftProbabilities);
 
 	        //Set the home button to only work if there are no errors on the page
 	        home.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 
 	            @Override public void handle(ActionEvent e) {
-		            if (errorLabel.getText() == "" && errorLabel2.getText() == "") {
-		            	if (totalVal.getText() == "100") {
-			                mainPage(primaryStage);
-		            	} else {
-			            	errorLabel.setText("Invalid Summation: \n\tMeal percentages must total 100.");
-			            }
+	            	String resultProbs = testProbabilities(shiftProbabilities);
+	            	String resultMealProbs = testMealProbabilities(listProbs, totalVal, foodProbs);
+	            	if (resultProbs.equalsIgnoreCase("Success") && resultMealProbs.equalsIgnoreCase("Success")) {
+		                mainPage(primaryStage);
+	            	} else {
+		            	failedAlert("All values must be valid before leaving.");
 		            }
 	            }
 	        });
@@ -792,6 +737,57 @@ public class Main extends Application {
 		}
 	}
 
+	public static String testMealProbabilities(ListView listProbs, Label totalVal, ObservableList<String> foodProbs) {
+		double total = 0;
+        for (int i = 0; i < listProbs.getItems().size(); i++) {
+        	try {
+        		Object entryValue = listProbs.getItems().get(i);
+        		double val = Double.parseDouble((String)entryValue);
+        		if (val < 0) {
+        			return("Invalid Meal Percentage:\n\tA value less than 0 was entered");
+        		} else if (val > 100) {
+        			return("Invalid Meal Percentage: \n\t A value greater than 100 was entered.");
+        		}
+        		total += val;
+        	} catch (Exception E) {
+    			return("Invalid Meal Percentage: \n\t A non-numerical value was entered.");
+        	}
+        }
+        for (int i = 0; i < mealList.getMeals().size(); i++) {
+        	double percent = Double.parseDouble(foodProbs.get(i))/100;
+        	mealList.getMeals().get(i).setPercentage(percent);
+	    }
+        total = (total * 1000)/1000;
+        if (total == 100) {
+            totalVal.setText("100.00%");
+            totalVal.setTextFill(Color.web("#1f942f"));
+            return "Success";
+        } else {
+        	totalVal.setText(String.format("%3.2f%%",total));
+        	totalVal.setTextFill(Color.web("#9c291c"));
+        	return "SuccessParsing";
+        }
+	}
+
+	public static String testProbabilities(ListView shiftProbabilities) {
+		for (int i = 0; i < shiftProbabilities.getItems().size(); i++) {
+        	try {
+        		Object entryValue = shiftProbabilities.getItems().get(i);
+        		int val = Integer.parseInt((String)entryValue);
+        		if (val < 0) {
+        			return("Invalid Shift Entry: \t\nA value less than 0 was entered.");
+        		} else {
+        			ObservableList<String> data = shiftProbabilities.getItems();
+        			orderList.setHourlyRate(Integer.parseInt(data.get(0)), Integer.parseInt(data.get(1)),
+        					Integer.parseInt(data.get(2)), Integer.parseInt(data.get(3)));
+        		}
+        	} catch (Exception E) {
+        		return("Invalid Shift Entry: \n\tA non-integer value was entered.");
+        	}
+        }
+		return "Success";
+	}
+
 	public static void meals(Stage primaryStage) {
 
 		try {
@@ -800,21 +796,15 @@ public class Main extends Application {
 
 			//declare labels and set initial values
 			Label label = new Label("Dromedary Drones");
+			dromedaryDronesTextStyle(label);
 			Label mealsLabel = new Label("Meals");
 			Label foods = new Label("Foods");
 			Label errorLabel = new Label("");
 
 			//set layout, font, and colors of labels
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
+			setMediumLabelStyle(mealsLabel,352,72);
 
-			mealsLabel.setFont(new Font("Arial", 20));
-			mealsLabel.setLayoutX(370);
-			mealsLabel.setLayoutY(80);
-
-			foods.setFont(new Font("Arial", 20));
-			foods.setLayoutX(70);
-			foods.setLayoutY(80);
+			setMediumLabelStyle(foods,44,72);
 
 			errorLabel.setFont(new Font("Arial", 20));
 			errorLabel.setLayoutX(160);
@@ -825,8 +815,10 @@ public class Main extends Application {
 			//Add buttons and their initial values
 	        Button removeFood = new Button("Remove Food");
 	        Button editFood = new Button("Edit Food");
-	        Button addFood = new Button("Add Food");
-	        Button addMeal = new Button("Add Meal");
+	        Button addFood = new Button("+");
+	        Button addMeal = new Button("+");
+	        Button clickMeal = new Button("Click a Meal");
+	        Button clickFood = new Button("Click a Food");
 	        Button editMeal = new Button("Edit Meal");
 	        Button removeMeal = new Button("Remove Meal");
 	        Button home = new Button("Home");
@@ -844,13 +836,20 @@ public class Main extends Application {
 		    ObservableList<String> meals =FXCollections.observableArrayList ();
 
 
-		  //Adds foodss to the listView from the foodList, displaying their name
+		  //Adds foods to the listView from the foodList, displaying their name
 	        for (int i = 0; i < foodList.getFoods().size(); i++) {
 	        	food.add(foodList.getFoods().get(i).getName());
 	        }
 		        listFood.setItems(food);
 
-
+		        listFood.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		            @Override
+		            public void handle(MouseEvent event) {
+		            	clickMeal.setVisible(false);
+		            	clickFood.setVisible(false);
+		                displayFoodOrMealButtons(removeFood, editFood, removeMeal, editMeal, true);
+		            }
+		        });
 
 
 			//Adds meals to the listView from the mealList, displaying their name
@@ -861,32 +860,32 @@ public class Main extends Application {
 		    }
 
 			    listMeals.setItems(meals);
-
+			    listMeals.setOnMouseClicked(new EventHandler<MouseEvent>() {
+		            @Override
+		            public void handle(MouseEvent event) {
+		            	clickMeal.setVisible(false);
+		            	clickFood.setVisible(false);
+		            	displayFoodOrMealButtons(removeFood, editFood, removeMeal, editMeal, false);
+		            }
+		        });
 
 			//Create the pane
 	        Pane root = new Pane();
 
 	        //Set layout of Buttons
-	        addFood.setLayoutX(180);
-	        addFood.setLayoutY(100);
+	        addFood.setLayoutX(123);
+	        addFood.setLayoutY(70);
 
-	        addMeal.setLayoutX(180);
-	        addMeal.setLayoutY(250);
-
-	        editMeal.setLayoutX(180);
-	        editMeal.setLayoutY(300);
-
-	        removeMeal.setLayoutX(180);
-	        removeMeal.setLayoutY(350);
+	        addMeal.setLayoutX(430);
+	        addMeal.setLayoutY(70);
 
 	        home.setLayoutX(180);
-	        home.setLayoutY(450);
+	        home.setLayoutY(285);
 
-	        removeFood.setLayoutX(180);
-	        removeFood.setLayoutY(200);
-
-	        editFood.setLayoutX(180);
-	        editFood.setLayoutY(150);
+	        clickMeal.setLayoutX(180);
+	        clickMeal.setLayoutY(185);
+	        clickFood.setLayoutX(180);
+	        clickFood.setLayoutY(235);
 
 	        //Set dimensions of buttons
 	        removeFood.setPrefHeight(40);
@@ -895,11 +894,11 @@ public class Main extends Application {
 	        editFood.setPrefHeight(40);
 	        editFood.setPrefWidth(140);
 
-	        addFood.setPrefHeight(40);
-	        addFood.setPrefWidth(140);
+	        addFood.setPrefHeight(20);
+	        addFood.setPrefWidth(25);
 
-	        addMeal.setPrefHeight(40);
-	        addMeal.setPrefWidth(140);
+	        addMeal.setPrefHeight(20);
+	        addMeal.setPrefWidth(25);
 
 	        editMeal.setPrefHeight(40);
 	        editMeal.setPrefWidth(140);
@@ -909,16 +908,18 @@ public class Main extends Application {
 
 	        home.setPrefHeight(40);
 	        home.setPrefWidth(140);
-	        
+	        clickMeal.setPrefSize(140,40);
+	        clickFood.setPrefSize(140, 40);
+
 	        saveMeals.setPrefHeight(40);
 	        saveMeals.setPrefWidth(140);
 	        loadMeals.setPrefHeight(40);
 	        loadMeals.setPrefWidth(140);
-	        
+
 	        saveMeals.setLayoutX(330);
-	        saveMeals.setLayoutY(410);
+	        saveMeals.setLayoutY(340);
 	        loadMeals.setLayoutX(330);
-	        loadMeals.setLayoutY(450);
+	        loadMeals.setLayoutY(390);
 
 	        saveFoods.setPrefHeight(40);
 	        saveFoods.setPrefWidth(140);
@@ -927,18 +928,18 @@ public class Main extends Application {
 
 
 	        saveFoods.setLayoutX(30);
-	        saveFoods.setLayoutY(410);
+	        saveFoods.setLayoutY(340);
 
 	        loadFoods.setLayoutX(30);
-	        loadFoods.setLayoutY(450);
+	        loadFoods.setLayoutY(390);
 
 
 	        //Set dimensions and layout of food and Meal lists
 	        listFood.setPrefWidth(140);
-	        listFood.setPrefHeight(300);
+	        listFood.setPrefHeight(230);
 
 	        listMeals.setPrefWidth(140);
-	        listMeals.setPrefHeight(300);
+	        listMeals.setPrefHeight(230);
 
 	        listFood.setLayoutX(30);
 	        listFood.setLayoutY(100);
@@ -949,8 +950,8 @@ public class Main extends Application {
 	      //Add the button styles
 	        addButtonStyleNormal(removeFood);
 	        addButtonStyleNormal(editFood);
-	        addButtonStyleNormal(addFood);
-	        addButtonStyleNormal(addMeal);
+	        addButtonStyleSmall(addFood,4,4);
+	        addButtonStyleSmall(addMeal,4,4);
 	        addButtonStyleNormal(editMeal);
 	        addButtonStyleNormal(removeMeal);
 	        addButtonStyleNormal(home);
@@ -958,6 +959,17 @@ public class Main extends Application {
 	        addButtonStyleNormal(loadFoods);
 	        addButtonStyleNormal(saveMeals);
 	        addButtonStyleNormal(loadMeals);
+	        addButtonStyleDisabled(clickMeal);
+	        addButtonStyleDisabled(clickFood);
+
+
+	        //Set edit buttons to hide on first load
+	        removeFood.setVisible(false);
+	        editFood.setVisible(false);
+	        editMeal.setVisible(false);
+	        removeMeal.setVisible(false);
+//	        clickMeal.setDisable(true);
+//	        clickFood.setDisable(true);
 
 	        //Add Every javaFX element to the pane so it will be displayed
 	        root.getChildren().add(removeFood);
@@ -977,6 +989,8 @@ public class Main extends Application {
 	        root.getChildren().add(loadMeals);
 	        root.getChildren().add(saveFoods);
 	        root.getChildren().add(loadFoods);
+	        root.getChildren().add(clickMeal);
+	        root.getChildren().add(clickFood);
 
 
 	        loadMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
@@ -985,7 +999,7 @@ public class Main extends Application {
 
 	            }//ends event handler
 	        });
-	        
+
 	        saveMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	saveMeals(primaryStage);
@@ -1116,7 +1130,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}	//End meals function
-	
+
 	public static void editFoodPageNew(Stage primaryStage, Food foodToBeEdited) {
 		try {
 		//title of the page
@@ -1124,9 +1138,8 @@ public class Main extends Application {
 
 		//create labels
 		Label label = new Label("Dromedary Drones");
-		label.setFont(new Font("Arial", 40));
-		label.setLayoutX(80);
-		
+		dromedaryDronesTextStyle(label);
+
         //create name
         Label name = new Label("Food Name");
 		name.setFont(new Font("Arial", 12));
@@ -1136,7 +1149,7 @@ public class Main extends Application {
         newFoodName.setText(foodToBeEdited.getName());
         newFoodName.setLayoutX(180);
         newFoodName.setLayoutY(100);
-        
+
         //create weight
       	Label weight = new Label("Food Weight");
       	weight.setFont(new Font("Arial", 12));
@@ -1146,7 +1159,7 @@ public class Main extends Application {
       	newFoodWeight.setText(Double.toString(foodToBeEdited.getWeight()));
       	newFoodWeight.setLayoutX(180);
       	newFoodWeight.setLayoutY(150);
-        
+
 
 		//create buttons
         Button saveChanges = new Button("Save Changes");
@@ -1169,31 +1182,31 @@ public class Main extends Application {
 
         //adds everything to the pane
         Pane root = new Pane();
-        //adds the labels 
+        //adds the labels
         root.getChildren().add(label);
         root.getChildren().add(name);
-        root.getChildren().add(weight); 
-        //adds the text fields 
+        root.getChildren().add(weight);
+        //adds the text fields
         root.getChildren().add(newFoodName);
-        root.getChildren().add(newFoodWeight); 
-        //add buttons 
+        root.getChildren().add(newFoodWeight);
+        //add buttons
         root.getChildren().add(saveChanges);
         root.getChildren().add(cancel);
-        
+
         //if the user presses the save button
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-            	
+
             	//gets the info from text fields
-            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName) 
+            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName)
             	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
-            	String newN = newFoodName.getText(); 
-            	double newW = Double.parseDouble(newFoodWeight.getText());  
+            	String newN = newFoodName.getText();
+            	double newW = Double.parseDouble(newFoodWeight.getText());
             	foodToBeEdited.changeName(newN);
             	foodToBeEdited.changeWeight(newW);
                 meals(primaryStage);
             	}
-            
+
             }
         });
 
@@ -1216,9 +1229,9 @@ public class Main extends Application {
 		}.start();
 	} catch(Exception e) {
 		e.printStackTrace();
-	}		
 	}
-	
+	}
+
 	public static void saveMeals(Stage primaryStage) {
 	   	 FileChooser fileChooser = new FileChooser();
 
@@ -1261,8 +1274,8 @@ public class Main extends Application {
 	       }
 
 		}
-	
-	
+
+
 	public static void loadMealsPage(Stage primaryStage) {
 		 FileChooser fileChooser = new FileChooser();
 	     //Set extension filter
@@ -1288,29 +1301,29 @@ public class Main extends Application {
 		        		}
 
 		        	}//ends while
-		        	
+
 		        	if (isFormattingGood == true) {
 			        	//now have to make the new meals, and replace the old ones with them.
 			        	while (mealList.getMeals().size() != 0) {
 			        		mealList.deleteMeal(mealList.getMeals().get(0));
 			        	}
-			        	
-			        	
+
+
 			        	sc = new Scanner(file);
 			        	while (sc.hasNext()) {
 				        	String s = sc.nextLine();
-				        	
+
 				        	Scanner stringScanner = new Scanner(s);
 				        	//if there is a comma or a new line
 							stringScanner.useDelimiter(",|\\n");
-							
+
 							//get meal name
 							String mealName = stringScanner.next();
 							//get meal percentage then turn it into a double
 							String percentage = stringScanner.next();
 							double percentageDouble = Double.parseDouble(percentage);
-							
-							
+
+
 							ArrayList<Food> mealFoods = new ArrayList<Food>();
 							while (stringScanner.hasNext()) {
 								String foodName = stringScanner.next();
@@ -1342,26 +1355,26 @@ public class Main extends Application {
 
 
 	}//ends loadmealspage
-	
+
 	public static boolean checkMeal(String meal) {
-		
+
 		try {
 			boolean hasFood = false;
 			Scanner stringScanner = new Scanner(meal);
 			//if there is a comma or a new line
 			stringScanner.useDelimiter(",|\\n");
-			
+
 			String mealName = stringScanner.next();
 			if (mealName.equals("")) {
 				return false;
 			}
-			
+
 			String percentage = stringScanner.next();
 			double percentageDouble = Double.parseDouble(percentage);
 			if (percentageDouble < 0) {
 				return false;
 			}
-			
+
 			while (stringScanner.hasNext()) {
 				hasFood = false;
 				//check to see if the food exists
@@ -1380,11 +1393,11 @@ public class Main extends Application {
 			System.out.println("Invalid formatting");
 			return false;
 		}
-		
+
 		return true;
 	}
 
-	
+
 	public static void loadFoodsPage(Stage primaryStage) {
 		 FileChooser fileChooser = new FileChooser();
 	     //Set extension filter
@@ -1488,9 +1501,8 @@ public class Main extends Application {
 
 			//add the labels
 			Label label = new Label("Dromedary Drones");
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-			
+			dromedaryDronesTextStyle(label);
+
 			Label name = new Label("Food Name");
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
@@ -1498,7 +1510,7 @@ public class Main extends Application {
 	        TextField foodName = new TextField();
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(100);
-	        
+
 			Label weight = new Label("Food Weight (oz)");
 			weight.setFont(new Font("Arial", 12));
 			weight.setLayoutX(180);
@@ -1506,7 +1518,7 @@ public class Main extends Application {
 	        TextField foodWeight = new TextField();
 	        foodWeight.setLayoutX(180);
 	        foodWeight.setLayoutY(150);
-	        
+
 			//create buttons
 	        Button saveFood = new Button("Save Food");
 	        Button cancel = new Button("Cancel");
@@ -1614,7 +1626,7 @@ public class Main extends Application {
 
 	public static void failedAlert(String s) {
 		Alert fail = new Alert(AlertType.INFORMATION);
-		fail.setHeaderText("Failed");
+		fail.setHeaderText("ERROR");
 		fail.setContentText(s);
 		fail.showAndWait();
 	}//ends alert message method
@@ -1637,13 +1649,12 @@ public class Main extends Application {
 
 			//Create labels and set their initial values
 			Label label = new Label("Dromedary Drones");
+			dromedaryDronesTextStyle(label);
+
 			Label mealNameHere = new Label("Meal Name");
 			Label errorLabel = new Label("");
 
 			//Set label fonts, layouts and colors
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-
 			mealNameHere.setFont(new Font("Arial", 12));
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
@@ -1949,13 +1960,12 @@ public class Main extends Application {
 
 			//Create labels and set their initial values
 			Label label = new Label("Dromedary Drones");
+			dromedaryDronesTextStyle(label);
+
 			Label mealNameHere = new Label("Meal Name");
 			Label errorLabel = new Label("");
 
 			//Set layout, font, and color of labels
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-
 			mealNameHere.setFont(new Font("Arial", 12));
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
@@ -2252,9 +2262,7 @@ public class Main extends Application {
 			primaryStage.setTitle("Saving Screen");
 
 			Label label = new Label("Dromedary Drones");
-
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
+			dromedaryDronesTextStyle(label);
 
 	        Button home = new Button("Home");
 
@@ -2388,405 +2396,6 @@ public class Main extends Application {
 	        }
 	 }
 
-
-	public static void editFoodPage(Stage primaryStage) {
-		try {
-			//creates title of the page
-			primaryStage.setTitle("Edit Food Page");
-			//creates label
-			Label label = new Label("Dromedary Drones");
-
-			//set label positions
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-
-			//add buttons
-	        Button editName = new Button("Change Food Name");
-	        Button editWeight = new Button("Change Food Weight");
-	        Button cancel = new Button("Cancel");
-
-	        //sets position of buttons
-	        editName.setLayoutX(180);
-	        editName.setLayoutY(250);
-	        editWeight.setLayoutX(180);
-	        editWeight.setLayoutY(300);
-	        cancel.setLayoutX(180);
-	        cancel.setLayoutY(350);
-	        editName.setPrefHeight(40);
-	        editName.setPrefWidth(140);
-	        editWeight.setPrefHeight(40);
-	        editWeight.setPrefWidth(140);
-	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);
-
-		      //Add the button styles
-	        addButtonStyleNormal(editName);
-	        addButtonStyleNormal(editWeight);
-	        addButtonStyleNormal(cancel);
-
-	        //add to the pane
-	        Pane root = new Pane();
-	        root.getChildren().add(editName);
-	        root.getChildren().add(editWeight);
-	        root.getChildren().add(cancel);
-	        root.getChildren().add(label);
-
-	        //if you choose edit name goes to the edit food name
-	        editName.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	            	editFoodName(primaryStage);
-	            }
-	        });
-
-	        //if you chose edit weight goes to the edit food weight page
-	        editWeight.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	            	editFoodWeight(primaryStage);
-	            }
-	        });
-
-	        //if you chose cancel goes back to the meals page
-	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	                meals(primaryStage);
-	            }
-	            });
-	        //creates a new scene
-	        Scene scene = new Scene(root,500,500);
-	      //Color the scene background
-			root.setBackground(bg);
-			primaryStage.setScene(scene);
-			primaryStage.show();
-			new AnimationTimer() {
-				@Override
-				public void handle(long now) {
-				}
-			}.start();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-
-	}//ends method
-
-	public static void editFoodWeight(Stage primaryStage) {
-		try {
-			//add label and titles
-			primaryStage.setTitle("Change Food Weight Page");
-			Label label = new Label("Dromedary Drones");
-			Label name = new Label("Food Name");
-			Label newWeight = new Label("New Food Weight (oz)");
-			Pane root = new Pane();
-
-			//set positions of labels
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-			name.setFont(new Font("Arial", 12));
-			name.setLayoutX(180);
-			name.setLayoutY(80);
-			newWeight.setFont(new Font("Arial", 12));
-			newWeight.setLayoutX(180);
-			newWeight.setLayoutY(130);
-
-			//create buttons
-	        Button saveChanges = new Button("Save Changes");
-	        Button cancel = new Button("Cancel");
-
-	        //add text fields
-	        TextField foodName = new TextField();
-	        TextField newFoodWeight = new TextField();
-
-	        //sets position of buttons
-	        saveChanges.setLayoutX(180);
-	        saveChanges.setLayoutY(300);
-	        cancel.setLayoutX(180);
-	        cancel.setLayoutY(350);
-	        saveChanges.setPrefHeight(40);
-	        saveChanges.setPrefWidth(140);
-	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);
-
-	        //set position of text box
-	        foodName.setLayoutX(180);
-	        foodName.setLayoutY(100);
-	        newFoodWeight.setLayoutX(180);
-	        newFoodWeight.setLayoutY(150);
-
-		      //Add the button styles
-	        addButtonStyleNormal(saveChanges);
-	        addButtonStyleNormal(cancel);
-
-	        //adds to the pane
-	        root.getChildren().add(saveChanges);
-	        root.getChildren().add(cancel);
-	        root.getChildren().add(foodName);
-	        root.getChildren().add(name);
-	        root.getChildren().add(newFoodWeight);
-	        root.getChildren().add(newWeight);
-	        root.getChildren().add(label);
-
-	        //if the user presses the save button
-	        saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	            	//gets the text field into
-	            	String origName = foodName.getText();
-	            	//checks that the food is in the list, that a number was entered, that the weight
-	            	//and that the weight is in bounds
-	            	if(checkNames(foodName) && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
-	            	double newW = Double.parseDouble(newFoodWeight.getText());
-	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
-	            		//changes the weight once there is a match
-	            		if(foodList.getFoods().get(i).getName().equals(origName)) {
-	            			foodList.getFoods().get(i).changeWeight(newW);
-	            		}//ends if
-	            	}//ends for loop
-	                meals(primaryStage);
-	            	}//ends if weight
-	            }
-	        });
-	        //if you hit the cancel button goes back to the edit food page
-	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	                editFoodPage(primaryStage);
-	            }
-	            });
-
-	        //creates a new scene
-	        Scene scene = new Scene(root,500,500);
-	      //Color the scene background
-			root.setBackground(bg);
-			primaryStage.setScene(scene);
-			primaryStage.show();
-			new AnimationTimer() {
-				@Override
-				public void handle(long now) {
-				}
-			}.start();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}//ends edit food weight
-
-	public static boolean checkNames(TextField t) {
-		//gets the text from the field
-		String name = t.getText();
-		//for all the foods in the list
-		for(int i = 0; i<foodList.getFoods().size(); i++) {
-			//if there is a food with the name from the text field
-			if(foodList.getFoods().get(i).getName().equals(name)) {
-				return true;
-			}//ends if
-		}//ends for loop
-		//gives the user a failed alert
-		failedAlert("That is not a current food");
-		return false;
-
-	}//ends check names method
-
-	public static void editFoodName(Stage primaryStage) {
-		try {
-		//title of the page
-		primaryStage.setTitle("Change Food Name Page");
-
-		//create labels
-		Label label = new Label("Dromedary Drones");
-		Label name = new Label("Current Food Name");
-		Label newName = new Label("New Food Name");
-		Label newWeight = new Label("New Food Weight");
-		Label weight = new Label("Current Food Weight");
-
-		//sets fonts and positions of labels
-		label.setFont(new Font("Arial", 40));
-		label.setLayoutX(80);
-		name.setFont(new Font("Arial", 12));
-		name.setLayoutX(180);
-		name.setLayoutY(80);
-		newName.setFont(new Font("Arial", 12));
-		newName.setLayoutX(180);
-		newName.setLayoutY(130);
-		weight.setFont(new Font("Arial", 12));
-		weight.setLayoutX(180);
-		weight.setLayoutY(180);
-		newWeight.setFont(new Font("Arial", 12));
-		newWeight.setLayoutX(180);
-		newWeight.setLayoutY(230);
-
-		//create buttons
-        Button saveChanges = new Button("Save Changes");
-        Button cancel = new Button("Cancel");
-
-        //set position of buttons
-        saveChanges.setLayoutX(180);
-        saveChanges.setLayoutY(300);
-        saveChanges.setPrefHeight(40);
-        saveChanges.setPrefWidth(140);
-        cancel.setLayoutX(180);
-        cancel.setLayoutY(350);
-        cancel.setPrefHeight(40);
-        cancel.setPrefWidth(140);
-
-        //create text fields
-        TextField foodName = new TextField();
-        TextField newFoodName = new TextField();
-        TextField newFoodWeight = new TextField();
-
-        //sets the position of the text fields
-        foodName.setLayoutX(180);
-        foodName.setLayoutY(100);
-        newFoodName.setLayoutX(180);
-        newFoodName.setLayoutY(150);
-        newFoodWeight.setLayoutX(180);
-        newFoodWeight.setLayoutY(250);
-
-	      //Add the button styles
-        addButtonStyleNormal(cancel);
-        addButtonStyleNormal(saveChanges);
-
-        //adds everything to the pane
-        Pane root = new Pane();
-        root.getChildren().add(saveChanges);
-        root.getChildren().add(cancel);
-        root.getChildren().add(foodName);
-        root.getChildren().add(newFoodName);
-        root.getChildren().add(newName);
-        root.getChildren().add(label);
-        root.getChildren().add(name);
-
-        //if the user presses the save button
-        saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-            	//if the food name exists in the list of foods
-            	if(checkNames(foodName)) {
-            	//gets the info from text fields
-            	String origName = foodName.getText();
-            	String newN = newFoodName.getText();
-            	//checks teh array of foods for a match
-            	for(int j = 0; j< foodList.getFoods().size(); j++) {
-            		if(foodList.getFoods().get(j).getName().equals(origName)) {
-            			//changees the name
-            			foodList.getFoods().get(j).changeName(newN);
-            		}//ends if
-            	}//ends for
-                meals(primaryStage);
-            }//ends if
-            }
-        });
-
-        //if the user presses the cancel button goes back to the edit food page
-        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                editFoodPage(primaryStage);
-            }
-            });
-        //creates a new scene
-        Scene scene = new Scene(root,500,500);
-      //Color the scene background
-		root.setBackground(bg);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-		new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-			}
-		}.start();
-	} catch(Exception e) {
-		e.printStackTrace();
-	}
-	}//ends edit food page
-
-	public static void removeFoodPage(Stage primaryStage) {
-		try {
-			//sets the title of the page
-			primaryStage.setTitle("Remove Food Page");
-
-			//create the labels
-			Label label = new Label("Dromedary Drones");
-			Label name = new Label("Food Name");
-
-			//sets the fonts and position of the labels
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
-			name.setFont(new Font("Arial", 12));
-			name.setLayoutX(180);
-			name.setLayoutY(180);
-
-			//creates the buttons
-	        Button remove = new Button("Remove");
-	        Button cancel = new Button("Cancel");
-
-	        //add the text fields
-	        TextField foodName = new TextField();
-
-	        //set position of text fields and buttons
-	        remove.setLayoutX(180);
-	        remove.setLayoutY(300);
-	        cancel.setLayoutX(180);
-	        cancel.setLayoutY(350);
-	        foodName.setLayoutX(180);
-	        foodName.setLayoutY(200);
-
-	        //sets the height and width of buttons
-	        remove.setPrefHeight(40);
-	        remove.setPrefWidth(140);
-	        cancel.setPrefHeight(40);
-	        cancel.setPrefWidth(140);
-	        cancel.setPrefWidth(140);
-
-		      //Add the button styles
-	        addButtonStyleNormal(remove);
-	        addButtonStyleNormal(cancel);
-
-	        //adds to the pane
-	        Pane root = new Pane();
-	        root.getChildren().add(remove);
-	        root.getChildren().add(cancel);
-	        root.getChildren().add(foodName);
-	        root.getChildren().add(label);
-	        root.getChildren().add(name);
-
-	        //if the user presses the remove button
-	        remove.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	            	//if the food is in check names
-	            	if(checkNames(foodName)) {
-	            	String removeName = foodName.getText();
-	            	//checks all the foods in the array
-	            	for(int i = 0; i<foodList.getFoods().size(); i++) {
-	            		//if the food equals the name of the food they want to remove
-	            		if(foodList.getFoods().get(i).getName().equals(removeName)) {
-	            			//removes the food
-	            			foodList.getFoods().remove(foodList.getFoods().get(i));
-	            		}//ends if
-	            	}//ends for
-	            	//goes back to the meals page
-	                meals(primaryStage);
-	            }//ends if check names
-	            }//ends if names
-	        }); //ends remove action
-
-	        //if the user presses the cancel button goes back to meals page
-	        cancel.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-	            @Override public void handle(ActionEvent e) {
-	                meals(primaryStage);
-	            }
-	        }); //ends cancel action
-
-	        //creates the scene
-			Scene scene = new Scene(root,500,500);
-			//Color the scene background
-			root.setBackground(bg);
-			primaryStage.setScene(scene);
-			primaryStage.show();
-			new AnimationTimer() {
-				@Override
-				public void handle(long now) {
-
-				}
-			}.start();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}//ends remove food page
-
 	public static void map(Stage primaryStage) {
 		try {
 
@@ -2795,10 +2404,7 @@ public class Main extends Application {
 
 			//create the labels
 			Label label = new Label("Dromedary Drones");
-
-			//sets the fonts and position of the labels
-			label.setFont(new Font("Arial", 40));
-			label.setLayoutX(80);
+			dromedaryDronesTextStyle(label);
 
 			//creates the buttons
 			Button changeImage = new Button("Change image");
@@ -2809,15 +2415,15 @@ public class Main extends Application {
 
 	        //set position of text fields and buttons
 	        update.setLayoutX(180);
-	        update.setLayoutY(100);
+	        update.setLayoutY(160);
 	        save.setLayoutX(180);
-	        save.setLayoutY(150);
+	        save.setLayoutY(210);
 	        load.setLayoutX(180);
-	        load.setLayoutY(200);
+	        load.setLayoutY(260);
 	        changeImage.setLayoutX(180);
-	        changeImage.setLayoutY(250);
+	        changeImage.setLayoutY(310);
 	        home.setLayoutX(180);
-	        home.setLayoutY(300);
+	        home.setLayoutY(360);
 
 	        //sets the height and width of buttons
 	        changeImage.setPrefHeight(40);
@@ -2847,7 +2453,7 @@ public class Main extends Application {
 	        root.getChildren().add(save);
 	        root.getChildren().add(label);
 	        root.getChildren().add(home);
-	        
+
 		      //if the user presses the cancel button goes back to meals page
 	        update.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
@@ -2867,7 +2473,7 @@ public class Main extends Application {
 
 		           	if (file != null) {
 		           		try {
-			                image = new Image("file:" + file.getAbsolutePath());
+//			                image = new Image("file:" + file.getAbsolutePath());
 		           		}
 		           		catch(Exception e1) {
 		           			e1.printStackTrace();
@@ -2998,7 +2604,7 @@ public class Main extends Application {
 
 		//creates the image
 		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(image);
+//		selectedImage.setImage(image);
 
 
 		//the image will resize with the window
@@ -3173,6 +2779,42 @@ public class Main extends Application {
 
 	}
 
+	public static void dromedaryDronesTextStyle(Label label) {
+		label.setStyle("-fx-font-size: 40px;" +
+				"-fx-font-family: 'Arial Black';" +
+				"-fx-fill: #818181;" +
+				"-fx-effect: innershadow( three-pass-box , rgba(0,0,0,0.7) , 6, 0.0 , 0 , 2 );");
+		label.setLayoutX(45);
+	}
+
+	public static void setMediumLabelStyle(Label label, int xPos, int yPos) {
+		label.setLayoutX(xPos);
+		label.setLayoutY(yPos);
+		label.setStyle("-fx-font-size: 23px;" +
+				"-fx-font-family: Arial;" +
+				"-fx-font-weight: bold;" +
+				"-fx-font-fill: #ffffff;");
+
+	}
+
+	public static void displayFoodOrMealButtons(Button foodEdit, Button foodRemove, Button mealEdit, Button mealRemove, boolean hide) {
+        foodEdit.setLayoutX(180);
+        foodEdit.setLayoutY(235);
+        foodRemove.setLayoutX(180);
+        foodRemove.setLayoutY(185);
+
+        mealEdit.setLayoutX(180);
+        mealEdit.setLayoutY(235);
+        mealRemove.setLayoutX(180);
+        mealRemove.setLayoutY(185);
+
+        foodEdit.setVisible(hide);
+        foodRemove.setVisible(hide);
+        mealEdit.setVisible(!hide);
+        mealRemove.setVisible(!hide);
+	}
+
+
 	public static void addButtonStyleNormal(Button button) {
 		String basic = "-fx-effect: dropshadow(gaussian, #828282, 10, 0.1, 0, 5);" +
 				"-fx-background-radius:14px;" +
@@ -3252,6 +2894,67 @@ public class Main extends Application {
 		}
 		
 		return tempList;
+	}
+
+	public static void addButtonStyleSmall(Button button,int padX, int padY) {
+		String basic = "-fx-effect: dropshadow(gaussian, #d1bfa1, 10, 0.1, 0, 5);" +
+				"-fx-background-radius:3px;" +
+				"-fx-border-radius:3px;" +
+				"-fx-border-width:1.5px;" +
+				"-fx-border-style: solid;"+
+				"-fx-border-color: #f7b4a1;" +
+				"-fx-display:inline-block;" +
+				"-fx-cursor:pointer;" +
+				"-fx-text-color:#000000;" +
+				"-fx-font-family:Arial;" +
+				"-fx-font-size:12px;" +
+				"-fx-font-weight:bold;" +
+				"-fx-padding:" + padX + "px " + padY + "px;" +
+				"-fx-text-decoration:none;";
+
+		String mainStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 5%, #e6ca9c 100%);" +
+				basic;
+
+		String hoverStyle = "-fx-background-color:linear-gradient(to bottom, #ffe0ac 15%, #ffbdab  100%);" +
+				basic;
+
+		String clickStyle =
+			"-fx-background-color:linear-gradient(to bottom, #f2d3a0 45%, #f7b4a1 100%);" +
+			basic;
+
+		//Set the button's main style
+		button.setStyle(mainStyle);
+		button.setTextOverrun(OverrunStyle.CLIP);
+
+		//Set the button to do special things on Hover and revert after
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(mainStyle));
+
+        //Set the button to "move down" when clicked and "go back" when released
+        button.setOnMousePressed(e -> button.setStyle(clickStyle));
+        button.setOnMouseReleased(e -> button.setStyle(mainStyle));
+	}
+
+	public static void addButtonStyleDisabled(Button button) {
+		String basic = "-fx-effect: dropshadow(gaussian, #828282, 10, 0.1, 0, 5);" +
+				"-fx-background-radius:14px;" +
+				"-fx-border-radius:12px;" +
+				"-fx-border-width:1.5px;" +
+				"-fx-border-style: solid;"+
+				"-fx-border-color: #d19a8a;" +
+				"-fx-display:inline-block;" +
+				"-fx-cursor:pointer;" +
+				"-fx-text-color:#000000;" +
+				"-fx-font-family:Arial;" +
+				"-fx-font-size:12px;" +
+				"-fx-font-weight:bold;" +
+				"-fx-padding:10px 10px;" +
+				"-fx-text-decoration:none;";
+
+		String mainStyle = "-fx-background-color:linear-gradient(to bottom, #f0e0c7 5%, #d4cbbc 100%);" +
+				basic;
+
+		button.setStyle(mainStyle);
 	}
 
 }
