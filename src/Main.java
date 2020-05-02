@@ -25,6 +25,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -35,11 +36,13 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.converter.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.converter.DoubleStringConverter;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -88,14 +91,6 @@ public class Main extends Application {
 
 
 	public static void main(String[] args) {
-		
-		
-		System.out.println(image.getWidth());
-		System.out.println(image.getHeight());
-		System.out.println(feetPerPixelWidth);
-		System.out.println(feetPerPixelHeight);
-		System.out.println(x0);
-		System.out.println(y0);
 		
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
 		Food fries = new Food("Fries", 4);
@@ -2454,7 +2449,7 @@ public class Main extends Application {
 	        root.getChildren().add(label);
 	        root.getChildren().add(home);
 
-		      //if the user presses the cancel button goes back to meals page
+		    //if the user presses the cancel button goes back to meals page
 	        update.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	updateMap(primaryStage);
@@ -2462,7 +2457,7 @@ public class Main extends Application {
 	        }); //ends cancel action
 
 
-	      //if the user presses the cancel button goes back to meals page
+	        //if the user presses the cancel button goes back to meals page
 	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
@@ -2473,15 +2468,23 @@ public class Main extends Application {
 
 		           	if (file != null) {
 		           		try {
-//			                image = new Image("file:" + file.getAbsolutePath());
+			                if(ImageIO.read(file) == null) {
+			           			Label error = new Label("ERROR: Invalid file type");
+			           			error.setLayoutX(180);
+			           			error.setLayoutY(140);
+			           			root.getChildren().add(error);
+			                }
+			                else { 
+				                image = new Image("file:" + file.getAbsolutePath());
+				                addDimensions(primaryStage);
+			                }
+					       
 		           		}
 		           		catch(Exception e1) {
-		           			e1.printStackTrace();
+		
 		           		}
 
 		           	}
-
-	                updateMap(primaryStage);
 	            }
 	        }); //ends cancel action
 
@@ -2493,7 +2496,43 @@ public class Main extends Application {
 
 		           	File file = fileChooser.showOpenDialog(primaryStage);
 	                if (file != null) {
-	                    setLocation(locationList, file);
+	                	try {
+	                		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	            			DocumentBuilder db;
+	            			db = dbf.newDocumentBuilder();
+	            			Document doc = db.parse(file);
+	            			doc.getDocumentElement().normalize();
+
+	            			NodeList nList = doc.getElementsByTagName("location");
+	            			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+
+	            			for (int i = 0; i < nList.getLength(); i++) {
+	            				tempList.add(new ArrayList<Double>());
+	            				Node nNode = nList.item(i);
+
+	            				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+	            					Element eElement = (Element) nNode;
+	            					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
+	            					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
+	            					
+	            					tempList.get(i).add(x);
+	            					tempList.get(i).add(y);
+	            					
+	            				}
+	            			}
+	            			
+	            			locationList = tempList;
+	            			
+	            			locationToSend = updateToSend();
+	            			orderList.setLocations(locationToSend);
+	                	}
+	                	catch(Exception e1) {
+		           			Label error = new Label("ERROR: Invalid file");
+		           			error.setLayoutX(180);
+		           			error.setLayoutY(140);
+		           			root.getChildren().add(error);
+	                	}
 	                }
 	                //map(primaryStage);
 	            }
@@ -2604,7 +2643,7 @@ public class Main extends Application {
 
 		//creates the image
 		ImageView selectedImage = new ImageView();
-//		selectedImage.setImage(image);
+		selectedImage.setImage(image);
 
 
 		//the image will resize with the window
@@ -2889,12 +2928,132 @@ public class Main extends Application {
 			
 			tempList.add(temp);
 			
-			System.out.println(x + " " + y);
-			
 		}
 		
 		return tempList;
 	}
+	
+	/*
+	 * Displaying the mainPage
+	 */
+	public static void addDimensions(Stage primaryStage) {
+
+		try {
+
+			//Set the title of the window
+			primaryStage.setTitle("Dimensions");
+			
+			Label label = new Label("Dromedary Drones");
+			Label xlabel = new Label("X Dimension of image in feet");
+			Label ylabel = new Label("Y Dimension of image in feet");
+			Button confirm = new Button("Confirm");
+			
+
+			dromedaryDronesTextStyle(label);
+
+			Pane root = new Pane();
+			
+			// create a textfield 
+	        TextField x = new TextField(); 
+	        TextField y = new TextField(); 
+	        xlabel.setLayoutX(180);
+	        xlabel.setLayoutY(180);
+	        x.setLayoutX(180);
+	        x.setLayoutY(200);
+	        ylabel.setLayoutX(180);
+	        ylabel.setLayoutY(230);
+	        y.setLayoutX(180);
+	        y.setLayoutY(250);
+	        confirm.setLayoutX(180);
+	        confirm.setLayoutY(300);
+	        
+	        confirm.setPrefWidth(150);
+	        confirm.setPrefHeight(50);
+	        
+
+	        javafx.util.StringConverter<Double> converter = new DoubleStringConverter();
+
+	        
+			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 4200.0);
+			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 4200.0);
+
+			x.setTextFormatter(xformat);
+			y.setTextFormatter(yformat);
+	        
+	        
+			 confirm.setOnAction(new EventHandler<ActionEvent>() {
+				 @Override public void handle(ActionEvent e) {
+                     //set button pressed values
+					 
+					 try {
+						 if (xformat.getValue() <= 0) {
+							 Label error = new Label("ERROR: X and y dimension must be greater than 0");
+							 error.setLayoutX(180);
+							 error.setLayoutY(160);
+							 root.getChildren().add(error);
+							 
+						 }
+						 else if (yformat.getValue() <= 0) {
+							 Label error = new Label("ERROR: X and Y dimension must be greater than 0");
+							 error.setLayoutX(180);
+							 error.setLayoutY(160);
+							 root.getChildren().add(error);
+						 }
+						 else {
+							imageWidth = xformat.getValue();
+							imageHeight = yformat.getValue();
+							feetPerPixelWidth = imageWidth/500;
+							feetPerPixelHeight = imageHeight/500;
+							x0 = 0;
+							y0 = 0;
+								
+							
+							locationToSend = updateToSend();
+							orderList.setLocations(locationToSend);
+
+							
+							map(primaryStage);
+						 }
+						 
+					 } catch(Exception e1) {
+						 System.out.println(e1);
+					 }
+					
+					 
+					updateToSend();
+				 }
+			 });		
+				
+	   
+
+	        root.getChildren().add(xlabel);
+	        root.getChildren().add(ylabel);
+	        root.getChildren().add(label);
+	        root.getChildren().add(x);
+	        root.getChildren().add(y);
+	        root.getChildren().add(confirm);
+	        
+			//creates the scene
+			Scene scene = new Scene(root,500,500);
+			//Color the scene background
+			root.setBackground(bg);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+
+
+				}
+			}.start();
+
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	public static void addButtonStyleSmall(Button button,int padX, int padY) {
 		String basic = "-fx-effect: dropshadow(gaussian, #d1bfa1, 10, 0.1, 0, 5);" +
