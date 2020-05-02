@@ -107,7 +107,7 @@ public class Simulation {
 				}
 
 				//Do Traveling salesman
-				organizeRoute(ordersToDeliver);
+				organizeRouteBacktracking(ordersToDeliver);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
@@ -115,7 +115,7 @@ public class Simulation {
 				double timeDroneGone = 0;
 				for (int i = 0; i < ordersToDeliver.size(); i++) {
 					double[] newPoint = {ordersToDeliver.get(i).getLocation().get(0), ordersToDeliver.get(i).getLocation().get(0)};
-					
+
 					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
 
 						//If there is time left on the drone's flight, calculate time for order and add
@@ -226,7 +226,7 @@ public class Simulation {
 				}
 
 				//Do Traveling salesman
-				organizeRoute(ordersToDeliver);
+				organizeRouteBacktracking(ordersToDeliver);
 
 				//Calculate how long the drone will be gone and add on the
 				//		turn-around time (for putting in a new battery)
@@ -296,40 +296,51 @@ public class Simulation {
 		return timeToDelivery;
 	}
 
-	private static void organizeRoute(ArrayList<Order> currentOrders) {
-		double[] prevPoint = new double[] {0,0};
-		//Greedy Traveling Salesman (Done by re-organizing the list of current Orders)
-		for (int i = 0; i < currentOrders.size(); i++) {
-			
-			double[] comparisonPoint = {currentOrders.get(i).getLocation().get(0), currentOrders.get(i).getLocation().get(0)};
-			double minDist;
-			int pos = i;
-			if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
-				minDist = 0;
-			} else {
-				minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
-				for (int j = i; j < currentOrders.size(); j++) {
-					double distance;
-					double[] newPoint = {currentOrders.get(j).getLocation().get(0), currentOrders.get(j).getLocation().get(0)};
-					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
-						distance = 0;
-					} else {
-						distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
-					}
+	private static ArrayList<Integer> recursiveBacktrack(ArrayList<Order> orderList, boolean[] visited,
+			double[] prevPos, int count, double minDist, double currDistance,
+			ArrayList<Integer> lastVisited, ArrayList<Integer> bestLastVisited) {
 
-					if (j == 0 || distance < minDist) {
-						pos = j;
-						minDist = distance;
-					}
-					prevPoint = newPoint;
-				}
-				if (pos != i) {
-					Order temp = currentOrders.get(i);
-					currentOrders.set(i, currentOrders.get(pos));
-					currentOrders.set(pos, temp);
-				}
-			}
+		if (count == orderList.size()) {
+			double distance = Math.sqrt(Math.pow(prevPos[0]-0, 2)+Math.pow(prevPos[1]-0, 2));
+			return minDist < currDistance + distance ? bestLastVisited : lastVisited;
 		}
+
+		for (int i = 0; i < orderList.size(); i++)
+        {
+            if (visited[i] == false)
+            {
+            	double[] currentPoint = {orderList.get(i).getLocation().get(0), orderList.get(i).getLocation().get(0)};
+    			currDistance += Math.sqrt(Math.pow(prevPos[0]-currentPoint[0],2)+Math.pow(prevPos[1]-currentPoint[1], 2));
+
+    			// Mark as visited
+            	visited[i] = true;
+            	lastVisited.add(i);
+                bestLastVisited = recursiveBacktrack(orderList, visited, currentPoint,
+                		count + 1, minDist, currDistance, lastVisited, bestLastVisited);
+
+                // Mark ith node as unvisited
+                visited[i] = false;
+            }
+        }
+
+		return bestLastVisited;
+	}
+
+	private static void organizeRouteBacktracking(ArrayList<Order> currentOrders) {
+		double[] prevPoint = new double[] {0,0};
+		double shortestFlightPath = 1 << 25;
+		boolean[] visited = new boolean[currentOrders.size()];
+		ArrayList<Integer> bestVisitOrder = new ArrayList<Integer>();
+
+		bestVisitOrder = recursiveBacktrack(currentOrders, visited, prevPoint, 0,
+				shortestFlightPath, 0, new ArrayList<Integer>(), bestVisitOrder);
+
+		ArrayList<Order> tempVersion = new ArrayList<Order>();
+
+		for (int i = 0; i < bestVisitOrder.size(); i++) {
+			tempVersion.add(currentOrders.get(bestVisitOrder.get(i)));
+		}
+		currentOrders = tempVersion;
 	}
 
 	/***
