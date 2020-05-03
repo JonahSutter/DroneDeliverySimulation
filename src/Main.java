@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -1135,6 +1136,7 @@ public class Main extends Application {
 		Label label = new Label("Dromedary Drones");
 		dromedaryDronesTextStyle(label);
 
+
         //create name
         Label name = new Label("Food Name");
 		name.setFont(new Font("Arial", 12));
@@ -1154,7 +1156,6 @@ public class Main extends Application {
       	newFoodWeight.setText(Double.toString(foodToBeEdited.getWeight()));
       	newFoodWeight.setLayoutX(180);
       	newFoodWeight.setLayoutY(150);
-
 
 		//create buttons
         Button saveChanges = new Button("Save Changes");
@@ -1188,13 +1189,32 @@ public class Main extends Application {
         root.getChildren().add(saveChanges);
         root.getChildren().add(cancel);
 
+
         //if the user presses the save button
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-
-            	//gets the info from text fields
-            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName)
-            	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) {
+            	Label errorLabel = new Label("");
+          		errorLabel.setFont(new Font("Arial", 20));
+          		errorLabel.setLayoutX(150);
+          		errorLabel.setLayoutY(50);
+          		errorLabel.setTextFill(Color.web("#cc0000"));
+                root.getChildren().add(errorLabel); 
+            	if(checkIfEmpty(newFoodWeight)) {
+            		errorLabel.setText("Error: Empty Field");
+            	}
+            	else if(checkIfEmpty(newFoodName)) {
+            		errorLabel.setText("Error: Empty Field");
+            	}
+            	else if(!checkWeightIsNum(newFoodWeight)) {
+            		errorLabel.setText("Error: Weight must be a number");
+            	}
+            	else if(!checkWeight(newFoodWeight)) {
+            		errorLabel.setText("Error: Weight out of bounds");
+            	}
+//            	//gets the info from text fields
+//            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName)
+//            	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) 
+            	else{
             	String newN = newFoodName.getText();
             	double newW = Double.parseDouble(newFoodWeight.getText());
             	foodToBeEdited.changeName(newN);
@@ -1445,8 +1465,11 @@ public class Main extends Application {
 
 
 		        } catch (IOException ex) {
-		           System.out.println("File Logging Error");
-
+		            failedAlert("Error: Could not load");
+		        }catch(NoSuchElementException e) {
+		        	failedAlert("Error: Could not load");
+		        }catch(NumberFormatException nfe) {
+		        	failedAlert("Error: Could not load");
 		        }
 	       }
 
@@ -1545,8 +1568,32 @@ public class Main extends Application {
 	        //if you hit the save button
 	        saveFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
+	            	
+	            	Label errorLabel = new Label("");
+	          		errorLabel.setFont(new Font("Arial", 20));
+	          		errorLabel.setLayoutX(150);
+	          		errorLabel.setLayoutY(50);
+	          		errorLabel.setTextFill(Color.web("#cc0000"));
+	                root.getChildren().add(errorLabel); 
+	            	if(checkIfEmpty(foodName)) {
+	            		errorLabel.setText("Error: Empty Field");
+	            	}
+	            	else if(checkDuplicateName(foodName)) {
+	            		errorLabel.setText("Error: Duplicate Food Name");
+	            	}
+	            	else if(checkIfEmpty(foodWeight)) {
+	            		errorLabel.setText("Error: Empty Field");
+	            	}
+	            	else if(!checkWeightIsNum(foodWeight)) {
+	            		errorLabel.setText("Error: Weight must be a number");
+	            	}
+	            	else if(!checkWeight(foodWeight)) {
+	            		errorLabel.setText("Error: Weight out of bounds");
+	            	}
 	            	//checks if the text field is empty, if the user is trying to add a food already listed, if the weight is a num, and that the weight is in bounds
-	            	if(!checkIfEmpty(foodName)&& !checkIfEmpty(foodWeight) && !checkDuplicateName(foodName) && checkWeightIsNum(foodWeight) && checkWeight(foodWeight)) {
+//	            	if(!checkIfEmpty(foodName)&& !checkIfEmpty(foodWeight) && !checkDuplicateName(foodName) && checkWeightIsNum(foodWeight) 
+//	            	&& checkWeight(foodWeight))
+	            	else {
 	            	//gets info from text fields
 	            	String addName = foodName.getText();
 	            	double w = Double.parseDouble(foodWeight.getText());
@@ -1587,7 +1634,7 @@ public class Main extends Application {
 		//iterates list to see if the food already exists and sends failed notification
 		for(int i = 0; i<foodList.getFoods().size(); i++) {
 			if(foodList.getFoods().get(i).getName().equals(tryName)) {
-				failedAlert("This food is already listed");
+				//failedAlert("This food is already listed");
 				return true;
 			}//ends if
 		}//ends for
@@ -1597,10 +1644,10 @@ public class Main extends Application {
 	public static boolean checkWeight(TextField t) {
 		double w = Double.parseDouble(t.getText());
 		//checks that weight is in the right bounds
-		if(w>0) {
+		if(w>0 && w<192) {
 			return true;
 		}else {
-			failedAlert("Weight must be greater than 0");
+			//failedAlert("Weight must be greater than 0");
 			return false;
 		}
 	}//ends check weight
@@ -1612,7 +1659,7 @@ public class Main extends Application {
 			//gets characters and checks if character is number and sends failed alert
 			char c = s.charAt(i);
 			if(Character.isAlphabetic(c)) {
-				failedAlert("Weight must be only numbers");
+				//failedAlert("Weight must be only numbers");
 				return false;
 			}//ends if
 		}//ends for loop
@@ -1628,7 +1675,7 @@ public class Main extends Application {
 
 	public static boolean checkIfEmpty(TextField t) {
 		if(t.getText().trim().isEmpty()) {
-			failedAlert("One or more fields is empty");
+			//failedAlert("One or more fields is empty");
 			return true;
 		}else {
 			return false;
