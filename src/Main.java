@@ -1,10 +1,7 @@
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-=======
->>>>>>> branch 'master' of https://github.com/acramernc/Drone-Delivery-Simulation.git
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -2977,6 +2974,8 @@ public class Main extends Application {
 			Label label = new Label("Dromedary Drones");
 			Label xlabel = new Label("X Dimension of image in feet");
 			Label ylabel = new Label("Y Dimension of image in feet");
+			Label startxlabel = new Label("X value for origin point in feet");
+			Label startylabel = new Label("Y value for origin point in feet");
 			Button confirm = new Button("Confirm");
 
 
@@ -2987,6 +2986,8 @@ public class Main extends Application {
 			// create a textfield
 	        TextField x = new TextField();
 	        TextField y = new TextField();
+	        TextField startx = new TextField();
+	        TextField starty = new TextField();
 	        xlabel.setLayoutX(180);
 	        xlabel.setLayoutY(180);
 	        x.setLayoutX(180);
@@ -2995,8 +2996,16 @@ public class Main extends Application {
 	        ylabel.setLayoutY(230);
 	        y.setLayoutX(180);
 	        y.setLayoutY(250);
+	        startxlabel.setLayoutX(180);
+	        startxlabel.setLayoutY(280);
+	        startx.setLayoutX(180);
+	        startx.setLayoutY(300);
+	        startylabel.setLayoutX(180);
+	        startylabel.setLayoutY(330);
+	        starty.setLayoutX(180);
+	        starty.setLayoutY(350);
 	        confirm.setLayoutX(180);
-	        confirm.setLayoutY(300);
+	        confirm.setLayoutY(400);
 
 	        confirm.setPrefWidth(150);
 	        confirm.setPrefHeight(50);
@@ -3007,10 +3016,14 @@ public class Main extends Application {
 
 			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 3696.0);
 			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 3696.0);
+			TextFormatter<Double> startxformat = new TextFormatter<Double>(converter, 0.0);
+			TextFormatter<Double> startyformat = new TextFormatter<Double>(converter, 0.0);
+
 
 			x.setTextFormatter(xformat);
 			y.setTextFormatter(yformat);
-
+			startx.setTextFormatter(startxformat);
+			starty.setTextFormatter(startyformat);
 
 			 confirm.setOnAction(new EventHandler<ActionEvent>() {
 				 @Override public void handle(ActionEvent e) {
@@ -3018,32 +3031,43 @@ public class Main extends Application {
 
 					 try {
 						 if (xformat.getValue() <= 0) {
-							 Label error = new Label("ERROR: X and y dimension must be greater than 0");
-							 error.setLayoutX(180);
+							 Label error = new Label("ERROR: X and Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+							 error.setLayoutX(10);
 							 error.setLayoutY(160);
 							 root.getChildren().add(error);
 
 						 }
 						 else if (yformat.getValue() <= 0) {
-							 Label error = new Label("ERROR: X and Y dimension must be greater than 0");
-							 error.setLayoutX(180);
+							 Label error = new Label("ERROR: X, Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+							 error.setLayoutX(10);
 							 error.setLayoutY(160);
 							 root.getChildren().add(error);
 						 }
 						 else {
-							imageWidth = xformat.getValue();
-							imageHeight = yformat.getValue();
-							feetPerPixelWidth = imageWidth/500;
-							feetPerPixelHeight = imageHeight/500;
-							x0 = 0;
-							y0 = 0;
+							 if (startxformat.getValue() < 0 || startxformat.getValue() > xformat.getValue()) {
+								 Label error = new Label("ERROR: X, Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+								 error.setLayoutX(10);
+								 error.setLayoutY(160);
+								 root.getChildren().add(error);
+							 }
+							 else if (startyformat.getValue() < 0 || startyformat.getValue() > yformat.getValue()) {
+								 Label error = new Label("ERROR: X and Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+								 error.setLayoutX(10);
+								 error.setLayoutY(160);
+								 root.getChildren().add(error);
+							 }
+							 else  {
+									imageWidth = xformat.getValue();
+									imageHeight = yformat.getValue();
+									feetPerPixelWidth = imageWidth/500;
+									feetPerPixelHeight = imageHeight/500;
+									x0 = startxformat.getValue();
+									y0 = startyformat.getValue();
+									locationToSend = updateToSend();
+									orderList.setLocations(locationToSend);
+									map(primaryStage);
+							 }
 
-
-							locationToSend = updateToSend();
-							orderList.setLocations(locationToSend);
-
-
-							map(primaryStage);
 						 }
 
 					 } catch(Exception e1) {
@@ -3062,6 +3086,10 @@ public class Main extends Application {
 	        root.getChildren().add(label);
 	        root.getChildren().add(x);
 	        root.getChildren().add(y);
+	        root.getChildren().add(startx);
+	        root.getChildren().add(starty);
+	        root.getChildren().add(startxlabel);
+	        root.getChildren().add(startylabel);
 	        root.getChildren().add(confirm);
 
 			//creates the scene
