@@ -2656,10 +2656,7 @@ public class Main extends Application {
         	double y = location.get(1);
 
 		     Button bt = new Button();
-			 bt.setShape(new Circle(5));
-
-			 bt.setPrefSize(4, 4);
-			 bt.setStyle("-fx-background-color: Red");
+		     setMapButtonStyle(bt);
 
 			 bt.setLayoutX(x);
 			 bt.setLayoutY(y);
@@ -2700,10 +2697,7 @@ public class Main extends Application {
 				 //if the button has been pressed
 
 			     Button bt = new Button();
-				 bt.setShape(new Circle(5));
-
-				 bt.setPrefSize(4, 4);
-				 bt.setStyle("-fx-background-color: Red");
+			     setMapButtonStyle(bt);
 
 				 bt.setTranslateX(event.getSceneX() - 8);
 				 bt.setTranslateY(event.getSceneY() - 8);
@@ -3099,6 +3093,34 @@ public class Main extends Application {
 				basic;
 
 		button.setStyle(mainStyle);
+	}
+
+	public static void setMapButtonStyle(Button button) {
+		String basic = "-fx-background-radius: 50px;"
+				+ "-fx-min-width: 10px; "
+                + "-fx-min-height: 10px; "
+                + "-fx-max-width: 10px; "
+                + "-fx-max-height: 10px;";
+
+		String mainStyle = basic +
+				"-fx-background-color:linear-gradient(to bottom, #4df7f2 55%, #33918f  100%);";
+
+		String hoverStyle = basic
+				+ "-fx-background-color:linear-gradient(to bottom, #44e3de 45%, #33918f  100%);";
+
+		String clickStyle = basic
+			+ "-fx-background-color:linear-gradient(to bottom, #33918f 25%, #44e3de 100%);";
+
+		//Set the button's main style
+		button.setStyle(mainStyle);
+
+		//Set the button to do special things on Hover and revert after
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(mainStyle));
+
+        //Set the button to "move down" when clicked and "go back" when released
+        button.setOnMousePressed(e -> button.setStyle(clickStyle));
+        button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
 
 }
