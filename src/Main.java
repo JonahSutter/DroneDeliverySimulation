@@ -1,7 +1,10 @@
 import java.util.ArrayList;
+<<<<<<< HEAD
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+=======
+>>>>>>> branch 'master' of https://github.com/acramernc/Drone-Delivery-Simulation.git
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -11,8 +14,6 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -21,7 +22,6 @@ import org.json.simple.JSONArray;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -37,12 +37,10 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.css.converter.StringConverter;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -52,16 +50,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.OverrunStyle;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.image.*;
@@ -78,10 +73,6 @@ public class Main extends Application {
 	private static Background bg = new Background(
 			new BackgroundFill(Color.web("#fffcf0"), null, null));
 
-	private static Food f1 = new Food("1/4 lb Hamburger", 6);
-	private static Food f2 = new Food("Fries", 4);
-	private static Food f3 = new Food("12 oz Drink", 14);
-
 	private static Image image = new Image(Main.class.getResourceAsStream("mapGroveCity.jpg"));
 	private static double imageWidth = 3696;
 	private static double imageHeight = 3696;
@@ -92,7 +83,7 @@ public class Main extends Application {
 
 
 	public static void main(String[] args) {
-		
+
 		Food hamburger = new Food("1/4 lb Hamburger", 6);
 		Food fries = new Food("Fries", 4);
 		Food drink = new Food("12 oz Drink", 14);
@@ -117,7 +108,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		try {
-			
+
 			//setting labels and buttons
 			primaryStage.setTitle("Starting Screen");
 
@@ -2521,14 +2512,13 @@ public class Main extends Application {
 			           			error.setLayoutY(140);
 			           			root.getChildren().add(error);
 			                }
-			                else { 
+			                else {
 				                image = new Image("file:" + file.getAbsolutePath());
 				                addDimensions(primaryStage);
 			                }
-					       
 		           		}
 		           		catch(Exception e1) {
-		
+
 		           		}
 
 		           	}
@@ -2562,15 +2552,15 @@ public class Main extends Application {
 	            					Element eElement = (Element) nNode;
 	            					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
 	            					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
-	            					
+
 	            					tempList.get(i).add(x);
 	            					tempList.get(i).add(y);
-	            					
+
 	            				}
 	            			}
-	            			
+
 	            			locationList = tempList;
-	            			
+
 	            			locationToSend = updateToSend();
 	            			orderList.setLocations(locationToSend);
 	                	}
@@ -2718,10 +2708,7 @@ public class Main extends Application {
         	double y = location.get(1);
 
 		     Button bt = new Button();
-			 bt.setShape(new Circle(5));
-
-			 bt.setPrefSize(4, 4);
-			 bt.setStyle("-fx-background-color: Red");
+		     setMapButtonStyle(bt);
 
 			 bt.setLayoutX(x);
 			 bt.setLayoutY(y);
@@ -2737,11 +2724,11 @@ public class Main extends Application {
 							 locationList.remove(locationList.get(i));
 						 }
 					 }
-					 
+
 					updateToSend();
 				 }
-			 });		
-				
+			 });
+
 
 		     root.getChildren().addAll(bt);
 
@@ -2762,10 +2749,7 @@ public class Main extends Application {
 				 //if the button has been pressed
 
 			     Button bt = new Button();
-				 bt.setShape(new Circle(5));
-
-				 bt.setPrefSize(4, 4);
-				 bt.setStyle("-fx-background-color: Red");
+			     setMapButtonStyle(bt);
 
 				 bt.setTranslateX(event.getSceneX() - 8);
 				 bt.setTranslateY(event.getSceneY() - 8);
@@ -2773,7 +2757,7 @@ public class Main extends Application {
 				 locationList.add(new ArrayList<Double>());
 				 locationList.get(locationList.size() - 1).add(event.getSceneX());
 				 locationList.get(locationList.size() - 1).add(event.getSceneY());
-				 
+
 				locationToSend = updateToSend();
 				orderList.setLocations(locationToSend);
 
@@ -2845,15 +2829,15 @@ public class Main extends Application {
 					Element eElement = (Element) nNode;
 					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
 					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
-					
+
 					tempList.get(i).add(x);
 					tempList.get(i).add(y);
-					
+
 				}
 			}
-			
+
 			locationList = tempList;
-			
+
 			locationToSend = updateToSend();
 			orderList.setLocations(locationToSend);
 
@@ -2939,47 +2923,47 @@ public class Main extends Application {
         button.setOnMousePressed(e -> button.setStyle(clickStyle));
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
-	
+
 	public static ArrayList<ArrayList<Double>> updateToSend(){
 
-		
+
 		ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
-		
+
 		for (ArrayList<Double> location: locationList) {
 
 			ArrayList<Double> temp = new ArrayList<Double>();
-			
+
 			double x = location.get(0);
 			double y = location.get(1);
-			
+
 			x = x * feetPerPixelWidth;
 			y = y * feetPerPixelHeight;
-			
-			
+
+
 			if (x < x0) {
 				x = x - x0;
 			}
 			else {
 				x = x - x0;
 			}
-			
+
 			if (y < x0) {
 				y = (-y) + y0;
 			}
 			else {
 				y = (-y) + y0;
 			}
-			
+
 			temp.add(x);
 			temp.add(y);
-			
+
 			tempList.add(temp);
-			
+
 		}
-		
+
 		return tempList;
 	}
-	
+
 	/*
 	 * Displaying the mainPage
 	 */
@@ -2989,20 +2973,20 @@ public class Main extends Application {
 
 			//Set the title of the window
 			primaryStage.setTitle("Dimensions");
-			
+
 			Label label = new Label("Dromedary Drones");
 			Label xlabel = new Label("X Dimension of image in feet");
 			Label ylabel = new Label("Y Dimension of image in feet");
 			Button confirm = new Button("Confirm");
-			
+
 
 			dromedaryDronesTextStyle(label);
 
 			Pane root = new Pane();
-			
-			// create a textfield 
-	        TextField x = new TextField(); 
-	        TextField y = new TextField(); 
+
+			// create a textfield
+	        TextField x = new TextField();
+	        TextField y = new TextField();
 	        xlabel.setLayoutX(180);
 	        xlabel.setLayoutY(180);
 	        x.setLayoutX(180);
@@ -3013,32 +2997,32 @@ public class Main extends Application {
 	        y.setLayoutY(250);
 	        confirm.setLayoutX(180);
 	        confirm.setLayoutY(300);
-	        
+
 	        confirm.setPrefWidth(150);
 	        confirm.setPrefHeight(50);
-	        
+
 
 	        javafx.util.StringConverter<Double> converter = new DoubleStringConverter();
 
-	        
+
 			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 3696.0);
 			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 3696.0);
 
 			x.setTextFormatter(xformat);
 			y.setTextFormatter(yformat);
-	        
-	        
+
+
 			 confirm.setOnAction(new EventHandler<ActionEvent>() {
 				 @Override public void handle(ActionEvent e) {
                      //set button pressed values
-					 
+
 					 try {
 						 if (xformat.getValue() <= 0) {
 							 Label error = new Label("ERROR: X and y dimension must be greater than 0");
 							 error.setLayoutX(180);
 							 error.setLayoutY(160);
 							 root.getChildren().add(error);
-							 
+
 						 }
 						 else if (yformat.getValue() <= 0) {
 							 Label error = new Label("ERROR: X and Y dimension must be greater than 0");
@@ -3053,25 +3037,25 @@ public class Main extends Application {
 							feetPerPixelHeight = imageHeight/500;
 							x0 = 0;
 							y0 = 0;
-								
-							
+
+
 							locationToSend = updateToSend();
 							orderList.setLocations(locationToSend);
 
-							
+
 							map(primaryStage);
 						 }
-						 
+
 					 } catch(Exception e1) {
 						 System.out.println(e1);
 					 }
-					
-					 
+
+
 					updateToSend();
 				 }
-			 });		
-				
-	   
+			 });
+
+
 
 	        root.getChildren().add(xlabel);
 	        root.getChildren().add(ylabel);
@@ -3079,7 +3063,7 @@ public class Main extends Application {
 	        root.getChildren().add(x);
 	        root.getChildren().add(y);
 	        root.getChildren().add(confirm);
-	        
+
 			//creates the scene
 			Scene scene = new Scene(root,500,500);
 			//Color the scene background
@@ -3161,6 +3145,34 @@ public class Main extends Application {
 				basic;
 
 		button.setStyle(mainStyle);
+	}
+
+	public static void setMapButtonStyle(Button button) {
+		String basic = "-fx-background-radius: 50px;"
+				+ "-fx-min-width: 10px; "
+                + "-fx-min-height: 10px; "
+                + "-fx-max-width: 10px; "
+                + "-fx-max-height: 10px;";
+
+		String mainStyle = basic +
+				"-fx-background-color:linear-gradient(to bottom, #4df7f2 55%, #33918f  100%);";
+
+		String hoverStyle = basic
+				+ "-fx-background-color:linear-gradient(to bottom, #44e3de 45%, #33918f  100%);";
+
+		String clickStyle = basic
+			+ "-fx-background-color:linear-gradient(to bottom, #33918f 25%, #44e3de 100%);";
+
+		//Set the button's main style
+		button.setStyle(mainStyle);
+
+		//Set the button to do special things on Hover and revert after
+        button.setOnMouseEntered(e -> button.setStyle(hoverStyle));
+        button.setOnMouseExited(e -> button.setStyle(mainStyle));
+
+        //Set the button to "move down" when clicked and "go back" when released
+        button.setOnMousePressed(e -> button.setStyle(clickStyle));
+        button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
 
 }
