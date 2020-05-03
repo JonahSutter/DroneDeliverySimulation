@@ -66,7 +66,6 @@ public class Simulation {
 						skippedOrders.remove(0);
 					} else {
 						overweight = true;
-						System.out.println("Overweight BOI");
 					}
 				}
 
@@ -94,7 +93,6 @@ public class Simulation {
 						currentOrders.remove(mealPos);
 					} else {
 						overweight = true;
-						System.out.println("Overweight BOI");
 					}
 				}
 
@@ -220,7 +218,6 @@ public class Simulation {
 						ordersToDeliver.add((currentOrders.get(0)));
 						currentOrders.remove(0);
 					} else {
-						System.out.println("Overweight BOI");
 						overweight = true;
 					}
 				}
@@ -327,20 +324,61 @@ public class Simulation {
 	}
 
 	private static void organizeRouteBacktracking(ArrayList<Order> currentOrders) {
-		double[] prevPoint = new double[] {0,0};
-		double shortestFlightPath = 1 << 25;
-		boolean[] visited = new boolean[currentOrders.size()];
-		ArrayList<Integer> bestVisitOrder = new ArrayList<Integer>();
 
-		bestVisitOrder = recursiveBacktrack(currentOrders, visited, prevPoint, 0,
-				shortestFlightPath, 0, new ArrayList<Integer>(), bestVisitOrder);
+		if (currentOrders.size() >= 7) {
+			organizeRouteGreedy(currentOrders);
+		} else {
+			double[] prevPoint = new double[] {0,0};
+			double shortestFlightPath = 1 << 25;
+			boolean[] visited = new boolean[currentOrders.size()];
+			ArrayList<Integer> bestVisitOrder = new ArrayList<Integer>();
 
-		ArrayList<Order> tempVersion = new ArrayList<Order>();
+			bestVisitOrder = recursiveBacktrack(currentOrders, visited, prevPoint, 0,
+					shortestFlightPath, 0, new ArrayList<Integer>(), bestVisitOrder);
 
-		for (int i = 0; i < bestVisitOrder.size(); i++) {
-			tempVersion.add(currentOrders.get(bestVisitOrder.get(i)));
+			ArrayList<Order> tempVersion = new ArrayList<Order>();
+
+			for (int i = 0; i < bestVisitOrder.size(); i++) {
+				tempVersion.add(currentOrders.get(bestVisitOrder.get(i)));
+			}
+			currentOrders = tempVersion;
 		}
-		currentOrders = tempVersion;
+	}
+
+	private static void organizeRouteGreedy(ArrayList<Order> currentOrders) {
+		double[] prevPoint = new double[] {0,0};
+		//Greedy Traveling Salesman (Done by re-organizing the list of current Orders)
+		for (int i = 0; i < currentOrders.size(); i++) {
+
+			double[] comparisonPoint = {currentOrders.get(i).getLocation().get(0), currentOrders.get(i).getLocation().get(0)};
+			double minDist;
+			int pos = i;
+			if (comparisonPoint[0] == prevPoint[0] && comparisonPoint[1] == prevPoint[1]) {
+				minDist = 0;
+			} else {
+				minDist = Math.sqrt(Math.pow(prevPoint[0]-comparisonPoint[0],2)+Math.pow(prevPoint[1]-comparisonPoint[1], 2));
+				for (int j = i; j < currentOrders.size(); j++) {
+					double distance;
+					double[] newPoint = {currentOrders.get(j).getLocation().get(0), currentOrders.get(j).getLocation().get(0)};
+					if (newPoint[0]==prevPoint[0] && newPoint[1]==prevPoint[1]) {
+						distance = 0;
+					} else {
+						distance = Math.sqrt(Math.pow(prevPoint[0]-newPoint[0],2)+Math.pow(prevPoint[1]-newPoint[1], 2));
+					}
+
+					if (j == 0 || distance < minDist) {
+						pos = j;
+						minDist = distance;
+					}
+					prevPoint = newPoint;
+				}
+				if (pos != i) {
+					Order temp = currentOrders.get(i);
+					currentOrders.set(i, currentOrders.get(pos));
+					currentOrders.set(pos, temp);
+				}
+			}
+		}
 	}
 
 	/***
