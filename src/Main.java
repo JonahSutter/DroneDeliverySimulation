@@ -1184,12 +1184,15 @@ public class Main extends Application {
         //if the user presses the save button
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+            	//creates the error label 
             	Label errorLabel = new Label("");
           		errorLabel.setFont(new Font("Arial", 20));
           		errorLabel.setLayoutX(150);
           		errorLabel.setLayoutY(50);
           		errorLabel.setTextFill(Color.web("#cc0000"));
                 root.getChildren().add(errorLabel); 
+                
+                //displays the error messages based on incorrect entries
             	if(checkIfEmpty(newFoodWeight)) {
             		errorLabel.setText("Error: Empty Field");
             	}
@@ -1202,9 +1205,7 @@ public class Main extends Application {
             	else if(!checkWeight(newFoodWeight)) {
             		errorLabel.setText("Error: Weight out of bounds");
             	}
-//            	//gets the info from text fields
-//            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName)
-//            	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) 
+            	//if everything is fine then edits the food
             	else{
             	String newN = newFoodName.getText();
             	double newW = Double.parseDouble(newFoodWeight.getText());
@@ -1454,7 +1455,6 @@ public class Main extends Application {
 		        	//refreshes the page
 		        	meals(primaryStage);
 
-
 		        } catch (IOException ex) {
 		            failedAlert("Error: Could not load");
 		        }catch(NoSuchElementException e) {
@@ -1483,6 +1483,7 @@ public class Main extends Application {
        if (file != null) {
        	 try {
 	        	String content = "";
+	        	//adds the food name and weight to the string
 	        	for(int index = 0; index<foodList.size(); index++ ) {
 	        		content = content + foodList.getFoods().get(index).getName() + ", "
 	        				+ foodList.getFoods().get(index).getWeight() + "\n";
@@ -1492,12 +1493,8 @@ public class Main extends Application {
 	             writer = new PrintWriter(file);
 	             writer.println(content);
 	             writer.close();
-
-
 	        } catch (IOException ex) {
-
 	           System.out.println("File Logging Error");
-
 	        }
        }
 
@@ -1512,6 +1509,7 @@ public class Main extends Application {
 			Label label = new Label("Dromedary Drones");
 			dromedaryDronesTextStyle(label);
 
+			//adds the label for the food name 
 			Label name = new Label("Food Name");
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
@@ -1520,6 +1518,7 @@ public class Main extends Application {
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(100);
 
+	        //adds the weight text fields 
 			Label weight = new Label("Food Weight (oz)");
 			weight.setFont(new Font("Arial", 12));
 			weight.setLayoutX(180);
@@ -1559,13 +1558,14 @@ public class Main extends Application {
 	        //if you hit the save button
 	        saveFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+	            	//creates and adds the error label 
 	            	Label errorLabel = new Label("");
 	          		errorLabel.setFont(new Font("Arial", 20));
 	          		errorLabel.setLayoutX(150);
 	          		errorLabel.setLayoutY(50);
 	          		errorLabel.setTextFill(Color.web("#cc0000"));
 	                root.getChildren().add(errorLabel); 
+	                //displays error messages 
 	            	if(checkIfEmpty(foodName)) {
 	            		errorLabel.setText("Error: Empty Field");
 	            	}
@@ -1581,9 +1581,7 @@ public class Main extends Application {
 	            	else if(!checkWeight(foodWeight)) {
 	            		errorLabel.setText("Error: Weight out of bounds");
 	            	}
-	            	//checks if the text field is empty, if the user is trying to add a food already listed, if the weight is a num, and that the weight is in bounds
-//	            	if(!checkIfEmpty(foodName)&& !checkIfEmpty(foodWeight) && !checkDuplicateName(foodName) && checkWeightIsNum(foodWeight) 
-//	            	&& checkWeight(foodWeight))
+	            	//if everything is fine then adds the food 
 	            	else {
 	            	//gets info from text fields
 	            	String addName = foodName.getText();
@@ -1692,7 +1690,7 @@ public class Main extends Application {
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
 
-			errorLabel.setFont(new Font("Arial", 12));
+			errorLabel.setFont(new Font("Arial", 20));
 			errorLabel.setLayoutX(220);
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
@@ -2003,7 +2001,7 @@ public class Main extends Application {
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
 
-			errorLabel.setFont(new Font("Arial", 12));
+			errorLabel.setFont(new Font("Arial", 20));
 			errorLabel.setLayoutX(220);
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
@@ -2508,6 +2506,7 @@ public class Main extends Application {
 		           		try {
 			                if(ImageIO.read(file) == null) {
 			           			Label error = new Label("ERROR: Invalid file type");
+			           			error.setFont(new Font("Arial", 20));
 			           			error.setLayoutX(180);
 			           			error.setLayoutY(140);
 			           			root.getChildren().add(error);
@@ -2566,6 +2565,7 @@ public class Main extends Application {
 	                	}
 	                	catch(Exception e1) {
 		           			Label error = new Label("ERROR: Invalid file");
+		           			error.setFont(new Font("Arial", 20));
 		           			error.setLayoutX(180);
 		           			error.setLayoutY(140);
 		           			root.getChildren().add(error);
@@ -3019,6 +3019,7 @@ public class Main extends Application {
 					 try {
 						 if (xformat.getValue() <= 0) {
 							 Label error = new Label("ERROR: X and y dimension must be greater than 0");
+							 error.setFont(new Font("Arial", 20));
 							 error.setLayoutX(180);
 							 error.setLayoutY(160);
 							 root.getChildren().add(error);
@@ -3026,6 +3027,7 @@ public class Main extends Application {
 						 }
 						 else if (yformat.getValue() <= 0) {
 							 Label error = new Label("ERROR: X and Y dimension must be greater than 0");
+							 error.setFont(new Font("Arial", 20));
 							 error.setLayoutX(180);
 							 error.setLayoutY(160);
 							 root.getChildren().add(error);
