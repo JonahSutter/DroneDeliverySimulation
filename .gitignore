@@ -4,3 +4,7 @@
 /.classpath
 /.settings/
 /temp.json
+/defaultFoods.txt
+/defaultMap.txt
+/defaultMeals.txt
+/defaultProb.json

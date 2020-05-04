@@ -62,6 +62,7 @@ import javafx.scene.input.MouseEvent;
 
 public class Main extends Application {
 	//static Foods foodList = new Foods();
+
 	private static Meals mealList = new Meals();
 	private static Orders orderList = new Orders(38, 45, 60, 30);
 	private static Foods foodList = new Foods();
@@ -97,6 +98,9 @@ public class Main extends Application {
 
 		//grab locations and set them
 		setLocation(locationList, new File("defaultLocation.xml"));
+
+		//loads default settings from last session
+		initDefaults();
 
 		launch(args);
 	}
@@ -264,7 +268,7 @@ public class Main extends Application {
 	      //buttons exits
 	        button4.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                System.exit(1);
+	                exit();
 	            }
 	        });
 
@@ -321,16 +325,16 @@ public class Main extends Application {
 			Label label4 = new Label("Knapsack Packing");
 			//FIFO labels
 			JSONObject FIFOJson = (JSONObject) data.get("FIFO");
-			String fifoAvg = String.format("%.4f sec", FIFOJson.get("avgTime")); //turn the double data into a formatted string
-			String fifoWorst = String.format("%.4f sec", FIFOJson.get("worstTime"));
+			String fifoAvg = String.format("%.4f min", (double)FIFOJson.get("avgTime")/60); //turn the double data into a formatted string
+			String fifoWorst = String.format("%.4f min", (double)FIFOJson.get("worstTime")/60);
 			Label fifo1 = new Label("Average Delivery Time:");
 			Label fifo2 = new Label("Worst Delivery Time:");
 			Label fifo3 = new Label(fifoAvg);
 			Label fifo4 = new Label(fifoWorst);
 			//Knapsack Labels
 			JSONObject KnapsackJson = (JSONObject) data.get("Knapsack");
-			String knapsackAvg = String.format("%.4f sec", KnapsackJson.get("avgTime")); //turn the double data into a formatted string
-			String knapsackWorst = String.format("%.4f sec", KnapsackJson.get("worstTime"));
+			String knapsackAvg = String.format("%.4f min", (double)KnapsackJson.get("avgTime")/60); //turn the double data into a formatted string
+			String knapsackWorst = String.format("%.4f min", (double)KnapsackJson.get("worstTime")/60);
 			Label knap1 = new Label("Average Delivery Time:");
 			Label knap2 = new Label("Worst Delivery Time:");
 			Label knap3 = new Label(knapsackAvg);
@@ -383,7 +387,7 @@ public class Main extends Application {
 			final NumberAxis fifoNumAxis = new NumberAxis();		//Y axis - displays quantity delivered
 			final BarChart<String, Number> fifoChart = new BarChart<String, Number>(fifoTimeAxis, fifoNumAxis);
 			fifoChart.setTitle("FIFO Delivery Times");
-			fifoTimeAxis.setLabel("Delivery Time");
+			fifoTimeAxis.setLabel("Delivery Time (Minutes)");
 			fifoNumAxis.setLabel("Num Delivered");
 
 			//FIFO Data
@@ -394,7 +398,7 @@ public class Main extends Application {
 			int timeslot;	//will also be used in knapsack
 			for(int i = 0; i < fifoData.size(); i++){
 				time = (Double) fifoData.get(i);
-				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+				timeslot = (int) time / 60;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
 
 				if(fifoTimeData.size() <= timeslot){
 					while(fifoTimeData.size() <= timeslot){
@@ -412,7 +416,7 @@ public class Main extends Application {
 			XYChart.Series fifoSeries = new XYChart.Series();
 			fifoSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < fifoTimeData.size(); i++) {	//puts all the data into the graph
-				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				categoryName = String.format("%d - %d", i, (i+1));
 				fifoSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, fifoTimeData.get(i)));
 			}
 			fifoChart.getData().addAll(fifoSeries);//adds all the data from the series to the chart
@@ -423,7 +427,7 @@ public class Main extends Application {
 			final NumberAxis knapsackNumAxis = new NumberAxis();
 			final BarChart<String, Number> knapsackChart = new BarChart<String, Number>(knapsackTimeAxis, knapsackNumAxis);
 			knapsackChart.setTitle("Knapsack Delivery Times");
-			knapsackTimeAxis.setLabel("Delivery Time");
+			knapsackTimeAxis.setLabel("Delivery Time (Minutes)");
 			knapsackNumAxis.setLabel("Num Delivered");
 
 			//Knapsack Data
@@ -432,7 +436,7 @@ public class Main extends Application {
 			knapsackTimeData.add(0);
 			for(int i = 0; i < knapsackData.size(); i++){
 				time = (Double) knapsackData.get(i);
-				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+				timeslot = (int) time / 60;	//this will tell us what timeslot it belongs in (0 for 0-60 sec and so on)
 
 				if(knapsackTimeData.size() <= timeslot){
 					while(knapsackTimeData.size() <= timeslot){
@@ -449,7 +453,7 @@ public class Main extends Application {
 			XYChart.Series knapsackSeries = new XYChart.Series();
 			knapsackSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
-				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				categoryName = String.format("%d - %d", i, (i+1));
 				knapsackSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, knapsackTimeData.get(i)));
 			}
 			knapsackChart.getData().addAll(knapsackSeries);
@@ -518,7 +522,7 @@ public class Main extends Application {
 
 			button3.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 				@Override public void handle(ActionEvent e) {
-					System.exit(1);
+					exit();
 				}
 			});
 
@@ -679,18 +683,32 @@ public class Main extends Application {
 
 		    //Create a home button and position it
 	        Button home = new Button("Home");
-	        home.setLayoutX(180);
-	        home.setLayoutY(320);
+	        home.setLayoutX(100);
+	        home.setLayoutY(340);
 	        home.setPrefWidth(140);
+	        //create save button
+	        Button save = new Button("Save");
+	        save.setLayoutX(100);
+	        save.setLayoutY(385);
+	        save.setPrefWidth(140);
+	        //create load button
+			Button load = new Button("Load");
+			load.setLayoutX(100);
+			load.setLayoutY(430);
+			load.setPrefWidth(140);
 
 	        //Add the button styles
 	        addButtonStyleNormal(home);
+	        addButtonStyleNormal(save);
+	        addButtonStyleNormal(load);
 
 	        //Add all the created elements to the screen
 	        Pane root = new Pane();
 	        root.getChildren().add(listProbs);
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
+	        root.getChildren().add(save);
+	        root.getChildren().add(load);
 	        root.getChildren().add(label);
 	        root.getChildren().addAll(totalVal,totalLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
@@ -710,6 +728,18 @@ public class Main extends Application {
 	            }
 	        });
 
+	        save.setOnAction((EventHandler <ActionEvent>) new EventHandler<ActionEvent>(){
+	        	@Override public void handle(ActionEvent e){
+	        		saveProbabilities(primaryStage);
+				}
+			});
+
+			load.setOnAction((EventHandler <ActionEvent>) new EventHandler<ActionEvent>(){
+				@Override public void handle(ActionEvent e){
+					loadProbabilities(primaryStage);
+				}
+			});
+
 	        //Have the GUI page display
 			Scene scene = new Scene(root,500,500);
 			//Color the scene background
@@ -721,6 +751,70 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
+
+	public static void saveProbabilities(Stage primaryStage){
+		FileChooser save = new FileChooser();
+
+		//set extension to json
+		FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json");
+		save.getExtensionFilters().add(extension);
+
+		//save file dialog box
+		File saveFile = save.showSaveDialog(primaryStage);
+
+		if(saveFile != null){
+			try{
+				JSONObject saveData = orderList.saveOrders();
+				PrintWriter out = new PrintWriter(saveFile);
+
+				out.print(saveData.toString());
+				out.flush();
+				out.close();
+
+			}
+			catch(IOException e){
+				System.out.println("File Error");
+				System.out.println(e.getStackTrace().toString());
+			}
+		}
+	}
+
+	public static void loadProbabilities(Stage primaryStage){
+		//Setup the file chooser dialog
+		FileChooser load = new FileChooser();
+		FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json");
+		load.getExtensionFilters().add(extensionFilter);
+
+		//show the dialog box to allow the user to select the file
+		File loadFile = load.showOpenDialog(primaryStage);
+		//get the json parser ready
+		JSONParser jsonParser = new JSONParser();
+
+		if(loadFile != null){
+			try{
+				//put all of the text in the file into a string to be parsed
+				Scanner scan = new Scanner(loadFile);
+				String jsonData = "";
+				while(scan.hasNext()){
+					jsonData += scan.next();
+				}
+
+				//parse the data
+				Object obj = jsonParser.parse(jsonData);
+				JSONObject data = (JSONObject) obj;
+
+				//set it as the active set
+				orderList.setHourlyRate((int)data.get("hour1"), (int)data.get("hour2"), (int)data.get("hour3"), (int)data.get("hour4"));
+
+			}
+			catch (Exception e){
+				failedAlert("Error: File Loading Failed");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 
 	public static String testMealProbabilities(ListView listProbs, Label totalVal, ObservableList<String> foodProbs) {
 		double total = 0;
@@ -1183,12 +1277,15 @@ public class Main extends Application {
         //if the user presses the save button
         saveChanges.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
+            	//creates the error label
             	Label errorLabel = new Label("");
           		errorLabel.setFont(new Font("Arial", 20));
           		errorLabel.setLayoutX(150);
           		errorLabel.setLayoutY(50);
           		errorLabel.setTextFill(Color.web("#cc0000"));
-                root.getChildren().add(errorLabel); 
+                root.getChildren().add(errorLabel);
+
+                //displays the error messages based on incorrect entries
             	if(checkIfEmpty(newFoodWeight)) {
             		errorLabel.setText("Error: Empty Field");
             	}
@@ -1201,9 +1298,7 @@ public class Main extends Application {
             	else if(!checkWeight(newFoodWeight)) {
             		errorLabel.setText("Error: Weight out of bounds");
             	}
-//            	//gets the info from text fields
-//            	if(!checkIfEmpty(newFoodWeight) && !checkIfEmpty(newFoodName)
-//            	   && checkWeightIsNum(newFoodWeight) && checkWeight(newFoodWeight)) 
+            	//if everything is fine then edits the food
             	else{
             	String newN = newFoodName.getText();
             	double newW = Double.parseDouble(newFoodWeight.getText());
@@ -1474,7 +1569,6 @@ public class Main extends Application {
 		        	//refreshes the page
 		        	meals(primaryStage);
 
-
 		        } catch (IOException ex) {
 		            failedAlert("Error: Could not load");
 		        }catch(NoSuchElementException e) {
@@ -1503,6 +1597,7 @@ public class Main extends Application {
        if (file != null) {
        	 try {
 	        	String content = "";
+	        	//adds the food name and weight to the string
 	        	for(int index = 0; index<foodList.size(); index++ ) {
 	        		content = content + foodList.getFoods().get(index).getName() + ", "
 	        				+ foodList.getFoods().get(index).getWeight() + "\n";
@@ -1512,12 +1607,8 @@ public class Main extends Application {
 	             writer = new PrintWriter(file);
 	             writer.println(content);
 	             writer.close();
-
-
 	        } catch (IOException ex) {
-
 	           System.out.println("File Logging Error");
-
 	        }
        }
 
@@ -1532,6 +1623,7 @@ public class Main extends Application {
 			Label label = new Label("Dromedary Drones");
 			dromedaryDronesTextStyle(label);
 
+			//adds the label for the food name
 			Label name = new Label("Food Name");
 			name.setFont(new Font("Arial", 12));
 			name.setLayoutX(180);
@@ -1540,6 +1632,7 @@ public class Main extends Application {
 	        foodName.setLayoutX(180);
 	        foodName.setLayoutY(100);
 
+	        //adds the weight text fields
 			Label weight = new Label("Food Weight (oz)");
 			weight.setFont(new Font("Arial", 12));
 			weight.setLayoutX(180);
@@ -1579,13 +1672,14 @@ public class Main extends Application {
 	        //if you hit the save button
 	        saveFood.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+	            	//creates and adds the error label
 	            	Label errorLabel = new Label("");
 	          		errorLabel.setFont(new Font("Arial", 20));
 	          		errorLabel.setLayoutX(150);
 	          		errorLabel.setLayoutY(50);
 	          		errorLabel.setTextFill(Color.web("#cc0000"));
-	                root.getChildren().add(errorLabel); 
+	                root.getChildren().add(errorLabel);
+	                //displays error messages
 	            	if(checkIfEmpty(foodName)) {
 	            		errorLabel.setText("Error: Empty Field");
 	            	}
@@ -1601,9 +1695,7 @@ public class Main extends Application {
 	            	else if(!checkWeight(foodWeight)) {
 	            		errorLabel.setText("Error: Weight out of bounds");
 	            	}
-	            	//checks if the text field is empty, if the user is trying to add a food already listed, if the weight is a num, and that the weight is in bounds
-//	            	if(!checkIfEmpty(foodName)&& !checkIfEmpty(foodWeight) && !checkDuplicateName(foodName) && checkWeightIsNum(foodWeight) 
-//	            	&& checkWeight(foodWeight))
+	            	//if everything is fine then adds the food
 	            	else {
 	            	//gets info from text fields
 	            	String addName = foodName.getText();
@@ -1694,7 +1786,6 @@ public class Main extends Application {
 	}//ends check if empty method
 
 
-
 	public static void addMealPage(Stage primaryStage) {
 		try {
 			//Set the title of the page
@@ -1712,7 +1803,7 @@ public class Main extends Application {
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
 
-			errorLabel.setFont(new Font("Arial", 12));
+			errorLabel.setFont(new Font("Arial", 20));
 			errorLabel.setLayoutX(220);
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
@@ -2023,7 +2114,7 @@ public class Main extends Application {
 			mealNameHere.setLayoutX(220);
 			mealNameHere.setLayoutY(80);
 
-			errorLabel.setFont(new Font("Arial", 12));
+			errorLabel.setFont(new Font("Arial", 20));
 			errorLabel.setLayoutX(220);
 			errorLabel.setLayoutY(50);
 			errorLabel.setTextFill(Color.web("#cc0000"));
@@ -2518,7 +2609,7 @@ public class Main extends Application {
 	        //if the user presses the cancel button goes back to meals page
 	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	            	
+
 	            	//grab files
 	           	    FileChooser fileChooser = new FileChooser();
 		           	File file = fileChooser.showOpenDialog(primaryStage);
@@ -2530,6 +2621,7 @@ public class Main extends Application {
 			                if(ImageIO.read(file) == null) {
 			                	//print error
 			           			Label error = new Label("ERROR: Invalid file type");
+			           			error.setFont(new Font("Arial", 20));
 			           			error.setLayoutX(180);
 			           			error.setLayoutY(140);
 			           			root.getChildren().add(error);
@@ -2558,7 +2650,7 @@ public class Main extends Application {
 
 	           	    //do file chooser
 		           	File file = fileChooser.showOpenDialog(primaryStage);
-		           	
+
 		           	//if we have a file
 	                if (file != null) {
 	                	try {
@@ -2591,7 +2683,7 @@ public class Main extends Application {
 
 	            				}
 	            			}
-	            			
+
 	            			//update locatons
 	            			locationList = tempList;
 	            			locationToSend = updateToSend();
@@ -2599,6 +2691,7 @@ public class Main extends Application {
 	                	}
 	                	catch(Exception e1) {
 		           			Label error = new Label("ERROR: Invalid file");
+		           			error.setFont(new Font("Arial", 20));
 		           			error.setLayoutX(180);
 		           			error.setLayoutY(140);
 		           			root.getChildren().add(error);
@@ -2627,7 +2720,7 @@ public class Main extends Application {
 	               if (file != null) {
 
 					try {
-						
+
 						//make new doc builder
 						DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
@@ -2691,7 +2784,7 @@ public class Main extends Application {
 
 	        //creates the scene
 			Scene scene = new Scene(root,500,500);
-			
+
 			//Color the scene background
 			root.setBackground(bg);
 			primaryStage.setScene(scene);
@@ -2712,54 +2805,54 @@ public class Main extends Application {
 
 	public static void updateMap(Stage primaryStage) {
 		try {
-	
+
 			//make new pane
 			Pane root = new Pane();
-	
+
 			//creates the image
 			ImageView selectedImage = new ImageView();
 			selectedImage.setImage(image);
-	
-	
+
+
 			//the image will resize with the window
 			selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
 			selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
-	
+
 			//adds to the pane
 			root.getChildren().addAll(selectedImage);
-	
+
 			//creates the buttons
 	        Button back = new Button("Back");
-	
+
 	        //set position of text fields and buttons
 	        back.setLayoutX(400);
 	        back.setLayoutY(450);
-	
-	
+
+
 	        //sets the height and width of buttons
 	        back.setPrefHeight(40);
 	        back.setPrefWidth(100);
-	
-	
+
+
 	        for (ArrayList<Double> location : locationList) {
 	        	//set values
 	        	double x = location.get(0);
 	        	double y = location.get(1);
-	
+
 	        	//make buttons
 			    Button bt = new Button();
 			    setMapButtonStyle(bt);
-	
+
 			    //set position
 				bt.setLayoutX(x);
 				bt.setLayoutY(y);
-	
+
 				 //set action
 				 bt.setOnAction(new EventHandler<ActionEvent>() {
 					 @Override public void handle(ActionEvent e) {
 	                     //set button pressed values
 						 root.getChildren().remove(bt);
-	
+
 						 //for each location
 						 for (int i = 0; i < locationList.size(); i++) {
 							 //if we have the button
@@ -2768,62 +2861,62 @@ public class Main extends Application {
 								 locationList.remove(locationList.get(i));
 							 }
 						 }
-						 
+
 						//update locations
 						locationToSend = updateToSend();
 						orderList.setLocations(locationToSend);
 					 }
 				 });
-	
+
 				 //add buttons
 			     root.getChildren().addAll(bt);
-		
+
 		        }
-	
+
 		        //if the user presses the cancel button goes back to meals page
 		        back.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 		            @Override public void handle(ActionEvent e) {
 		                map(primaryStage);
 		            }
 		        }); //ends cancel action
-	
+
 			//set action
 			 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
-	
+
 				 @Override
 				 public void handle(MouseEvent event) {
 					 //if the button has been pressed
-	
+
 					 //make new button
 				     Button bt = new Button();
 				     setMapButtonStyle(bt);
-	
+
 				     //new button position
 					 bt.setTranslateX(event.getSceneX() - 8);
 					 bt.setTranslateY(event.getSceneY() - 8);
-	
+
 					 //add location
 					 locationList.add(new ArrayList<Double>());
 					 locationList.get(locationList.size() - 1).add(event.getSceneX());
 					 locationList.get(locationList.size() - 1).add(event.getSceneY());
-	
+
 					 //update locations
 					 locationToSend = updateToSend();
 					 orderList.setLocations(locationToSend);
-					 
+
 					 //set button on action
 					 bt.setOnAction(new EventHandler<ActionEvent>() {
 						 @Override public void handle(ActionEvent e) {
 	                         //set button pressed values
 							 root.getChildren().remove(bt);
-	
+
 							 //for each location
 							 for (int i = 0; i < locationList.size(); i++) {
 								 //if we have the button
 								 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
 									 //remove the button
 									 locationList.remove(locationList.get(i));
-									 
+
 									 //update the locations
 									 locationToSend = updateToSend();
 									 orderList.setLocations(locationToSend);
@@ -2831,34 +2924,34 @@ public class Main extends Application {
 							 }
 						 }
 					 });
-	
+
 					 //add the buttons
 				     root.getChildren().addAll(bt);
 				 }
 			 });
-	
+
 			//Add the button styles
 			 addButtonStyleNormal(back);
-	
+
 		    //add the back button
 			root.getChildren().addAll(back);
-	
-	
+
+
 			//creates the scene
 			Scene scene = new Scene(root,500,500);
-			
+
 			//Color the scene background
 			root.setBackground(bg);
 			primaryStage.setScene(scene);
 			primaryStage.show();
-	
-	
+
+
 			new AnimationTimer() {
 				@Override
 				public void handle(long now) {
 				}
 			}.start();
-	
+
 
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -2882,7 +2975,7 @@ public class Main extends Application {
 
 			//create node list and get all locations
 			NodeList nList = doc.getElementsByTagName("location");
-			
+
 			//temp ArrayList
 			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
 
@@ -2896,7 +2989,7 @@ public class Main extends Application {
 				//if item is correct
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					
+
 					//get x,y
 					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
 					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
@@ -2913,7 +3006,7 @@ public class Main extends Application {
 
 			//update locations in feet
 			locationToSend = updateToSend();
-			
+
 			//update order location
 			orderList.setLocations(locationToSend);
 
@@ -2924,7 +3017,7 @@ public class Main extends Application {
 		}
 
 	}
-	
+
 	/*
 	 * Method for updating the locations to be feet bound
 	 */
@@ -2995,7 +3088,7 @@ public class Main extends Application {
 			Label startxlabel = new Label("X value for origin point in feet");
 			Label startylabel = new Label("Y value for origin point in feet");
 			Button confirm = new Button("Confirm");
-			
+
 			//style button
 		    addButtonStyleNormal(confirm);
 
@@ -3008,7 +3101,7 @@ public class Main extends Application {
 	        TextField y = new TextField();
 	        TextField startx = new TextField();
 	        TextField starty = new TextField();
-	        
+
 	        //setting values for textfields/labels
 	        xlabel.setLayoutX(180);
 	        xlabel.setLayoutY(140);
@@ -3052,7 +3145,7 @@ public class Main extends Application {
 			 confirm.setOnAction(new EventHandler<ActionEvent>() {
 				 @Override public void handle(ActionEvent e) {
                      //set button pressed values
-					
+
 					 try {
 						 //if x is negative
 						 if (xformat.getValue() <= 0) {
@@ -3097,13 +3190,13 @@ public class Main extends Application {
 									feetPerPixelHeight = imageHeight/500;
 									x0 = startxformat.getValue();
 									y0 = startyformat.getValue();
-									
+
 									//update values to be feet bound
 									locationToSend = updateToSend();
-									
+
 									//set orders
 									orderList.setLocations(locationToSend);
-									
+
 									//recal map
 									map(primaryStage);
 							 }
@@ -3136,7 +3229,7 @@ public class Main extends Application {
 
 			//creates the scene
 			Scene scene = new Scene(root,500,500);
-			
+
 			//Color the scene background
 			root.setBackground(bg);
 			primaryStage.setScene(scene);
@@ -3231,7 +3324,7 @@ public class Main extends Application {
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
 
-	
+
 	public static void addButtonStyleSmall(Button button,int padX, int padY) {
 		String basic = "-fx-effect: dropshadow(gaussian, #d1bfa1, 10, 0.1, 0, 5);" +
 				"-fx-background-radius:3px;" +
@@ -3319,6 +3412,310 @@ public class Main extends Application {
         //Set the button to "move down" when clicked and "go back" when released
         button.setOnMousePressed(e -> button.setStyle(clickStyle));
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
+	}
+
+	/***
+	 * On proper exit (hitting the exit button) this will save the current settings to be used on next program run
+	 */
+	public static void exit(){
+
+		//save the orders per hour
+		try{
+			JSONObject saveData = orderList.saveOrders();
+			PrintWriter defaultProb = new PrintWriter("defaultProb.json");
+
+			defaultProb.print(saveData.toString());
+			defaultProb.flush();
+			defaultProb.close();
+
+		}
+		catch(IOException e){
+			System.out.println("File Error");
+			System.out.println(e.getStackTrace().toString());
+		}
+
+		//save the food items
+		try {
+			String content = "";
+			for(int index = 0; index<foodList.size(); index++ ) {
+				content = content + foodList.getFoods().get(index).getName() + ", "
+						+ foodList.getFoods().get(index).getWeight() + "\n";
+			}
+			//write the string to the file
+			PrintWriter writer;
+			writer = new PrintWriter("defaultFoods.txt");
+			writer.println(content);
+			writer.close();
+
+
+		} catch (IOException ex) {
+
+			System.out.println("File Logging Error");
+
+		}
+
+		//save the meals
+		try {
+			String content = "";
+			for(int index = 0; index < mealList.getMeals().size(); index++ ) {
+				content = content + mealList.getMeals().get(index).getName() + ","
+						+ mealList.getMeals().get(index).getPercentage() + ",";
+				for (int i = 0; i < mealList.getMeals().get(index).getFoods().size(); i++) {
+					if (i != 0) {
+						content = content + ",";
+					}
+					content = content + mealList.getMeals().get(index).getFoods().get(i).getName();
+				}
+				content = content + "\n";
+			}
+			//write the string to the file
+			PrintWriter writer;
+			writer = new PrintWriter("defaultMeals.txt");
+			writer.println(content);
+			writer.close();
+
+
+		} catch (IOException ex) {
+
+			System.out.println("File Logging Error");
+
+		}
+
+		//save the map
+		try{
+			File file = new File("defaultMap.txt");
+			//make new doc builder
+			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+
+			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+
+			Document document = documentBuilder.newDocument();
+
+			// root element
+			Element root = document.createElement("locations");
+
+			//for each location
+			for (int i = 0; i < locationList.size(); i++) {
+				//grab location
+				Element location = document.createElement("location");
+
+				//add element
+				Element x = document.createElement("x");
+				x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
+
+				//add element
+				Element y = document.createElement("y");
+				y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
+
+				//append location
+				location.appendChild(x);
+				location.appendChild(y);
+
+				//append location
+				root.appendChild(location);
+			}
+
+			//append root
+			document.appendChild(root);
+
+			//save all the stuff
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource domSource = new DOMSource(document);
+			StreamResult streamResult = new StreamResult(file);
+
+			//save all the stuff
+			transformer.transform(domSource, streamResult);
+
+		} catch (ParserConfigurationException | TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		System.exit(1);
+	}
+
+	/***
+	 * loads default values if there are any,
+	 * if a file is missing an error will be printed to console but the method will run correctly
+	 */
+	public static void initDefaults(){
+		//load the map
+		File file = new File("defaultMap.txt");
+		if(file != null) {
+			try {
+				//get doc builder
+				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+				DocumentBuilder db;
+				db = dbf.newDocumentBuilder();
+				Document doc = db.parse(file);
+				doc.getDocumentElement().normalize();
+
+				//grab nodes
+				NodeList nList = doc.getElementsByTagName("location");
+				ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+				//for each node
+				for (int i = 0; i < nList.getLength(); i++) {
+					tempList.add(new ArrayList<Double>());
+					Node nNode = nList.item(i);
+
+					//if node is correct
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+						//get elements
+						Element eElement = (Element) nNode;
+						double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
+						double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
+
+						//add to temp
+						tempList.get(i).add(x);
+						tempList.get(i).add(y);
+
+					}
+				}
+
+				//update locatons
+				locationList = tempList;
+				locationToSend = updateToSend();
+				orderList.setLocations(locationToSend);
+			} catch (Exception e1) {
+				//do nothing
+			}
+		}
+
+		//load food
+		file = new File("defaultFoods.txt");
+		if (file != null) {
+			try {
+				Scanner sc = new Scanner(file);
+				while(sc.hasNext()) {
+					//reads in the line
+					String s = sc.nextLine();
+
+
+					//new scanner for the line
+					Scanner stringScanner = new Scanner(s);
+					//if there is a comma or a new line
+					stringScanner.useDelimiter(",|\\n");
+					//gets the name and weight from string
+					String name = stringScanner.next();
+					String weight = stringScanner.next();
+					double weightDouble = Double.parseDouble(weight);
+
+
+					//checks if the food already exists
+					boolean duplicate = false;
+					for(int i = 0; i<foodList.size(); i++) {
+						if(foodList.getFoods().get(i).getName().equals(name)) {
+							duplicate = true;
+						}//ends if
+					}//ends for
+
+
+					//as long as it isnt a duplicate, adds the food
+					if(duplicate == false) {
+						//creates the new food
+						Food f = new Food(name, weightDouble);
+						//adds the new food to the list
+						foodList.addFoodItem(f);
+					}//ends if
+				}//ends while
+
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		//load meals
+		file = new File("defaultMeals.txt");
+		if (file != null) {
+			try {
+				Scanner sc = new Scanner(file);
+				boolean isFormattingGood = true;
+				while(sc.hasNext()) {
+					//reads in the line
+					String s = sc.nextLine();
+					System.out.println(checkMeal(s));
+					if (checkMeal(s) == false) {
+						System.out.println("Invalid formatting?");
+						isFormattingGood = false;
+						break;
+					}
+
+				}//ends while
+
+				if (isFormattingGood == true) {
+					//now have to make the new meals, and replace the old ones with them.
+					while (mealList.getMeals().size() != 0) {
+						mealList.deleteMeal(mealList.getMeals().get(0));
+					}
+
+
+					sc = new Scanner(file);
+					while (sc.hasNext()) {
+						String s = sc.nextLine();
+
+						Scanner stringScanner = new Scanner(s);
+						//if there is a comma or a new line
+						stringScanner.useDelimiter(",|\\n");
+
+						//get meal name
+						String mealName = stringScanner.next();
+						//get meal percentage then turn it into a double
+						String percentage = stringScanner.next();
+						double percentageDouble = Double.parseDouble(percentage);
+
+
+						ArrayList<Food> mealFoods = new ArrayList<Food>();
+						while (stringScanner.hasNext()) {
+							String foodName = stringScanner.next();
+							System.out.println(foodName);
+							for (int i = 0; i < foodList.getFoods().size(); i++) {
+								if (foodName.equals(foodList.getFoods().get(i).getName())) {
+									mealFoods.add(foodList.getFoods().get(i));
+									break;
+								}
+							}
+						}
+						Meal newMeal = new Meal(mealName, percentageDouble, mealFoods);
+						mealList.addMeal(newMeal);
+						System.out.println(mealList.getMeals().size());
+						//sc.next();
+					}
+				}
+
+
+			} catch (IOException ex) {
+				System.out.println("File Logging Error");
+
+			}
+		}
+
+		//load probabilities
+		file = new File("defaultProb.json");
+		if(file != null){
+			try{
+				//put all of the text in the file into a string to be parsed
+				JSONParser jsonParser = new JSONParser();
+				Scanner scan = new Scanner(file);
+				String jsonData = "";
+				while(scan.hasNext()){
+					jsonData += scan.next();
+				}
+
+				//parse the data
+				Object obj = jsonParser.parse(jsonData);
+				JSONObject data = (JSONObject) obj;
+
+				//set it as the active set
+				orderList.setHourlyRate((int)data.get("hour1"), (int)data.get("hour2"), (int)data.get("hour3"), (int)data.get("hour4"));
+
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

@@ -1,3 +1,5 @@
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -55,6 +57,18 @@ public class Orders {
 		thirdHour = hourThree;
 		fourthHour = hourFour;
 	}
+
+	public JSONObject saveOrders(){
+		JSONObject save = new JSONObject();
+
+		save.put("hour1", firstHour);
+		save.put("hour2", secondHour);
+		save.put("hour3", thirdHour);
+		save.put("hour4", fourthHour);
+
+		return save;
+	}
+
 
 	/*
 	 * Constructor for Orders class
