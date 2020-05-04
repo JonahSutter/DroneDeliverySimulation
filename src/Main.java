@@ -1516,7 +1516,7 @@ public class Main extends Application {
 		}
 
 		return true;
-	}
+	} //ends checkMeal method
 
 
 	public static void loadFoodsPage(Stage primaryStage) {
