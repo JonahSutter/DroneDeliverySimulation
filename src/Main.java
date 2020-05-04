@@ -977,7 +977,7 @@ public class Main extends Application {
 	        root.getChildren().add(clickMeal);
 	        root.getChildren().add(clickFood);
 
-
+	        //Give loadMeals button functionality
 	        loadMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	loadMealsPage(primaryStage);
@@ -985,6 +985,7 @@ public class Main extends Application {
 	            }//ends event handler
 	        });
 
+	        //give saveMeals button functionality
 	        saveMeals.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 	            	saveMeals(primaryStage);
@@ -1236,6 +1237,7 @@ public class Main extends Application {
 	}
 	}
 
+	
 	public static void saveMeals(Stage primaryStage) {
 	   	 FileChooser fileChooser = new FileChooser();
 
@@ -1251,6 +1253,7 @@ public class Main extends Application {
 
 	       if (file != null) {
 	       	 try {
+	       		 //Save meals in format of mealName, mealPercentage, list of food names
 		        	String content = "";
 		        	for(int index = 0; index < mealList.getMeals().size(); index++ ) {
 		        		content = content + mealList.getMeals().get(index).getName() + ","
@@ -1295,43 +1298,55 @@ public class Main extends Application {
 		        	Scanner sc = new Scanner(file);
 		        	boolean isFormattingGood = true;
 		        	while(sc.hasNext()) {
+		        		
 		        		//reads in the line
 		        		String s = sc.nextLine();
-		        		System.out.println(checkMeal(s));
+		        		
+		        		//Calls checkMeal on each line to see if the formatting is valid
 		        		if (checkMeal(s) == false) {
-		        			System.out.println("Invalid formatting?");
 		        			isFormattingGood = false;
 		        			break;
 		        		}
 
 		        	}//ends while
 
+		        	//if the formatting is valid, start to load meals in
 		        	if (isFormattingGood == true) {
-			        	//now have to make the new meals, and replace the old ones with them.
+		        		
+		        		//removes all current meals
 			        	while (mealList.getMeals().size() != 0) {
 			        		mealList.deleteMeal(mealList.getMeals().get(0));
 			        	}
 
-
+			        	//get scanner of the file to load
 			        	sc = new Scanner(file);
+			        	//while scanner has text left, get the next line
 			        	while (sc.hasNext()) {
 				        	String s = sc.nextLine();
-
+				        	
+				        	//make a new scanner for the line
 				        	Scanner stringScanner = new Scanner(s);
+				        	
 				        	//if there is a comma or a new line
 							stringScanner.useDelimiter(",|\\n");
 
 							//get meal name
 							String mealName = stringScanner.next();
+							
 							//get meal percentage then turn it into a double
 							String percentage = stringScanner.next();
 							double percentageDouble = Double.parseDouble(percentage);
 
-
+							//Arraylist to hold the foods for this meal
 							ArrayList<Food> mealFoods = new ArrayList<Food>();
+							
+							//while the scanner has text left, get the foods
 							while (stringScanner.hasNext()) {
+								//get the foodname
 								String foodName = stringScanner.next();
-								System.out.println(foodName);
+
+								//Grabs the foods and checks to see if they are valid foods, if they are
+								//then add them to the list of foods
 								for (int i = 0; i < foodList.getFoods().size(); i++) {
 									if (foodName.equals(foodList.getFoods().get(i).getName())) {
 										mealFoods.add(foodList.getFoods().get(i));
@@ -1339,14 +1354,11 @@ public class Main extends Application {
 									}
 								}
 							}
+							//create a meal with the information gathered, and add it to mealList
 							Meal newMeal = new Meal(mealName, percentageDouble, mealFoods);
 							mealList.addMeal(newMeal);
-							System.out.println(mealList.getMeals().size());
-							//sc.next();
 			        	}
 		        	}
-
-		        	//System.out.println(mealList.getMeals().get(0).getFoods().get(0));
 		        	//refreshes the page
 		        	meals(primaryStage);
 
@@ -1358,36 +1370,46 @@ public class Main extends Application {
 	       }
 
 
-	}//ends loadmealspage
+	}//ends loadMealspage
 
 	public static boolean checkMeal(String meal) {
 
 		try {
+			//
 			boolean hasFood = false;
 			Scanner stringScanner = new Scanner(meal);
+			
 			//if there is a comma or a new line
 			stringScanner.useDelimiter(",|\\n");
 
+			//if meal name is blank, it is not a valid meal
 			String mealName = stringScanner.next();
 			if (mealName.equals("")) {
 				return false;
 			}
 
+			//grab the percentage and turn it into a double
 			String percentage = stringScanner.next();
 			double percentageDouble = Double.parseDouble(percentage);
+			
+			//if percentage is negative, it is not a valid meal
 			if (percentageDouble < 0) {
 				return false;
 			}
 
+			//check the foods in the meal
 			while (stringScanner.hasNext()) {
-				hasFood = false;
+				hasFood = false;	//start every food as false
+				
 				//check to see if the food exists
 				String foodName = stringScanner.next();
 				for (int i = 0; i < foodList.getFoods().size(); i++) {
 					if (foodName.equals(foodList.getFoods().get(i).getName())) {
+						//if food exists, then set hasFood to true
 						hasFood = true;
 					}
 				}
+				//if the food does not exist, then it is not a valid meal
 				if (hasFood = false) {
 					return false;
 				}
