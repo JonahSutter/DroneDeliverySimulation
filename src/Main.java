@@ -735,18 +735,24 @@ public class Main extends Application {
 
 		    //Create a home button and position it
 	        Button home = new Button("Home");
-	        home.setLayoutX(130);
-	        home.setLayoutY(385);
+	        home.setLayoutX(100);
+	        home.setLayoutY(340);
 	        home.setPrefWidth(75);
 	        //create save button
 	        Button save = new Button("Save");
-	        save.setLayoutX(130);
-	        save.setLayoutY(430);
+	        save.setLayoutX(100);
+	        save.setLayoutY(385);
 	        save.setPrefWidth(75);
+	        //create load button
+			Button load = new Button("Load");
+			load.setLayoutX(100);
+			load.setLayoutY(430);
+			load.setPrefWidth(75);
 
 	        //Add the button styles
 	        addButtonStyleNormal(home);
 	        addButtonStyleNormal(save);
+	        addButtonStyleNormal(load);
 
 	        //Add all the created elements to the screen
 	        Pane root = new Pane();
@@ -754,6 +760,7 @@ public class Main extends Application {
 	        root.getChildren().add(listFood);
 	        root.getChildren().add(home);
 	        root.getChildren().add(save);
+	        root.getChildren().add(load);
 	        root.getChildren().add(label);
 	        root.getChildren().addAll(totalVal,totalLabel,errorLabel);
 	        root.getChildren().addAll(mealLabel,mealProbLabel,mealsPerShift);
@@ -776,6 +783,12 @@ public class Main extends Application {
 	        save.setOnAction((EventHandler <ActionEvent>) new EventHandler<ActionEvent>(){
 	        	@Override public void handle(ActionEvent e){
 	        		saveProbabilities(primaryStage);
+				}
+			});
+
+			load.setOnAction((EventHandler <ActionEvent>) new EventHandler<ActionEvent>(){
+				@Override public void handle(ActionEvent e){
+					loadProbabilities(primaryStage);
 				}
 			});
 
@@ -816,6 +829,42 @@ public class Main extends Application {
 				System.out.println(e.getStackTrace().toString());
 			}
 		}
+	}
+
+	public static void loadProbabilities(Stage primaryStage){
+		//Setup the file chooser dialog
+		FileChooser load = new FileChooser();
+		FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json");
+		load.getExtensionFilters().add(extensionFilter);
+
+		//show the dialog box to allow the user to select the file
+		File loadFile = load.showOpenDialog(primaryStage);
+		//get the json parser ready
+		JSONParser jsonParser = new JSONParser();
+
+		if(loadFile != null){
+			try{
+				//put all of the text in the file into a string to be parsed
+				Scanner scan = new Scanner(loadFile);
+				String jsonData = "";
+				while(scan.hasNext()){
+					jsonData += scan.next();
+				}
+
+				//parse the data
+				Object obj = jsonParser.parse(jsonData);
+				JSONObject data = (JSONObject) obj;
+
+				//set it as the active set
+				orderList.setHourlyRate((int)data.get("hour1"), (int)data.get("hour2"), (int)data.get("hour3"), (int)data.get("hour4"));
+
+			}
+			catch (Exception e){
+				failedAlert("Error: File Loading Failed");
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 

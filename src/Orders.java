@@ -69,6 +69,7 @@ public class Orders {
 		return save;
 	}
 
+
 	/*
 	 * Constructor for Orders class
 	 * @firstHour int containing num orders in first hour
