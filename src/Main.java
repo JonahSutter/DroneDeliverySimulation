@@ -1,10 +1,7 @@
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-=======
->>>>>>> branch 'master' of https://github.com/acramernc/Drone-Delivery-Simulation.git
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -98,6 +95,7 @@ public class Main extends Application {
 
 		orderList.setMeals(mealList.getMeals()); //TODO we need to fix this data redundancy if possible
 
+		//grab locations and set them
 		setLocation(locationList, new File("defaultLocation.xml"));
 
 		launch(args);
@@ -2496,22 +2494,26 @@ public class Main extends Application {
 	        //if the user presses the cancel button goes back to meals page
 	        changeImage.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-
-	           	   FileChooser fileChooser = new FileChooser();
-
+	            	
+	            	//grab files
+	           	    FileChooser fileChooser = new FileChooser();
 		           	File file = fileChooser.showOpenDialog(primaryStage);
 
-
+		           	//if we have file
 		           	if (file != null) {
 		           		try {
+		           			//if image
 			                if(ImageIO.read(file) == null) {
+			                	//print error
 			           			Label error = new Label("ERROR: Invalid file type");
 			           			error.setFont(new Font("Arial", 20));
 			           			error.setLayoutX(180);
 			           			error.setLayoutY(140);
 			           			root.getChildren().add(error);
 			                }
+			                //if image
 			                else {
+			                	//do image stuff
 				                image = new Image("file:" + file.getAbsolutePath());
 				                addDimensions(primaryStage);
 			                }
@@ -2528,38 +2530,47 @@ public class Main extends Application {
 	        load.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
 
-	           	   FileChooser fileChooser = new FileChooser();
+	                //file chooser for files
+	           	   	FileChooser fileChooser = new FileChooser();
 
+	           	    //do file chooser
 		           	File file = fileChooser.showOpenDialog(primaryStage);
+		           	
+		           	//if we have a file
 	                if (file != null) {
 	                	try {
+	                		//get doc builder
 	                		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	            			DocumentBuilder db;
 	            			db = dbf.newDocumentBuilder();
 	            			Document doc = db.parse(file);
 	            			doc.getDocumentElement().normalize();
 
+	            			//grab nodes
 	            			NodeList nList = doc.getElementsByTagName("location");
 	            			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
 
-
+	            			//for each node
 	            			for (int i = 0; i < nList.getLength(); i++) {
 	            				tempList.add(new ArrayList<Double>());
 	            				Node nNode = nList.item(i);
 
+	            				//if node is correct
 	            				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+	            					//get elements
 	            					Element eElement = (Element) nNode;
 	            					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
 	            					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
 
+	            					//add to temp
 	            					tempList.get(i).add(x);
 	            					tempList.get(i).add(y);
 
 	            				}
 	            			}
-
+	            			
+	            			//update locatons
 	            			locationList = tempList;
-
 	            			locationToSend = updateToSend();
 	            			orderList.setLocations(locationToSend);
 	                	}
@@ -2593,9 +2604,9 @@ public class Main extends Application {
 
 	               if (file != null) {
 
-
-
 					try {
+						
+						//make new doc builder
 						DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 
 			            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -2605,34 +2616,37 @@ public class Main extends Application {
 			            // root element
 			            Element root = document.createElement("locations");
 
+			            //for each location
 			            for (int i = 0; i < locationList.size(); i++) {
+			            	//grab location
 			            	Element location = document.createElement("location");
 
+			            	//add element
 			            	Element x = document.createElement("x");
 			                x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
 
+			                //add element
 			                Element y = document.createElement("y");
 			                y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
 
-
+			                //append location
 			                location.appendChild(x);
 			                location.appendChild(y);
 
+			                //append location
 			                root.appendChild(location);
 			            }
 
+			            //append root
 			            document.appendChild(root);
 
+			            //save all the stuff
 			            TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			            Transformer transformer = transformerFactory.newTransformer();
 			            DOMSource domSource = new DOMSource(document);
 			            StreamResult streamResult = new StreamResult(file);
 
-			            // If you use
-			            // StreamResult result = new StreamResult(System.out);
-			            // the output will be pushed to the standard output ...
-			            // You can use that for debugging
-
+			            //save all the stuff
 			            transformer.transform(domSource, streamResult);
 
 					} catch (ParserConfigurationException | TransformerException e1) {
@@ -2655,6 +2669,7 @@ public class Main extends Application {
 
 	        //creates the scene
 			Scene scene = new Scene(root,500,500);
+			
 			//Color the scene background
 			root.setBackground(bg);
 			primaryStage.setScene(scene);
@@ -2675,131 +2690,153 @@ public class Main extends Application {
 
 	public static void updateMap(Stage primaryStage) {
 		try {
-		Pane root = new Pane();
-
-
-		//creates the image
-		ImageView selectedImage = new ImageView();
-		selectedImage.setImage(image);
-
-
-		//the image will resize with the window
-		selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
-		selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
-
-		//adds to the pane
-		root.getChildren().addAll(selectedImage);
-
-		//creates the buttons
-        Button back = new Button("Back");
-
-        //set position of text fields and buttons
-        back.setLayoutX(400);
-        back.setLayoutY(450);
-
-
-        //sets the height and width of buttons
-        back.setPrefHeight(40);
-        back.setPrefWidth(100);
-
-
-        for (ArrayList<Double> location : locationList) {
-        	double x = location.get(0);
-        	double y = location.get(1);
-
-		     Button bt = new Button();
-		     setMapButtonStyle(bt);
-
-			 bt.setLayoutX(x);
-			 bt.setLayoutY(y);
-
-
-			 bt.setOnAction(new EventHandler<ActionEvent>() {
-				 @Override public void handle(ActionEvent e) {
-                     //set button pressed values
-					 root.getChildren().remove(bt);
-
-					 for (int i = 0; i < locationList.size(); i++) {
-						 if ((locationList.get(i).get(0) == bt.getLayoutX()) && (locationList.get(i).get(1) == bt.getLayoutY())) {
-							 locationList.remove(locationList.get(i));
-						 }
-					 }
-
-					updateToSend();
-				 }
-			 });
-
-
-		     root.getChildren().addAll(bt);
-
-        }
-
-        //if the user presses the cancel button goes back to meals page
-        back.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                map(primaryStage);
-            }
-        }); //ends cancel action
-
-		//set action
-		 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-			 @Override
-			 public void handle(MouseEvent event) {
-				 //if the button has been pressed
-
-			     Button bt = new Button();
-			     setMapButtonStyle(bt);
-
-				 bt.setTranslateX(event.getSceneX() - 8);
-				 bt.setTranslateY(event.getSceneY() - 8);
-
-				 locationList.add(new ArrayList<Double>());
-				 locationList.get(locationList.size() - 1).add(event.getSceneX());
-				 locationList.get(locationList.size() - 1).add(event.getSceneY());
-
-				locationToSend = updateToSend();
-				orderList.setLocations(locationToSend);
-
+	
+			//make new pane
+			Pane root = new Pane();
+	
+			//creates the image
+			ImageView selectedImage = new ImageView();
+			selectedImage.setImage(image);
+	
+	
+			//the image will resize with the window
+			selectedImage.fitWidthProperty().bind(primaryStage.widthProperty());
+			selectedImage.fitHeightProperty().bind(primaryStage.heightProperty());
+	
+			//adds to the pane
+			root.getChildren().addAll(selectedImage);
+	
+			//creates the buttons
+	        Button back = new Button("Back");
+	
+	        //set position of text fields and buttons
+	        back.setLayoutX(400);
+	        back.setLayoutY(450);
+	
+	
+	        //sets the height and width of buttons
+	        back.setPrefHeight(40);
+	        back.setPrefWidth(100);
+	
+	
+	        for (ArrayList<Double> location : locationList) {
+	        	//set values
+	        	double x = location.get(0);
+	        	double y = location.get(1);
+	
+	        	//make buttons
+			    Button bt = new Button();
+			    setMapButtonStyle(bt);
+	
+			    //set position
+				bt.setLayoutX(x);
+				bt.setLayoutY(y);
+	
+				 //set action
 				 bt.setOnAction(new EventHandler<ActionEvent>() {
 					 @Override public void handle(ActionEvent e) {
-                         //set button pressed values
+	                     //set button pressed values
 						 root.getChildren().remove(bt);
-
+	
+						 //for each location
 						 for (int i = 0; i < locationList.size(); i++) {
-							 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
+							 //if we have the button
+							 if ((locationList.get(i).get(0) == bt.getLayoutX()) && (locationList.get(i).get(1) == bt.getLayoutY())) {
+								 //remove the button from locationList
 								 locationList.remove(locationList.get(i));
-									locationToSend = updateToSend();
-									orderList.setLocations(locationToSend);
 							 }
 						 }
+						 
+						//update locations
+						locationToSend = updateToSend();
+						orderList.setLocations(locationToSend);
 					 }
 				 });
-
+	
+				 //add buttons
 			     root.getChildren().addAll(bt);
-			 }
-		 });
-
-		//Add the button styles
-		 addButtonStyleNormal(back);
-
-		root.getChildren().addAll(back);
-
-
-		//creates the scene
-		Scene scene = new Scene(root,500,500);
-		//Color the scene background
-		root.setBackground(bg);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-
-
-		new AnimationTimer() {
-			@Override
-			public void handle(long now) {
-			}
-		}.start();
-
+		
+		        }
+	
+		        //if the user presses the cancel button goes back to meals page
+		        back.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
+		            @Override public void handle(ActionEvent e) {
+		                map(primaryStage);
+		            }
+		        }); //ends cancel action
+	
+			//set action
+			 selectedImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+	
+				 @Override
+				 public void handle(MouseEvent event) {
+					 //if the button has been pressed
+	
+					 //make new button
+				     Button bt = new Button();
+				     setMapButtonStyle(bt);
+	
+				     //new button position
+					 bt.setTranslateX(event.getSceneX() - 8);
+					 bt.setTranslateY(event.getSceneY() - 8);
+	
+					 //add location
+					 locationList.add(new ArrayList<Double>());
+					 locationList.get(locationList.size() - 1).add(event.getSceneX());
+					 locationList.get(locationList.size() - 1).add(event.getSceneY());
+	
+					 //update locations
+					 locationToSend = updateToSend();
+					 orderList.setLocations(locationToSend);
+					 
+					 //set button on action
+					 bt.setOnAction(new EventHandler<ActionEvent>() {
+						 @Override public void handle(ActionEvent e) {
+	                         //set button pressed values
+							 root.getChildren().remove(bt);
+	
+							 //for each location
+							 for (int i = 0; i < locationList.size(); i++) {
+								 //if we have the button
+								 if ((locationList.get(i).get(0) == event.getSceneX()) && (locationList.get(i).get(1) == event.getSceneY())) {
+									 //remove the button
+									 locationList.remove(locationList.get(i));
+									 
+									 //update the locations
+									 locationToSend = updateToSend();
+									 orderList.setLocations(locationToSend);
+								 }
+							 }
+						 }
+					 });
+	
+					 //add the buttons
+				     root.getChildren().addAll(bt);
+				 }
+			 });
+	
+			//Add the button styles
+			 addButtonStyleNormal(back);
+	
+		    //add the back button
+			root.getChildren().addAll(back);
+	
+	
+			//creates the scene
+			Scene scene = new Scene(root,500,500);
+			
+			//Color the scene background
+			root.setBackground(bg);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+	
+	
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+				}
+			}.start();
+	
 
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -2808,37 +2845,54 @@ public class Main extends Application {
 
 	}//ends map method
 
+	/*
+	 * Method to set location based on files
+	 */
 	public static void setLocation(ArrayList<ArrayList<Double>> locations, File file){
 
 		try {
+			//create doc builder
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db;
 			db = dbf.newDocumentBuilder();
 			Document doc = db.parse(file);
 			doc.getDocumentElement().normalize();
 
+			//create node list and get all locations
 			NodeList nList = doc.getElementsByTagName("location");
+			
+			//temp ArrayList
 			ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
 
-
+			//for each node
 			for (int i = 0; i < nList.getLength(); i++) {
+				//add arrayList
 				tempList.add(new ArrayList<Double>());
+				//get item
 				Node nNode = nList.item(i);
 
+				//if item is correct
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
+					
+					//get x,y
 					double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
 					double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
 
+					//add x,y
 					tempList.get(i).add(x);
 					tempList.get(i).add(y);
 
 				}
 			}
 
+			//set locationList
 			locationList = tempList;
 
+			//update locations in feet
 			locationToSend = updateToSend();
+			
+			//update order location
 			orderList.setLocations(locationToSend);
 
 
@@ -2847,6 +2901,237 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/*
+	 * Method for updating the locations to be feet bound
+	 */
+	public static ArrayList<ArrayList<Double>> updateToSend(){
+
+		//temp list
+		ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+		//for each location
+		for (ArrayList<Double> location: locationList) {
+
+			//create a temp ArrayList
+			ArrayList<Double> temp = new ArrayList<Double>();
+
+			//get the current locations
+			double x = location.get(0);
+			double y = location.get(1);
+
+			//mult them by our pixel values
+			x = x * feetPerPixelWidth;
+			y = y * feetPerPixelHeight;
+
+
+			//for negative x's
+			if (x < x0) {
+				x = x - x0;
+			}
+			//for positive x's
+			else {
+				x = x - x0;
+			}
+			//for negative y's
+			if (y < x0) {
+				y = (-y) + y0;
+			}
+			//for positive y's
+			else {
+				y = (-y) + y0;
+			}
+
+			//add x and y
+			temp.add(x);
+			temp.add(y);
+
+			//add the temp ArrayList
+			tempList.add(temp);
+
+		}
+
+		//return the tempList
+		return tempList;
+	}
+
+	/*
+	 * Method for inputting the dimensions and values for the image uploaded
+	 */
+	public static void addDimensions(Stage primaryStage) {
+
+		try {
+
+			//Set the title of the window
+			primaryStage.setTitle("Dimensions");
+
+			//creating labels and button
+			Label label = new Label("Dromedary Drones");
+			Label xlabel = new Label("X Dimension of image in feet");
+			Label ylabel = new Label("Y Dimension of image in feet");
+			Label startxlabel = new Label("X value for origin point in feet");
+			Label startylabel = new Label("Y value for origin point in feet");
+			Button confirm = new Button("Confirm");
+			
+			//style button
+		    addButtonStyleNormal(confirm);
+
+			dromedaryDronesTextStyle(label);
+
+			Pane root = new Pane();
+
+			// create a textfield
+	        TextField x = new TextField();
+	        TextField y = new TextField();
+	        TextField startx = new TextField();
+	        TextField starty = new TextField();
+	        
+	        //setting values for textfields/labels
+	        xlabel.setLayoutX(180);
+	        xlabel.setLayoutY(140);
+	        x.setLayoutX(180);
+	        x.setLayoutY(160);
+	        ylabel.setLayoutX(180);
+	        ylabel.setLayoutY(190);
+	        y.setLayoutX(180);
+	        y.setLayoutY(210);
+	        startxlabel.setLayoutX(180);
+	        startxlabel.setLayoutY(240);
+	        startx.setLayoutX(180);
+	        startx.setLayoutY(260);
+	        startylabel.setLayoutX(180);
+	        startylabel.setLayoutY(290);
+	        starty.setLayoutX(180);
+	        starty.setLayoutY(320);
+	        confirm.setLayoutX(180);
+	        confirm.setLayoutY(370);
+	        confirm.setPrefWidth(140);
+	        confirm.setPrefHeight(40);
+
+
+	        javafx.util.StringConverter<Double> converter = new DoubleStringConverter();
+
+
+	        //to get values from textfields
+			TextFormatter<Double> xformat = new TextFormatter<Double>(converter, 3696.0);
+			TextFormatter<Double> yformat = new TextFormatter<Double>(converter, 3696.0);
+			TextFormatter<Double> startxformat = new TextFormatter<Double>(converter, 0.0);
+			TextFormatter<Double> startyformat = new TextFormatter<Double>(converter, 0.0);
+
+
+			//setting the formatters
+			x.setTextFormatter(xformat);
+			y.setTextFormatter(yformat);
+			startx.setTextFormatter(startxformat);
+			starty.setTextFormatter(startyformat);
+
+			 //set on action
+			 confirm.setOnAction(new EventHandler<ActionEvent>() {
+				 @Override public void handle(ActionEvent e) {
+                     //set button pressed values
+					
+					 try {
+						 //if x is negative
+						 if (xformat.getValue() <= 0) {
+							 //print error message
+							 Label error = new Label("ERROR: X and Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+							 error.setLayoutX(10);
+							 error.setLayoutY(160);
+							 root.getChildren().add(error);
+
+						 }
+						 //if y is negative
+						 else if (yformat.getValue() <= 0) {
+							 //print error message
+							 Label error = new Label("ERROR: X, Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+							 error.setLayoutX(10);
+							 error.setLayoutY(160);
+							 root.getChildren().add(error);
+						 }
+						 else {
+							 //if origin is out of bounds
+							 if (startxformat.getValue() < 0 || startxformat.getValue() > xformat.getValue()) {
+								 //print error
+								 Label error = new Label("ERROR: X, Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+								 error.setLayoutX(10);
+								 error.setLayoutY(160);
+								 root.getChildren().add(error);
+							 }
+							 //if origin is out of bounds
+							 else if (startyformat.getValue() < 0 || startyformat.getValue() > yformat.getValue()) {
+								 //print error
+								 Label error = new Label("ERROR: X and Y dimension must be greater than 0 and X, Y origin point is not within bounds");
+								 error.setLayoutX(10);
+								 error.setLayoutY(160);
+								 root.getChildren().add(error);
+							 }
+							 //if everything checks out
+							 else  {
+								 	//change values
+									imageWidth = xformat.getValue();
+									imageHeight = yformat.getValue();
+									feetPerPixelWidth = imageWidth/500;
+									feetPerPixelHeight = imageHeight/500;
+									x0 = startxformat.getValue();
+									y0 = startyformat.getValue();
+									
+									//update values to be feet bound
+									locationToSend = updateToSend();
+									
+									//set orders
+									orderList.setLocations(locationToSend);
+									
+									//recal map
+									map(primaryStage);
+							 }
+
+						 }
+
+					 } catch(Exception e1) {
+						 System.out.println(e1);
+					 }
+
+
+					//update locations
+					locationToSend = updateToSend();
+					orderList.setLocations(locationToSend);
+				 }
+			 });
+
+
+			//add everything to the root
+	        root.getChildren().add(xlabel);
+	        root.getChildren().add(ylabel);
+	        root.getChildren().add(label);
+	        root.getChildren().add(x);
+	        root.getChildren().add(y);
+	        root.getChildren().add(startx);
+	        root.getChildren().add(starty);
+	        root.getChildren().add(startxlabel);
+	        root.getChildren().add(startylabel);
+	        root.getChildren().add(confirm);
+
+			//creates the scene
+			Scene scene = new Scene(root,500,500);
+			
+			//Color the scene background
+			root.setBackground(bg);
+			primaryStage.setScene(scene);
+			primaryStage.show();
+
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+
+
+				}
+			}.start();
+
+
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void dromedaryDronesTextStyle(Label label) {
@@ -2924,6 +3209,7 @@ public class Main extends Application {
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
 	}
 
+<<<<<<< HEAD
 	public static ArrayList<ArrayList<Double>> updateToSend(){
 
 
@@ -3088,6 +3374,9 @@ public class Main extends Application {
 	}
 
 
+=======
+	
+>>>>>>> branch 'master' of https://github.com/acramernc/Drone-Delivery-Simulation.git
 	public static void addButtonStyleSmall(Button button,int padX, int padY) {
 		String basic = "-fx-effect: dropshadow(gaussian, #d1bfa1, 10, 0.1, 0, 5);" +
 				"-fx-background-radius:3px;" +
