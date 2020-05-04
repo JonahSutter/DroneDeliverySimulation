@@ -321,16 +321,16 @@ public class Main extends Application {
 			Label label4 = new Label("Knapsack Packing");
 			//FIFO labels
 			JSONObject FIFOJson = (JSONObject) data.get("FIFO");
-			String fifoAvg = String.format("%.4f sec", FIFOJson.get("avgTime")); //turn the double data into a formatted string
-			String fifoWorst = String.format("%.4f sec", FIFOJson.get("worstTime"));
+			String fifoAvg = String.format("%.4f min", (double)FIFOJson.get("avgTime")/60); //turn the double data into a formatted string
+			String fifoWorst = String.format("%.4f min", (double)FIFOJson.get("worstTime")/60);
 			Label fifo1 = new Label("Average Delivery Time:");
 			Label fifo2 = new Label("Worst Delivery Time:");
 			Label fifo3 = new Label(fifoAvg);
 			Label fifo4 = new Label(fifoWorst);
 			//Knapsack Labels
 			JSONObject KnapsackJson = (JSONObject) data.get("Knapsack");
-			String knapsackAvg = String.format("%.4f sec", KnapsackJson.get("avgTime")); //turn the double data into a formatted string
-			String knapsackWorst = String.format("%.4f sec", KnapsackJson.get("worstTime"));
+			String knapsackAvg = String.format("%.4f min", (double)KnapsackJson.get("avgTime")/60); //turn the double data into a formatted string
+			String knapsackWorst = String.format("%.4f min", (double)KnapsackJson.get("worstTime")/60);
 			Label knap1 = new Label("Average Delivery Time:");
 			Label knap2 = new Label("Worst Delivery Time:");
 			Label knap3 = new Label(knapsackAvg);
@@ -385,7 +385,7 @@ public class Main extends Application {
 			final NumberAxis fifoNumAxis = new NumberAxis();		//Y axis - displays quantity delivered
 			final BarChart<String, Number> fifoChart = new BarChart<String, Number>(fifoTimeAxis, fifoNumAxis);
 			fifoChart.setTitle("FIFO Delivery Times");
-			fifoTimeAxis.setLabel("Delivery Time");
+			fifoTimeAxis.setLabel("Delivery Time (Minutes)");
 			fifoNumAxis.setLabel("Num Delivered");
 
 			//FIFO Data
@@ -396,7 +396,7 @@ public class Main extends Application {
 			int timeslot;	//will also be used in knapsack
 			for(int i = 0; i < fifoData.size(); i++){
 				time = (Double) fifoData.get(i);
-				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+				timeslot = (int) time / 60;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
 
 				if(fifoTimeData.size() <= timeslot){
 					while(fifoTimeData.size() <= timeslot){
@@ -414,7 +414,7 @@ public class Main extends Application {
 			XYChart.Series fifoSeries = new XYChart.Series();
 			fifoSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < fifoTimeData.size(); i++) {	//puts all the data into the graph
-				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				categoryName = String.format("%d - %d", i, (i+1));
 				fifoSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, fifoTimeData.get(i)));
 			}
 			fifoChart.getData().addAll(fifoSeries);//adds all the data from the series to the chart
@@ -425,7 +425,7 @@ public class Main extends Application {
 			final NumberAxis knapsackNumAxis = new NumberAxis();
 			final BarChart<String, Number> knapsackChart = new BarChart<String, Number>(knapsackTimeAxis, knapsackNumAxis);
 			knapsackChart.setTitle("Knapsack Delivery Times");
-			knapsackTimeAxis.setLabel("Delivery Time");
+			knapsackTimeAxis.setLabel("Delivery Time (Minutes)");
 			knapsackNumAxis.setLabel("Num Delivered");
 
 			//Knapsack Data
@@ -434,7 +434,7 @@ public class Main extends Application {
 			knapsackTimeData.add(0);
 			for(int i = 0; i < knapsackData.size(); i++){
 				time = (Double) knapsackData.get(i);
-				timeslot = (int) time / 30;	//this will tell us what timeslot it belongs in (0 for 0-30 sec and so on)
+				timeslot = (int) time / 60;	//this will tell us what timeslot it belongs in (0 for 0-60 sec and so on)
 
 				if(knapsackTimeData.size() <= timeslot){
 					while(knapsackTimeData.size() <= timeslot){
@@ -451,7 +451,7 @@ public class Main extends Application {
 			XYChart.Series knapsackSeries = new XYChart.Series();
 			knapsackSeries.setName("Number of Orders Delivered");
 			for(int i = 0; i < knapsackTimeData.size(); i++) {	//puts all the data into the graph
-				categoryName = String.format("%d - %d", i*30, (i+1)*30);
+				categoryName = String.format("%d - %d", i, (i+1));
 				knapsackSeries.getData().add(new XYChart.Data<String, Integer>(categoryName, knapsackTimeData.get(i)));
 			}
 			knapsackChart.getData().addAll(knapsackSeries);
