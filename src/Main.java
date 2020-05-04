@@ -62,6 +62,7 @@ import javafx.scene.input.MouseEvent;
 
 public class Main extends Application {
 	//static Foods foodList = new Foods();
+
 	private static Meals mealList = new Meals();
 	private static Orders orderList = new Orders(38, 45, 60, 30);
 	private static Foods foodList = new Foods();
@@ -97,6 +98,9 @@ public class Main extends Application {
 
 		//grab locations and set them
 		setLocation(locationList, new File("defaultLocation.xml"));
+
+		//loads default settings from last session
+		initDefaults();
 
 		launch(args);
 	}
@@ -264,7 +268,7 @@ public class Main extends Application {
 	      //buttons exits
 	        button4.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 	            @Override public void handle(ActionEvent e) {
-	                System.exit(1);
+	                exit();
 	            }
 	        });
 
@@ -518,7 +522,7 @@ public class Main extends Application {
 
 			button3.setOnAction((EventHandler<ActionEvent>) new EventHandler<ActionEvent>() {
 				@Override public void handle(ActionEvent e) {
-					System.exit(1);
+					exit();
 				}
 			});
 
@@ -1760,7 +1764,6 @@ public class Main extends Application {
 			return false;
 		}//ends else
 	}//ends check if empty method
-
 
 
 	public static void addMealPage(Stage primaryStage) {
@@ -3387,6 +3390,310 @@ public class Main extends Application {
         //Set the button to "move down" when clicked and "go back" when released
         button.setOnMousePressed(e -> button.setStyle(clickStyle));
         button.setOnMouseReleased(e -> button.setStyle(mainStyle));
+	}
+
+	/***
+	 * On proper exit (hitting the exit button) this will save the current settings to be used on next program run
+	 */
+	public static void exit(){
+
+		//save the orders per hour
+		try{
+			JSONObject saveData = orderList.saveOrders();
+			PrintWriter defaultProb = new PrintWriter("defaultProb.json");
+
+			defaultProb.print(saveData.toString());
+			defaultProb.flush();
+			defaultProb.close();
+
+		}
+		catch(IOException e){
+			System.out.println("File Error");
+			System.out.println(e.getStackTrace().toString());
+		}
+
+		//save the food items
+		try {
+			String content = "";
+			for(int index = 0; index<foodList.size(); index++ ) {
+				content = content + foodList.getFoods().get(index).getName() + ", "
+						+ foodList.getFoods().get(index).getWeight() + "\n";
+			}
+			//write the string to the file
+			PrintWriter writer;
+			writer = new PrintWriter("defaultFoods.txt");
+			writer.println(content);
+			writer.close();
+
+
+		} catch (IOException ex) {
+
+			System.out.println("File Logging Error");
+
+		}
+
+		//save the meals
+		try {
+			String content = "";
+			for(int index = 0; index < mealList.getMeals().size(); index++ ) {
+				content = content + mealList.getMeals().get(index).getName() + ","
+						+ mealList.getMeals().get(index).getPercentage() + ",";
+				for (int i = 0; i < mealList.getMeals().get(index).getFoods().size(); i++) {
+					if (i != 0) {
+						content = content + ",";
+					}
+					content = content + mealList.getMeals().get(index).getFoods().get(i).getName();
+				}
+				content = content + "\n";
+			}
+			//write the string to the file
+			PrintWriter writer;
+			writer = new PrintWriter("defaultMeals.txt");
+			writer.println(content);
+			writer.close();
+
+
+		} catch (IOException ex) {
+
+			System.out.println("File Logging Error");
+
+		}
+
+		//save the map
+		try{
+			File file = new File("defaultMap.txt");
+			//make new doc builder
+			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+
+			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+
+			Document document = documentBuilder.newDocument();
+
+			// root element
+			Element root = document.createElement("locations");
+
+			//for each location
+			for (int i = 0; i < locationList.size(); i++) {
+				//grab location
+				Element location = document.createElement("location");
+
+				//add element
+				Element x = document.createElement("x");
+				x.appendChild(document.createTextNode(locationList.get(i).get(0).toString()));
+
+				//add element
+				Element y = document.createElement("y");
+				y.appendChild(document.createTextNode(locationList.get(i).get(1).toString()));
+
+				//append location
+				location.appendChild(x);
+				location.appendChild(y);
+
+				//append location
+				root.appendChild(location);
+			}
+
+			//append root
+			document.appendChild(root);
+
+			//save all the stuff
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource domSource = new DOMSource(document);
+			StreamResult streamResult = new StreamResult(file);
+
+			//save all the stuff
+			transformer.transform(domSource, streamResult);
+
+		} catch (ParserConfigurationException | TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		System.exit(1);
+	}
+
+	/***
+	 * loads default values if there are any,
+	 * if a file is missing an error will be printed to console but the method will run correctly
+	 */
+	public static void initDefaults(){
+		//load the map
+		File file = new File("defaultMap.txt");
+		if(file != null) {
+			try {
+				//get doc builder
+				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+				DocumentBuilder db;
+				db = dbf.newDocumentBuilder();
+				Document doc = db.parse(file);
+				doc.getDocumentElement().normalize();
+
+				//grab nodes
+				NodeList nList = doc.getElementsByTagName("location");
+				ArrayList<ArrayList<Double>> tempList = new ArrayList<ArrayList<Double>>();
+
+				//for each node
+				for (int i = 0; i < nList.getLength(); i++) {
+					tempList.add(new ArrayList<Double>());
+					Node nNode = nList.item(i);
+
+					//if node is correct
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+						//get elements
+						Element eElement = (Element) nNode;
+						double x = Double.valueOf(eElement.getElementsByTagName("x").item(0).getTextContent());
+						double y = Double.valueOf(eElement.getElementsByTagName("y").item(0).getTextContent());
+
+						//add to temp
+						tempList.get(i).add(x);
+						tempList.get(i).add(y);
+
+					}
+				}
+
+				//update locatons
+				locationList = tempList;
+				locationToSend = updateToSend();
+				orderList.setLocations(locationToSend);
+			} catch (Exception e1) {
+				//do nothing
+			}
+		}
+
+		//load food
+		file = new File("defaultFoods.txt");
+		if (file != null) {
+			try {
+				Scanner sc = new Scanner(file);
+				while(sc.hasNext()) {
+					//reads in the line
+					String s = sc.nextLine();
+
+
+					//new scanner for the line
+					Scanner stringScanner = new Scanner(s);
+					//if there is a comma or a new line
+					stringScanner.useDelimiter(",|\\n");
+					//gets the name and weight from string
+					String name = stringScanner.next();
+					String weight = stringScanner.next();
+					double weightDouble = Double.parseDouble(weight);
+
+
+					//checks if the food already exists
+					boolean duplicate = false;
+					for(int i = 0; i<foodList.size(); i++) {
+						if(foodList.getFoods().get(i).getName().equals(name)) {
+							duplicate = true;
+						}//ends if
+					}//ends for
+
+
+					//as long as it isnt a duplicate, adds the food
+					if(duplicate == false) {
+						//creates the new food
+						Food f = new Food(name, weightDouble);
+						//adds the new food to the list
+						foodList.addFoodItem(f);
+					}//ends if
+				}//ends while
+
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		//load meals
+		file = new File("defaultMeals.txt");
+		if (file != null) {
+			try {
+				Scanner sc = new Scanner(file);
+				boolean isFormattingGood = true;
+				while(sc.hasNext()) {
+					//reads in the line
+					String s = sc.nextLine();
+					System.out.println(checkMeal(s));
+					if (checkMeal(s) == false) {
+						System.out.println("Invalid formatting?");
+						isFormattingGood = false;
+						break;
+					}
+
+				}//ends while
+
+				if (isFormattingGood == true) {
+					//now have to make the new meals, and replace the old ones with them.
+					while (mealList.getMeals().size() != 0) {
+						mealList.deleteMeal(mealList.getMeals().get(0));
+					}
+
+
+					sc = new Scanner(file);
+					while (sc.hasNext()) {
+						String s = sc.nextLine();
+
+						Scanner stringScanner = new Scanner(s);
+						//if there is a comma or a new line
+						stringScanner.useDelimiter(",|\\n");
+
+						//get meal name
+						String mealName = stringScanner.next();
+						//get meal percentage then turn it into a double
+						String percentage = stringScanner.next();
+						double percentageDouble = Double.parseDouble(percentage);
+
+
+						ArrayList<Food> mealFoods = new ArrayList<Food>();
+						while (stringScanner.hasNext()) {
+							String foodName = stringScanner.next();
+							System.out.println(foodName);
+							for (int i = 0; i < foodList.getFoods().size(); i++) {
+								if (foodName.equals(foodList.getFoods().get(i).getName())) {
+									mealFoods.add(foodList.getFoods().get(i));
+									break;
+								}
+							}
+						}
+						Meal newMeal = new Meal(mealName, percentageDouble, mealFoods);
+						mealList.addMeal(newMeal);
+						System.out.println(mealList.getMeals().size());
+						//sc.next();
+					}
+				}
+
+
+			} catch (IOException ex) {
+				System.out.println("File Logging Error");
+
+			}
+		}
+
+		//load probabilities
+		file = new File("defaultProb.json");
+		if(file != null){
+			try{
+				//put all of the text in the file into a string to be parsed
+				JSONParser jsonParser = new JSONParser();
+				Scanner scan = new Scanner(file);
+				String jsonData = "";
+				while(scan.hasNext()){
+					jsonData += scan.next();
+				}
+
+				//parse the data
+				Object obj = jsonParser.parse(jsonData);
+				JSONObject data = (JSONObject) obj;
+
+				//set it as the active set
+				orderList.setHourlyRate((int)data.get("hour1"), (int)data.get("hour2"), (int)data.get("hour3"), (int)data.get("hour4"));
+
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
